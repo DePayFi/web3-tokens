@@ -1,10 +1,10 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('ethers'), require('depay-blockchain-call')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'ethers', 'depay-blockchain-call'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.BlockchainToken = {}, global.ethers, global.BlockchainCall));
-}(this, (function (exports, ethers, depayBlockchainCall) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-blockchain-call'), require('ethers')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'depay-blockchain-call', 'ethers'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.BlockchainToken = {}, global.BlockchainCall, global.ethers));
+}(this, (function (exports, depayBlockchainCall, ethers) { 'use strict';
 
-  let ERC20 = [
+  var ERC20 = [
     {
       constant: true,
       inputs: [],
@@ -132,7 +132,7 @@
       return {
         blockchain: 'ethereum',
         address: this.address,
-        api: ERC20,
+        api: ERC20
       }
     }
 
@@ -140,6 +140,7 @@
       return await depayBlockchainCall.call({
         ...this.callBasics(),
         method: 'decimals',
+        cache: 86400000 // 1 day
       })
     }
 
@@ -147,6 +148,7 @@
       return await depayBlockchainCall.call({
         ...this.callBasics(),
         method: 'symbol',
+        cache: 86400000 // 1 day
       })
     }
 
@@ -154,6 +156,7 @@
       return await depayBlockchainCall.call({
         ...this.callBasics(),
         method: 'name',
+        cache: 86400000 // 1 day
       })
     }
   }

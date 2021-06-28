@@ -2,10 +2,10 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var ethers = require('ethers');
 var depayBlockchainCall = require('depay-blockchain-call');
+var ethers = require('ethers');
 
-let ERC20 = [
+var ERC20 = [
   {
     constant: true,
     inputs: [],
@@ -133,7 +133,7 @@ class Token {
     return {
       blockchain: 'ethereum',
       address: this.address,
-      api: ERC20,
+      api: ERC20
     }
   }
 
@@ -141,6 +141,7 @@ class Token {
     return await depayBlockchainCall.call({
       ...this.callBasics(),
       method: 'decimals',
+      cache: 86400000 // 1 day
     })
   }
 
@@ -148,6 +149,7 @@ class Token {
     return await depayBlockchainCall.call({
       ...this.callBasics(),
       method: 'symbol',
+      cache: 86400000 // 1 day
     })
   }
 
@@ -155,6 +157,7 @@ class Token {
     return await depayBlockchainCall.call({
       ...this.callBasics(),
       method: 'name',
+      cache: 86400000 // 1 day
     })
   }
 }

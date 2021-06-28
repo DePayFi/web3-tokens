@@ -1,11 +1,14 @@
 import { Token } from 'dist/cjs/index.js';
-import { mock } from 'depay-web3mock'
+import { mock, resetMocks } from 'depay-web3mock'
 
 describe('Token', () => {
 
+  beforeEach(resetMocks)
+  afterEach(resetMocks)
+
   it('retrieves basic token data from the blockchain', async ()=> {
 
-    mock({
+    let tokenCallMock = mock({
       blockchain: 'ethereum',
       call: {
         address: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
@@ -25,5 +28,15 @@ describe('Token', () => {
     expect(await token.decimals()).toEqual(18)
     expect(await token.symbol()).toEqual('DEPAY')
     expect(await token.name()).toEqual('DePay')
+
+    expect(tokenCallMock).toHaveBeenCalledTimes(3)
+
+    // caches calls up to 1 day:
+
+    expect(await token.decimals()).toEqual(18)
+    expect(await token.symbol()).toEqual('DEPAY')
+    expect(await token.name()).toEqual('DePay')
+
+    expect(tokenCallMock).toHaveBeenCalledTimes(3) // still 3
   });
 });

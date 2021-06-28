@@ -2624,10 +2624,10 @@ delayed-stream@~1.0.0:
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha1-3zrhmayt+31ECqrgsp4icrJOxhk=
 
-depay-blockchain-call@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/depay-blockchain-call/-/depay-blockchain-call-1.0.0.tgz#49e37685e31d8e5ea56e8f7ab1901c4419ffa495"
-  integrity sha512-XUGdj2eJmWhkAM8gTHCquYwCNJNurpblOrshF/jCRQ35kaG1KVxLEVuCH+tFh43WbuI4ApvMlXylndextxVXsg==
+depay-blockchain-call@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/depay-blockchain-call/-/depay-blockchain-call-1.1.1.tgz#19b379623c7072ec15805e3c14ca4e60eb49d7fe"
+  integrity sha512-AEbbuLjjKouWb7APyt8q+JWyRGvtZdD3TXSWvJJ61aTVPvp4qP5t9RrGLvLg+rMT2rJfu7IEoGTUS2MKSq7IPA==
   dependencies:
     ethers "^5.3.1"
 
