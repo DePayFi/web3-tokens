@@ -161,6 +161,12 @@
     }
   }
 
+  Token.BigNumber = async ({ amount, blockchain, address }) => {
+    let token = new Token({ blockchain, address });
+    let decimals = await token.decimals();
+    return ethers.ethers.BigNumber.from(amount).mul(ethers.ethers.BigNumber.from(10).pow(decimals))
+  };
+
   exports.Token = Token;
 
   Object.defineProperty(exports, '__esModule', { value: true });

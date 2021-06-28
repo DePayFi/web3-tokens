@@ -158,4 +158,10 @@ class Token {
   }
 }
 
+Token.BigNumber = async ({ amount, blockchain, address }) => {
+  let token = new Token({ blockchain, address });
+  let decimals = await token.decimals();
+  return ethers.BigNumber.from(amount).mul(ethers.BigNumber.from(10).pow(decimals))
+};
+
 export { Token };

@@ -26,7 +26,7 @@ expect(await token.name()).toEqual('DePay')
 
 ## Functionalities
 
-### initalize
+### initalize (new)
 
 ```javascript
 import { Token } from 'depay-blockchain-token';
@@ -59,6 +59,18 @@ Retrieves token name
 
 ```javascript
 await token.name() // DePay
+```
+
+### BigNumber
+
+Provides the BigNumber amount for a given token (based on the tokens decimals) based on a humand readable amount:
+
+```javascript
+Token.BigNumber({
+  amount: 1,
+  blockchain: 'ethereum',
+  address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
+}) // BigNumber '1000000000000000000'
 ```
 
 ## Development
