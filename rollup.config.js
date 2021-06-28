@@ -12,21 +12,24 @@ export default {
     {
       format: 'cjs',
       globals: {
-        'ethers': 'ethers'
+        'ethers': 'ethers',
+        'depay-blockchain-call': 'BlockchainCall'
       },
       file: 'dist/cjs/index.js'
     },
     {
       format: 'es',
       globals: {
-        'ethers': 'ethers'
+        'ethers': 'ethers',
+        'depay-blockchain-call': 'BlockchainCall'
       },
       file: 'dist/es/index.js'
     },
     {
       format: 'umd',
       globals: {
-        'ethers': 'ethers'
+        'ethers': 'ethers',
+        'depay-blockchain-call': 'BlockchainCall'
       },
       name: pkg.moduleName,
       file: 'dist/umd/index.js'

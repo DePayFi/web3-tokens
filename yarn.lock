@@ -2624,10 +2624,17 @@ delayed-stream@~1.0.0:
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha1-3zrhmayt+31ECqrgsp4icrJOxhk=
 
-depay-web3mock@^1.0.0:
+depay-blockchain-call@^1.0.0:
   version "1.0.0"
-  resolved "https://registry.yarnpkg.com/depay-web3mock/-/depay-web3mock-1.0.0.tgz#bb7ea878116c7a72191bab4c86806387682043c7"
-  integrity sha512-ew57X+jBDDEXjusLdnowgH2fOzqa072XenI3QjXxlG8/d9DgxTViBccG4aQE6C4ZdqDGCNJYl74ObvHjMdST3A==
+  resolved "https://registry.yarnpkg.com/depay-blockchain-call/-/depay-blockchain-call-1.0.0.tgz#49e37685e31d8e5ea56e8f7ab1901c4419ffa495"
+  integrity sha512-XUGdj2eJmWhkAM8gTHCquYwCNJNurpblOrshF/jCRQ35kaG1KVxLEVuCH+tFh43WbuI4ApvMlXylndextxVXsg==
+  dependencies:
+    ethers "^5.3.1"
+
+depay-web3mock@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/depay-web3mock/-/depay-web3mock-1.0.2.tgz#01b69e29af4af683529604d3a173626f1036f0a6"
+  integrity sha512-0J+u6KnGiEH/vANJyAIQ+Mwg8QjnTCsyHGyvSJ/KYpCY6BaIaCMtyeF+pBgR1UhkFsh54aUnxe2AxzFliKtDGg==
   dependencies:
     ethers "^5.3.1"
 
