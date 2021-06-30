@@ -1,3 +1,4 @@
+import CONSTANTS from 'depay-blockchain-constants'
 import ERC20 from './ERC20'
 import { call } from 'depay-blockchain-call'
 import { ethers } from 'ethers'
@@ -17,6 +18,9 @@ class Token {
   }
 
   async decimals() {
+    if(this.address == CONSTANTS[this.blockchain].NATIVE) {
+      return CONSTANTS[this.blockchain].DECIMALS
+    }
     return await call({
       ...this.callBasics(),
       method: 'decimals',
@@ -25,6 +29,9 @@ class Token {
   }
 
   async symbol() {
+    if(this.address == CONSTANTS[this.blockchain].NATIVE) {
+      return CONSTANTS[this.blockchain].SYMBOL
+    }
     return await call({
       ...this.callBasics(),
       method: 'symbol',
@@ -33,6 +40,9 @@ class Token {
   }
 
   async name() {
+    if(this.address == CONSTANTS[this.blockchain].NATIVE) {
+      return CONSTANTS[this.blockchain].NAME
+    }
     return await call({
       ...this.callBasics(),
       method: 'name',

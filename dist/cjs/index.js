@@ -2,8 +2,13 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var CONSTANTS = require('depay-blockchain-constants');
 var depayBlockchainCall = require('depay-blockchain-call');
 var ethers = require('ethers');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var CONSTANTS__default = /*#__PURE__*/_interopDefaultLegacy(CONSTANTS);
 
 var ERC20 = [
   {
@@ -138,6 +143,9 @@ class Token {
   }
 
   async decimals() {
+    if(this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+      return CONSTANTS__default['default'][this.blockchain].DECIMALS
+    }
     return await depayBlockchainCall.call({
       ...this.callBasics(),
       method: 'decimals',
@@ -146,6 +154,9 @@ class Token {
   }
 
   async symbol() {
+    if(this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+      return CONSTANTS__default['default'][this.blockchain].SYMBOL
+    }
     return await depayBlockchainCall.call({
       ...this.callBasics(),
       method: 'symbol',
@@ -154,6 +165,9 @@ class Token {
   }
 
   async name() {
+    if(this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+      return CONSTANTS__default['default'][this.blockchain].NAME
+    }
     return await depayBlockchainCall.call({
       ...this.callBasics(),
       method: 'name',

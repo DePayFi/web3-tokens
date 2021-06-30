@@ -2631,6 +2631,11 @@ depay-blockchain-call@^1.1.1:
   dependencies:
     ethers "^5.3.1"
 
+depay-blockchain-constants@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/depay-blockchain-constants/-/depay-blockchain-constants-1.4.0.tgz#269ab10ac0a761ca771c5545ceca46d7556cde3b"
+  integrity sha512-R8BbF/BF0iB1lt/rdP+mfekhBOTQVpJ88Wi4aLIWPdVfqmaULwaExWwlEhbUdtFabJuVTIWnXSpZffuqsq1bIQ==
+
 depay-web3mock@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/depay-web3mock/-/depay-web3mock-1.0.2.tgz#01b69e29af4af683529604d3a173626f1036f0a6"

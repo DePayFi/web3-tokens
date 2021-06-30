@@ -39,4 +39,18 @@ describe('Token', () => {
 
     expect(tokenCallMock).toHaveBeenCalledTimes(3) // still 3
   });
+
+  it('provides basic token data also for the native tokens', async ()=> {
+
+    let token = new Token({
+      blockchain: 'ethereum',
+      address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+    });
+
+    expect(token.address).toEqual('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
+    expect(await token.decimals()).toEqual(18)
+    expect(await token.symbol()).toEqual('ETH')
+    expect(await token.name()).toEqual('Ether')
+
+  });
 });

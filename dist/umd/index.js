@@ -1,8 +1,12 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-blockchain-call'), require('ethers')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'depay-blockchain-call', 'ethers'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.BlockchainToken = {}, global.BlockchainCall, global.ethers));
-}(this, (function (exports, depayBlockchainCall, ethers) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-blockchain-constants'), require('depay-blockchain-call'), require('ethers')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'depay-blockchain-constants', 'depay-blockchain-call', 'ethers'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.BlockchainToken = {}, global.CONSTANTS, global.BlockchainCall, global.ethers));
+}(this, (function (exports, CONSTANTS, depayBlockchainCall, ethers) { 'use strict';
+
+  function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+  var CONSTANTS__default = /*#__PURE__*/_interopDefaultLegacy(CONSTANTS);
 
   var ERC20 = [
     {
@@ -137,6 +141,9 @@
     }
 
     async decimals() {
+      if(this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+        return CONSTANTS__default['default'][this.blockchain].DECIMALS
+      }
       return await depayBlockchainCall.call({
         ...this.callBasics(),
         method: 'decimals',
@@ -145,6 +152,9 @@
     }
 
     async symbol() {
+      if(this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+        return CONSTANTS__default['default'][this.blockchain].SYMBOL
+      }
       return await depayBlockchainCall.call({
         ...this.callBasics(),
         method: 'symbol',
@@ -153,6 +163,9 @@
     }
 
     async name() {
+      if(this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+        return CONSTANTS__default['default'][this.blockchain].NAME
+      }
       return await depayBlockchainCall.call({
         ...this.callBasics(),
         method: 'name',

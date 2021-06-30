@@ -25,4 +25,14 @@ describe('BigNumber', () => {
       })).toString()
     ).toEqual('1000000000000000000')
   });
+
+  it('also provides a BigNumber if the passed token address is the placeholder for the native token itself', async ()=>{
+    expect(
+      (await Token.BigNumber({
+        amount: 2,
+        blockchain: 'ethereum',
+        address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+      })).toString()
+    ).toEqual('2000000000000000000')
+  })
 });
