@@ -18,7 +18,7 @@ class Token {
   }
 
   async decimals() {
-    if(this.address == CONSTANTS[this.blockchain].NATIVE) {
+    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].DECIMALS
     }
     return await call({
@@ -29,7 +29,7 @@ class Token {
   }
 
   async symbol() {
-    if(this.address == CONSTANTS[this.blockchain].NATIVE) {
+    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].SYMBOL
     }
     return await call({
@@ -40,7 +40,7 @@ class Token {
   }
 
   async name() {
-    if(this.address == CONSTANTS[this.blockchain].NATIVE) {
+    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].NAME
     }
     return await call({

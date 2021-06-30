@@ -141,7 +141,7 @@
     }
 
     async decimals() {
-      if(this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+      if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
         return CONSTANTS__default['default'][this.blockchain].DECIMALS
       }
       return await depayBlockchainCall.call({
@@ -152,7 +152,7 @@
     }
 
     async symbol() {
-      if(this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+      if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
         return CONSTANTS__default['default'][this.blockchain].SYMBOL
       }
       return await depayBlockchainCall.call({
@@ -163,7 +163,7 @@
     }
 
     async name() {
-      if(this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+      if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
         return CONSTANTS__default['default'][this.blockchain].NAME
       }
       return await depayBlockchainCall.call({
