@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-blockchain-constants'), require('depay-blockchain-call'), require('ethers')) :
   typeof define === 'function' && define.amd ? define(['exports', 'depay-blockchain-constants', 'depay-blockchain-call', 'ethers'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.BlockchainToken = {}, global.CONSTANTS, global.BlockchainCall, global.ethers));
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.BlockchainToken = {}, global.BlockchainConstants, global.BlockchainCall, global.ethers));
 }(this, (function (exports, CONSTANTS, depayBlockchainCall, ethers) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -134,7 +134,7 @@
 
     callBasics() {
       return {
-        blockchain: 'ethereum',
+        blockchain: this.blockchain,
         address: this.address,
         api: ERC20,
       }
@@ -170,6 +170,20 @@
         ...this.callBasics(),
         method: 'name',
         cache: 86400000, // 1 day
+      })
+    }
+
+    transferable() {
+      return new Promise(async (resolve, reject) => {
+        let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        let provider = new ethers.ethers.providers.Web3Provider(window.ethereum);
+        let signer = provider.getSigner();
+        let contract = new ethers.ethers.Contract(this.address, ERC20, provider);
+        let estimate = contract
+          .connect(signer)
+          .estimateGas.transfer(accounts[0], '1')
+          .then(() => resolve(true))
+          .catch(() => resolve(false));
       })
     }
   }

@@ -136,7 +136,7 @@ class Token {
 
   callBasics() {
     return {
-      blockchain: 'ethereum',
+      blockchain: this.blockchain,
       address: this.address,
       api: ERC20,
     }
@@ -172,6 +172,20 @@ class Token {
       ...this.callBasics(),
       method: 'name',
       cache: 86400000, // 1 day
+    })
+  }
+
+  transferable() {
+    return new Promise(async (resolve, reject) => {
+      let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      let provider = new ethers.ethers.providers.Web3Provider(window.ethereum);
+      let signer = provider.getSigner();
+      let contract = new ethers.ethers.Contract(this.address, ERC20, provider);
+      let estimate = contract
+        .connect(signer)
+        .estimateGas.transfer(accounts[0], '1')
+        .then(() => resolve(true))
+        .catch(() => resolve(false));
     })
   }
 }

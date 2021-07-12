@@ -18,10 +18,11 @@ let token = new Token({
   address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
 });
 
-expect(token.address).toEqual('0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb')
-expect(await token.decimals()).toEqual(18)
-expect(await token.symbol()).toEqual('DEPAY')
-expect(await token.name()).toEqual('DePay')
+token.address // '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
+await token.decimals() // 18
+await token.symbol() // 'DEPAY'
+await token.name() // 'DePay'
+await token.transferable() // true
 ```
 
 ## Functionalities
@@ -61,6 +62,14 @@ Retrieves token name
 await token.name() // DePay
 ```
 
+### transferable
+
+Checks if token is transferable:
+
+```javascript
+await token.transferable() // true
+```
+
 ### BigNumber
 
 Provides the BigNumber amount for a given token (based on the tokens decimals) based on a humand readable amount:
@@ -79,7 +88,7 @@ Token.BigNumber({
 
 ```
 yarn install
-yarn start
+yarn dev
 ```
 
 ### Release
