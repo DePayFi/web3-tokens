@@ -194,6 +194,7 @@
     return ethers.ethers.BigNumber.from(amount).mul(ethers.ethers.BigNumber.from(10).pow(decimals))
   };
 
+  exports.ERC20 = ERC20;
   exports.Token = Token;
 
   Object.defineProperty(exports, '__esModule', { value: true });

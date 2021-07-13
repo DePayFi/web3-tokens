@@ -188,4 +188,4 @@ Token.BigNumber = async ({ amount, blockchain, address }) => {
   return ethers.BigNumber.from(amount).mul(ethers.BigNumber.from(10).pow(decimals))
 };
 
-export { Token };
+export { ERC20, Token };

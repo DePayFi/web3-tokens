@@ -82,6 +82,14 @@ Token.BigNumber({
 }) // BigNumber '1000000000000000000'
 ```
 
+### Token Standards
+
+`depay-blockchain-token` exports standard token apis, like `ERC20`, `BEP20` etc.:
+
+```javascript
+import { ERC20 } from 'depay-blockchain-token'
+```
+
 ## Development
 
 ### Get started
