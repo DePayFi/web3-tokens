@@ -177,6 +177,9 @@ class Token {
 
   transferable() {
     return new Promise(async (resolve, reject) => {
+      if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+        resolve(true);
+      }
       let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       let provider = new ethers.ethers.providers.Web3Provider(window.ethereum);
       let signer = provider.getSigner();

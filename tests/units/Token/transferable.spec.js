@@ -1,3 +1,4 @@
+import CONSTANTS from 'depay-blockchain-constants'
 import ERC20 from '../../../src/ERC20'
 import { mock, resetMocks } from 'depay-web3mock'
 import { Token } from 'dist/cjs/index.js'
@@ -47,6 +48,16 @@ describe('Token', () => {
       let transferable = await token.transferable()
       expect(transferable).toEqual(false)
       expect(estimateMock).toHaveBeenCalled()
+    })
+
+    it('returns true for native tokens immediatelly', async ()=> {
+
+      mock({ blockchain: 'ethereum', require: 'estimate' })
+
+      let token = new Token({ blockchain: 'ethereum', address: CONSTANTS.ethereum.NATIVE })
+      let transferable = await token.transferable()
+
+      expect(transferable).toEqual(true)
     })
   })
 })
