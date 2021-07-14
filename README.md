@@ -81,8 +81,7 @@ await token.balance('0xb0252f13850a4823706607524de0b146820F2240') // BigNumber 
 this also works for the native token of the given blockchain:
 
 ```javascript
-
-
+await token.balance('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') // BigNumber {_hex: "0x0b896d5e9eeaabf4f1", _isBigNumber: true}
 ```
 
 ### BigNumber
