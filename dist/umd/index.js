@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-blockchain-constants'), require('depay-blockchain-call'), require('ethers')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'depay-blockchain-constants', 'depay-blockchain-call', 'ethers'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.BlockchainToken = {}, global.BlockchainConstants, global.BlockchainCall, global.ethers));
-}(this, (function (exports, CONSTANTS, depayBlockchainCall, ethers) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-blockchain-constants'), require('depay-blockchain-client'), require('ethers')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'depay-blockchain-constants', 'depay-blockchain-client', 'ethers'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.BlockchainToken = {}, global.BlockchainConstants, global.BlockchainClient, global.ethers));
+}(this, (function (exports, CONSTANTS, depayBlockchainClient, ethers) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -132,21 +132,12 @@
       this.address = ethers.ethers.utils.getAddress(address);
     }
 
-    callBasics() {
-      return {
-        blockchain: this.blockchain,
-        address: this.address,
-        api: ERC20,
-      }
-    }
-
     async decimals() {
       if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
         return CONSTANTS__default['default'][this.blockchain].DECIMALS
       }
-      return await depayBlockchainCall.call({
-        ...this.callBasics(),
-        method: 'decimals',
+      return await depayBlockchainClient.request(['ethereum://', this.address, '/decimals'].join(''), {
+        api: ERC20,
         cache: 86400000, // 1 day
       })
     }
@@ -155,9 +146,8 @@
       if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
         return CONSTANTS__default['default'][this.blockchain].SYMBOL
       }
-      return await depayBlockchainCall.call({
-        ...this.callBasics(),
-        method: 'symbol',
+      return await depayBlockchainClient.request(['ethereum://', this.address, '/symbol'].join(''), {
+        api: ERC20,
         cache: 86400000, // 1 day
       })
     }
@@ -166,9 +156,8 @@
       if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
         return CONSTANTS__default['default'][this.blockchain].NAME
       }
-      return await depayBlockchainCall.call({
-        ...this.callBasics(),
-        method: 'name',
+      return await depayBlockchainClient.request(['ethereum://', this.address, '/name'].join(''), {
+        api: ERC20,
         cache: 86400000, // 1 day
       })
     }
@@ -188,6 +177,20 @@
           .then(() => resolve(true))
           .catch(() => resolve(false));
       })
+    }
+
+    async balance(account) {
+      if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+        return await depayBlockchainClient.request(['ethereum://', account, '/balance'].join(''), {
+          cache: 30000, // 30 seconds
+        })
+      } else {
+        return await depayBlockchainClient.request(['ethereum://', this.address, '/balanceOf'].join(''), {
+          api: ERC20,
+          params: [account],
+          cache: 30000, // 30 seconds
+        })
+      }
     }
   }
 

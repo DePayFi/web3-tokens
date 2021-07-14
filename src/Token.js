@@ -1,6 +1,6 @@
 import CONSTANTS from 'depay-blockchain-constants'
 import ERC20 from './ERC20'
-import { call } from 'depay-blockchain-call'
+import { request } from 'depay-blockchain-client'
 import { ethers } from 'ethers'
 
 class Token {
@@ -9,21 +9,12 @@ class Token {
     this.address = ethers.utils.getAddress(address)
   }
 
-  callBasics() {
-    return {
-      blockchain: this.blockchain,
-      address: this.address,
-      api: ERC20,
-    }
-  }
-
   async decimals() {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].DECIMALS
     }
-    return await call({
-      ...this.callBasics(),
-      method: 'decimals',
+    return await request(['ethereum://', this.address, '/decimals'].join(''), {
+      api: ERC20,
       cache: 86400000, // 1 day
     })
   }
@@ -32,9 +23,8 @@ class Token {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].SYMBOL
     }
-    return await call({
-      ...this.callBasics(),
-      method: 'symbol',
+    return await request(['ethereum://', this.address, '/symbol'].join(''), {
+      api: ERC20,
       cache: 86400000, // 1 day
     })
   }
@@ -43,9 +33,8 @@ class Token {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].NAME
     }
-    return await call({
-      ...this.callBasics(),
-      method: 'name',
+    return await request(['ethereum://', this.address, '/name'].join(''), {
+      api: ERC20,
       cache: 86400000, // 1 day
     })
   }
@@ -65,6 +54,20 @@ class Token {
         .then(() => resolve(true))
         .catch(() => resolve(false))
     })
+  }
+
+  async balance(account) {
+    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
+      return await request(['ethereum://', account, '/balance'].join(''), {
+        cache: 30000, // 30 seconds
+      })
+    } else {
+      return await request(['ethereum://', this.address, '/balanceOf'].join(''), {
+        api: ERC20,
+        params: [account],
+        cache: 30000, // 30 seconds
+      })
+    }
   }
 }
 

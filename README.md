@@ -70,6 +70,21 @@ Checks if token is transferable:
 await token.transferable() // true
 ```
 
+### balance
+
+Provides the balance (BigNumber) of the given account:
+
+```javascript
+await token.balance('0xb0252f13850a4823706607524de0b146820F2240') // BigNumber {_hex: "0x0b896d5e9eeaabf4f1", _isBigNumber: true}
+```
+
+this also works for the native token of the given blockchain:
+
+```javascript
+
+
+```
+
 ### BigNumber
 
 Provides the BigNumber amount for a given token (based on the tokens decimals) based on a humand readable amount:

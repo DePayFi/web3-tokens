@@ -1,5 +1,5 @@
 export default {
   'ethers': 'ethers',
-  'depay-blockchain-call': 'BlockchainCall',
+  'depay-blockchain-client': 'BlockchainClient',
   'depay-blockchain-constants': 'BlockchainConstants'
 }
