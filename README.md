@@ -87,7 +87,16 @@ this also works for the native token of the given blockchain:
 
 ### BigNumber
 
-Provides the BigNumber amount for a given token (based on the tokens decimals) based on a humand readable amount:
+Provides the BigNumber amount for a given token (based on the tokens decimals) based on a human readable amount:
+
+```javascript
+let token = new Token({
+  blockchain: 'ethereum',
+  address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
+}) 
+
+token.BigNumber(1) // BigNumber '1000000000000000000'
+```
 
 ```javascript
 Token.BigNumber({

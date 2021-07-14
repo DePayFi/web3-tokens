@@ -186,12 +186,16 @@ class Token {
       })
     }
   }
+
+  async BigNumber(amount) {
+    let decimals = await this.decimals();
+    return ethers.BigNumber.from(amount).mul(ethers.BigNumber.from(10).pow(decimals))
+  }
 }
 
 Token.BigNumber = async ({ amount, blockchain, address }) => {
   let token = new Token({ blockchain, address });
-  let decimals = await token.decimals();
-  return ethers.BigNumber.from(amount).mul(ethers.BigNumber.from(10).pow(decimals))
+  return token.BigNumber(amount)
 };
 
 export { ERC20, Token };
