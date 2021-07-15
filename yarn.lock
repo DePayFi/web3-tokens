@@ -2963,10 +2963,10 @@ delayed-stream@~1.0.0:
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha1-3zrhmayt+31ECqrgsp4icrJOxhk=
 
-depay-blockchain-client@^2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/depay-blockchain-client/-/depay-blockchain-client-2.3.2.tgz#57f229e382c1e09553353a7463d4a7cf92719c1b"
-  integrity sha512-KiCyL/IOkI0pJO7Q/ypam/Z5ZKvZP0rmPcNTmwRHsMmBWqQPbVEHOJdzwtWOf4tOd+j2PGRawe0wUF9yTDZIvQ==
+depay-blockchain-client@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/depay-blockchain-client/-/depay-blockchain-client-2.3.3.tgz#807035e3b4061570e15a8b7729b899382f55f881"
+  integrity sha512-h0RPZSq0gTT4DXWy08LyJoJRw2AvoxABcRfum41Yd5M14LUiysmAxMNPmq6jY5oJMczY0Uaqo22bAbCNpoD0yw==
   dependencies:
     depay-crypto-wallets "^2.4.0"
     ethers "^5.3.1"
