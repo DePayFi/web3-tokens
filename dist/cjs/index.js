@@ -3,8 +3,9 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var CONSTANTS = require('depay-blockchain-constants');
-var depayBlockchainClient = require('depay-blockchain-client');
 var ethers = require('ethers');
+var depayCryptoWallets = require('depay-crypto-wallets');
+var depayBlockchainClient = require('depay-blockchain-client');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -138,30 +139,51 @@ class Token {
     if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
       return CONSTANTS__default['default'][this.blockchain].DECIMALS
     }
-    return await depayBlockchainClient.request(['ethereum://', this.address, '/decimals'].join(''), {
-      api: ERC20,
-      cache: 86400000, // 1 day
-    })
+    return await depayBlockchainClient.request(
+      {
+        blockchain: 'ethereum',
+        address: this.address,
+        method: 'decimals',
+      },
+      {
+        api: ERC20,
+        cache: 86400000, // 1 day
+      },
+    )
   }
 
   async symbol() {
     if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
       return CONSTANTS__default['default'][this.blockchain].SYMBOL
     }
-    return await depayBlockchainClient.request(['ethereum://', this.address, '/symbol'].join(''), {
-      api: ERC20,
-      cache: 86400000, // 1 day
-    })
+    return await depayBlockchainClient.request(
+      {
+        blockchain: 'ethereum',
+        address: this.address,
+        method: 'symbol',
+      },
+      {
+        api: ERC20,
+        cache: 86400000, // 1 day
+      },
+    )
   }
 
   async name() {
     if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
       return CONSTANTS__default['default'][this.blockchain].NAME
     }
-    return await depayBlockchainClient.request(['ethereum://', this.address, '/name'].join(''), {
-      api: ERC20,
-      cache: 86400000, // 1 day
-    })
+    return await depayBlockchainClient.request(
+      {
+        blockchain: 'ethereum',
+        address: this.address,
+        method: 'name',
+      },
+      {
+        api: ERC20,
+        cache: 86400000, // 1 day
+      },
+    )
   }
 
   transferable() {
@@ -169,13 +191,18 @@ class Token {
       if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
         resolve(true);
       }
-      let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      let provider = new ethers.ethers.providers.Web3Provider(window.ethereum);
-      let signer = provider.getSigner();
-      let contract = new ethers.ethers.Contract(this.address, ERC20, provider);
-      let estimate = contract
-        .connect(signer)
-        .estimateGas.transfer(accounts[0], '1')
+
+      depayBlockchainClient.estimate(
+        {
+          blockchain: 'ethereum',
+          address: this.address,
+          method: 'transfer',
+        },
+        {
+          api: ERC20,
+          params: [await depayCryptoWallets.getWallet().account(), '1'],
+        },
+      )
         .then(() => resolve(true))
         .catch(() => resolve(false));
     })
@@ -183,15 +210,48 @@ class Token {
 
   async balance(account) {
     if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
-      return await depayBlockchainClient.request(['ethereum://', account, '/balance'].join(''), {
-        cache: 30000, // 30 seconds
-      })
+      return await depayBlockchainClient.request(
+        {
+          blockchain: 'ethereum',
+          address: account,
+          method: 'balance',
+        },
+        {
+          cache: 30000, // 30 seconds
+        },
+      )
     } else {
-      return await depayBlockchainClient.request(['ethereum://', this.address, '/balanceOf'].join(''), {
-        api: ERC20,
-        params: [account],
-        cache: 30000, // 30 seconds
-      })
+      return await depayBlockchainClient.request(
+        {
+          blockchain: 'ethereum',
+          address: this.address,
+          method: 'balanceOf',
+        },
+        {
+          api: ERC20,
+          params: [account],
+          cache: 30000, // 30 seconds
+        },
+      )
+    }
+  }
+
+  async allowance(spender) {
+    if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+      return ethers.ethers.BigNumber.from(CONSTANTS__default['default'][this.blockchain].MAXINT)
+    } else {
+      return await depayBlockchainClient.request(
+        {
+          blockchain: 'ethereum',
+          address: this.address,
+          method: 'allowance',
+        },
+        {
+          api: ERC20,
+          params: [await depayCryptoWallets.getWallet().account(), spender],
+          cache: 30000, // 30 seconds
+        },
+      )
     }
   }
 

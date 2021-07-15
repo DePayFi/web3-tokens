@@ -1,7 +1,8 @@
 import CONSTANTS from 'depay-blockchain-constants'
 import ERC20 from './ERC20'
-import { request } from 'depay-blockchain-client'
 import { ethers } from 'ethers'
+import { getWallet } from 'depay-crypto-wallets'
+import { request, estimate } from 'depay-blockchain-client'
 
 class Token {
   constructor({ blockchain, address }) {
@@ -13,30 +14,51 @@ class Token {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].DECIMALS
     }
-    return await request(['ethereum://', this.address, '/decimals'].join(''), {
-      api: ERC20,
-      cache: 86400000, // 1 day
-    })
+    return await request(
+      {
+        blockchain: 'ethereum',
+        address: this.address,
+        method: 'decimals',
+      },
+      {
+        api: ERC20,
+        cache: 86400000, // 1 day
+      },
+    )
   }
 
   async symbol() {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].SYMBOL
     }
-    return await request(['ethereum://', this.address, '/symbol'].join(''), {
-      api: ERC20,
-      cache: 86400000, // 1 day
-    })
+    return await request(
+      {
+        blockchain: 'ethereum',
+        address: this.address,
+        method: 'symbol',
+      },
+      {
+        api: ERC20,
+        cache: 86400000, // 1 day
+      },
+    )
   }
 
   async name() {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].NAME
     }
-    return await request(['ethereum://', this.address, '/name'].join(''), {
-      api: ERC20,
-      cache: 86400000, // 1 day
-    })
+    return await request(
+      {
+        blockchain: 'ethereum',
+        address: this.address,
+        method: 'name',
+      },
+      {
+        api: ERC20,
+        cache: 86400000, // 1 day
+      },
+    )
   }
 
   transferable() {
@@ -44,13 +66,18 @@ class Token {
       if (this.address == CONSTANTS[this.blockchain].NATIVE) {
         resolve(true)
       }
-      let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-      let provider = new ethers.providers.Web3Provider(window.ethereum)
-      let signer = provider.getSigner()
-      let contract = new ethers.Contract(this.address, ERC20, provider)
-      let estimate = contract
-        .connect(signer)
-        .estimateGas.transfer(accounts[0], '1')
+
+      estimate(
+        {
+          blockchain: 'ethereum',
+          address: this.address,
+          method: 'transfer',
+        },
+        {
+          api: ERC20,
+          params: [await getWallet().account(), '1'],
+        },
+      )
         .then(() => resolve(true))
         .catch(() => resolve(false))
     })
@@ -58,15 +85,48 @@ class Token {
 
   async balance(account) {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return await request(['ethereum://', account, '/balance'].join(''), {
-        cache: 30000, // 30 seconds
-      })
+      return await request(
+        {
+          blockchain: 'ethereum',
+          address: account,
+          method: 'balance',
+        },
+        {
+          cache: 30000, // 30 seconds
+        },
+      )
     } else {
-      return await request(['ethereum://', this.address, '/balanceOf'].join(''), {
-        api: ERC20,
-        params: [account],
-        cache: 30000, // 30 seconds
-      })
+      return await request(
+        {
+          blockchain: 'ethereum',
+          address: this.address,
+          method: 'balanceOf',
+        },
+        {
+          api: ERC20,
+          params: [account],
+          cache: 30000, // 30 seconds
+        },
+      )
+    }
+  }
+
+  async allowance(spender) {
+    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
+      return ethers.BigNumber.from(CONSTANTS[this.blockchain].MAXINT)
+    } else {
+      return await request(
+        {
+          blockchain: 'ethereum',
+          address: this.address,
+          method: 'allowance',
+        },
+        {
+          api: ERC20,
+          params: [await getWallet().account(), spender],
+          cache: 30000, // 30 seconds
+        },
+      )
     }
   }
 
