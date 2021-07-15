@@ -1,7 +1,7 @@
 {
   "name": "depay-blockchain-token",
   "moduleName": "BlockchainToken",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "JavaScript library providing basic functionalities to work with tokens.",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
@@ -32,7 +32,7 @@
   "homepage": "https://github.com/DePayFi/depay-blockchain-token#readme",
   "private": false,
   "dependencies": {
-    "depay-blockchain-client": "^2.3.0",
+    "depay-blockchain-client": "^2.3.1",
     "depay-blockchain-constants": "^1.4.0",
     "depay-crypto-wallets": "^2.4.0",
     "ethers": "^5.3.1"
