@@ -1,10 +1,12 @@
-import CONSTANTS from 'depay-blockchain-constants'
-import ERC20 from './ERC20'
+import BEP20 from './blockchains/bsc/BEP20'
+import ERC20 from './blockchains/ethereum/ERC20'
+import { CONSTANTS } from 'depay-web3-constants'
 import { ethers } from 'ethers'
-import { getWallet } from 'depay-crypto-wallets'
-import { request, estimate } from 'depay-blockchain-client'
+import { getWallet } from 'depay-web3-wallets'
+import { request, estimate } from 'depay-web3-client'
 
 class Token {
+  
   constructor({ blockchain, address }) {
     this.blockchain = blockchain
     this.address = ethers.utils.getAddress(address)
@@ -140,5 +142,8 @@ Token.BigNumber = async ({ amount, blockchain, address }) => {
   let token = new Token({ blockchain, address })
   return token.BigNumber(amount)
 }
+
+Token.ethereum = { ERC20 }
+Token.bsc = { BEP20 }
 
 export default Token

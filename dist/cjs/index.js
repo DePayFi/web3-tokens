@@ -2,14 +2,405 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var CONSTANTS = require('depay-blockchain-constants');
+var depayWeb3Constants = require('depay-web3-constants');
 var ethers = require('ethers');
-var depayCryptoWallets = require('depay-crypto-wallets');
-var depayBlockchainClient = require('depay-blockchain-client');
+var depayWeb3Wallets = require('depay-web3-wallets');
+var depayWeb3Client = require('depay-web3-client');
 
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var CONSTANTS__default = /*#__PURE__*/_interopDefaultLegacy(CONSTANTS);
+var BEP20 = [
+  {
+    "inputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "Approval",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "Transfer",
+    "type": "event"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      }
+    ],
+    "name": "allowance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "approve",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "subtractedValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "decreaseAllowance",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getOwner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "addedValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "increaseAllowance",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "mint",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "totalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "transfer",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "transferFrom",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+];
 
 var ERC20 = [
   {
@@ -130,16 +521,17 @@ var ERC20 = [
 ];
 
 class Token {
+  
   constructor({ blockchain, address }) {
     this.blockchain = blockchain;
     this.address = ethers.ethers.utils.getAddress(address);
   }
 
   async decimals() {
-    if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
-      return CONSTANTS__default['default'][this.blockchain].DECIMALS
+    if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
+      return depayWeb3Constants.CONSTANTS[this.blockchain].DECIMALS
     }
-    return await depayBlockchainClient.request(
+    return await depayWeb3Client.request(
       {
         blockchain: 'ethereum',
         address: this.address,
@@ -153,10 +545,10 @@ class Token {
   }
 
   async symbol() {
-    if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
-      return CONSTANTS__default['default'][this.blockchain].SYMBOL
+    if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
+      return depayWeb3Constants.CONSTANTS[this.blockchain].SYMBOL
     }
-    return await depayBlockchainClient.request(
+    return await depayWeb3Client.request(
       {
         blockchain: 'ethereum',
         address: this.address,
@@ -170,10 +562,10 @@ class Token {
   }
 
   async name() {
-    if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
-      return CONSTANTS__default['default'][this.blockchain].NAME
+    if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
+      return depayWeb3Constants.CONSTANTS[this.blockchain].NAME
     }
-    return await depayBlockchainClient.request(
+    return await depayWeb3Client.request(
       {
         blockchain: 'ethereum',
         address: this.address,
@@ -188,11 +580,11 @@ class Token {
 
   transferable() {
     return new Promise(async (resolve, reject) => {
-      if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
+      if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
         resolve(true);
       }
 
-      depayBlockchainClient.estimate(
+      depayWeb3Client.estimate(
         {
           blockchain: 'ethereum',
           address: this.address,
@@ -200,7 +592,7 @@ class Token {
         },
         {
           api: ERC20,
-          params: [await depayCryptoWallets.getWallet().account(), '1'],
+          params: [await depayWeb3Wallets.getWallet().account(), '1'],
         },
       )
         .then(() => resolve(true))
@@ -209,8 +601,8 @@ class Token {
   }
 
   async balance(account) {
-    if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
-      return await depayBlockchainClient.request(
+    if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
+      return await depayWeb3Client.request(
         {
           blockchain: 'ethereum',
           address: account,
@@ -221,7 +613,7 @@ class Token {
         },
       )
     } else {
-      return await depayBlockchainClient.request(
+      return await depayWeb3Client.request(
         {
           blockchain: 'ethereum',
           address: this.address,
@@ -237,10 +629,10 @@ class Token {
   }
 
   async allowance(spender) {
-    if (this.address == CONSTANTS__default['default'][this.blockchain].NATIVE) {
-      return ethers.ethers.BigNumber.from(CONSTANTS__default['default'][this.blockchain].MAXINT)
+    if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
+      return ethers.ethers.BigNumber.from(depayWeb3Constants.CONSTANTS[this.blockchain].MAXINT)
     } else {
-      return await depayBlockchainClient.request(
+      return await depayWeb3Client.request(
         {
           blockchain: 'ethereum',
           address: this.address,
@@ -248,7 +640,7 @@ class Token {
         },
         {
           api: ERC20,
-          params: [await depayCryptoWallets.getWallet().account(), spender],
+          params: [await depayWeb3Wallets.getWallet().account(), spender],
           cache: 30000, // 30 seconds
         },
       )
@@ -266,5 +658,7 @@ Token.BigNumber = async ({ amount, blockchain, address }) => {
   return token.BigNumber(amount)
 };
 
-exports.ERC20 = ERC20;
+Token.ethereum = { ERC20 };
+Token.bsc = { BEP20 };
+
 exports.Token = Token;

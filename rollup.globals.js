@@ -1,6 +1,6 @@
 export default {
-  'depay-blockchain-client': 'BlockchainClient',
-  'depay-blockchain-constants': 'BlockchainConstants',
-  'depay-crypto-wallets': 'CryptoWallets',
+  'depay-web3-client': 'Web3Client',
+  'depay-web3-constants': 'Web3Constants',
+  'depay-web3-wallets': 'Web3Wallets',
   'ethers': 'ethers',
 }

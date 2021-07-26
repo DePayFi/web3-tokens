@@ -1,7 +1,7 @@
-import CONSTANTS from 'depay-blockchain-constants'
-import ERC20 from '../../../src/ERC20'
-import { mock, resetMocks } from 'depay-web3mock'
-import { Token } from 'dist/cjs/index.js'
+import { CONSTANTS } from 'depay-web3-constants'
+import ERC20 from '../../../../../src/blockchains/ethereum/ERC20'
+import { mock, resetMocks } from 'depay-web3-mock'
+import { Token } from '../../../../../src'
 
 describe('Token', () => {
   describe('transferable', () => {

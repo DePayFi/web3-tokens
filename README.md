@@ -1,17 +1,17 @@
 ## Quickstart
 
 ```
-yarn add depay-blockchain-token
+yarn add depay-web3-tokens
 ```
 
 or 
 
 ```
-npm install --save depay-blockchain-token
+npm install --save depay-web3-tokens
 ```
 
 ```javascript
-import { Token } from 'depay-blockchain-token';
+import { Token } from 'depay-web3-tokens'
 
 let token = new Token({
   blockchain: 'ethereum',
@@ -25,12 +25,19 @@ await token.name() // 'DePay'
 await token.transferable() // true
 ```
 
+## Support
+
+This library supports the following blockchains:
+
+- [Ethereum](https://ethereum.org)
+- [Binance Smart Chain](https://www.binance.org/en/smartChain)
+
 ## Functionalities
 
 ### initalize (new)
 
 ```javascript
-import { Token } from 'depay-blockchain-token';
+import { Token } from 'depay-web3-tokens'
 
 let token = new Token({
   blockchain: 'ethereum',
@@ -107,10 +114,13 @@ Token.BigNumber({
 
 ### Token Standards
 
-`depay-blockchain-token` exports standard token apis, like `ERC20`, `BEP20` etc.:
+`depay-web3-tokens` exports standard token apis, like `ERC20`, `BEP20` etc.:
 
 ```javascript
-import { ERC20 } from 'depay-blockchain-token'
+import { Token } from 'depay-web3-tokens'
+
+Token.ethereum.ERC20 // [...] ERC20 ABI
+Token.bsc.BEP20 // [...] BEP20 ABI
 ```
 
 ## Development
