@@ -134,7 +134,7 @@ class Token {
 
   async BigNumber(amount) {
     let decimals = await this.decimals()
-    return ethers.BigNumber.from(amount).mul(ethers.BigNumber.from(10).pow(decimals))
+    return ethers.utils.parseUnits(amount.toString(), decimals)
   }
 }
 

@@ -646,7 +646,7 @@
 
     async BigNumber(amount) {
       let decimals = await this.decimals();
-      return ethers.ethers.BigNumber.from(amount).mul(ethers.ethers.BigNumber.from(10).pow(decimals))
+      return ethers.ethers.utils.parseUnits(amount.toString(), decimals)
     }
   }
 
