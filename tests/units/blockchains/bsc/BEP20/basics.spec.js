@@ -1,4 +1,4 @@
-import ERC20 from '../../../../../src/blockchains/ethereum/ERC20'
+import BEP20 from '../../../../../src/blockchains/bsc/BEP20'
 import { mock, resetMocks } from 'depay-web3-mock'
 import { Token } from '../../../../../src'
 
@@ -7,40 +7,42 @@ describe('Token', () => {
   beforeEach(resetMocks)
   afterEach(resetMocks)
 
+  let blockchain = 'bsc'
+
   it('retrieves basic token data from the blockchain', async ()=> {
 
     let tokenNameMock = mock({
-      blockchain: 'ethereum',
+      blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
-        api: ERC20,
+        api: BEP20,
         method: 'name',
         return: "DePay"
       }
     })
 
     let tokenSymbolMock = mock({
-      blockchain: 'ethereum',
+      blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
-        api: ERC20,
+        api: BEP20,
         method: 'symbol',
         return: "DEPAY"
       }
     })
 
     let tokenDecimalMock = mock({
-      blockchain: 'ethereum',
+      blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
-        api: ERC20,
+        api: BEP20,
         method: 'decimals',
         return: 18
       }
     })
 
     let token = new Token({
-      blockchain: 'ethereum',
+      blockchain,
       address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
     });
 
@@ -67,14 +69,14 @@ describe('Token', () => {
   it('provides basic token data also for the native tokens', async ()=> {
 
     let token = new Token({
-      blockchain: 'ethereum',
+      blockchain,
       address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
     });
 
     expect(token.address).toEqual('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
     expect(await token.decimals()).toEqual(18)
-    expect(await token.symbol()).toEqual('ETH')
-    expect(await token.name()).toEqual('Ether')
+    expect(await token.symbol()).toEqual('BNB')
+    expect(await token.name()).toEqual('Binance Coin')
 
   });
 });

@@ -9,11 +9,13 @@ describe('Token', () => {
     let token
     let tokenAddress = '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
 
+    let blockchain = 'ethereum'
+
     beforeEach(()=>{
       resetMocks()
 
       token = new Token({
-        blockchain: 'ethereum',
+        blockchain,
         address: tokenAddress
       })
     })
@@ -22,7 +24,7 @@ describe('Token', () => {
 
     it('confirms that a token is transferable', async ()=> {
       let estimateMock = mock({
-        blockchain: 'ethereum',
+        blockchain,
         estimate: {
           api: ERC20,
           to: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
@@ -37,7 +39,7 @@ describe('Token', () => {
 
     it('informs you that a token is not transferable', async ()=> {
       let estimateMock = mock({
-        blockchain: 'ethereum',
+        blockchain,
         estimate: {
           api: ERC20,
           to: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
@@ -52,9 +54,9 @@ describe('Token', () => {
 
     it('returns true for native tokens immediatelly', async ()=> {
 
-      mock({ blockchain: 'ethereum', require: 'estimate' })
+      mock({ blockchain, require: 'estimate' })
 
-      let token = new Token({ blockchain: 'ethereum', address: CONSTANTS.ethereum.NATIVE })
+      let token = new Token({ blockchain, address: CONSTANTS.ethereum.NATIVE })
       let transferable = await token.transferable()
 
       expect(transferable).toEqual(true)

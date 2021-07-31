@@ -533,7 +533,7 @@ class Token {
     }
     return await depayWeb3Client.request(
       {
-        blockchain: 'ethereum',
+        blockchain: this.blockchain,
         address: this.address,
         method: 'decimals',
       },
@@ -550,7 +550,7 @@ class Token {
     }
     return await depayWeb3Client.request(
       {
-        blockchain: 'ethereum',
+        blockchain: this.blockchain,
         address: this.address,
         method: 'symbol',
       },
@@ -567,7 +567,7 @@ class Token {
     }
     return await depayWeb3Client.request(
       {
-        blockchain: 'ethereum',
+        blockchain: this.blockchain,
         address: this.address,
         method: 'name',
       },
@@ -586,7 +586,7 @@ class Token {
 
       depayWeb3Client.estimate(
         {
-          blockchain: 'ethereum',
+          blockchain: this.blockchain,
           address: this.address,
           method: 'transfer',
         },
@@ -604,7 +604,7 @@ class Token {
     if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
       return await depayWeb3Client.request(
         {
-          blockchain: 'ethereum',
+          blockchain: this.blockchain,
           address: account,
           method: 'balance',
         },
@@ -615,7 +615,7 @@ class Token {
     } else {
       return await depayWeb3Client.request(
         {
-          blockchain: 'ethereum',
+          blockchain: this.blockchain,
           address: this.address,
           method: 'balanceOf',
         },
@@ -634,7 +634,7 @@ class Token {
     } else {
       return await depayWeb3Client.request(
         {
-          blockchain: 'ethereum',
+          blockchain: this.blockchain,
           address: this.address,
           method: 'allowance',
         },

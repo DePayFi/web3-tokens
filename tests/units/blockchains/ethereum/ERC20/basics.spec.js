@@ -7,10 +7,12 @@ describe('Token', () => {
   beforeEach(resetMocks)
   afterEach(resetMocks)
 
+  let blockchain = 'ethereum'
+
   it('retrieves basic token data from the blockchain', async ()=> {
 
     let tokenNameMock = mock({
-      blockchain: 'ethereum',
+      blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
         api: ERC20,
@@ -20,7 +22,7 @@ describe('Token', () => {
     })
 
     let tokenSymbolMock = mock({
-      blockchain: 'ethereum',
+      blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
         api: ERC20,
@@ -30,7 +32,7 @@ describe('Token', () => {
     })
 
     let tokenDecimalMock = mock({
-      blockchain: 'ethereum',
+      blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
         api: ERC20,
@@ -40,7 +42,7 @@ describe('Token', () => {
     })
 
     let token = new Token({
-      blockchain: 'ethereum',
+      blockchain,
       address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
     });
 
@@ -67,7 +69,7 @@ describe('Token', () => {
   it('provides basic token data also for the native tokens', async ()=> {
 
     let token = new Token({
-      blockchain: 'ethereum',
+      blockchain,
       address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
     });
 

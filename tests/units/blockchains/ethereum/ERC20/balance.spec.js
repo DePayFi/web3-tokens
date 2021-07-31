@@ -9,9 +9,11 @@ describe('Token', () => {
     beforeEach(resetMocks)
     afterEach(resetMocks)
 
+    let blockchain = 'ethereum'
+
     it('provides the balance of the token for the given account', async ()=> {
       mock({ 
-        blockchain: 'ethereum',
+        blockchain,
         call: {
           to: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
           api: ERC20,
@@ -20,20 +22,20 @@ describe('Token', () => {
           return: '1022222211'
         }
       })
-      let token = new Token({ blockchain: 'ethereum', address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb' })
+      let token = new Token({ blockchain, address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb' })
       let balance = await token.balance('0xb0252f13850a4823706607524de0b146820F2240')
       expect(balance.toString()).toEqual('1022222211')
     })
 
     it('provides the balance of the native token for the given account', async ()=> {
       mock({ 
-        blockchain: 'ethereum',
+        blockchain,
         balance: {
           for: '0xb0252f13850a4823706607524de0b146820F2240',
           return: '12345'
         }
       })
-      let token = new Token({ blockchain: 'ethereum', address: CONSTANTS.ethereum.NATIVE })
+      let token = new Token({ blockchain, address: CONSTANTS[blockchain].NATIVE })
       let balance = await token.balance('0xb0252f13850a4823706607524de0b146820F2240')
       expect(balance.toString()).toEqual('12345')
     })
