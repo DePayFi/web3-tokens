@@ -651,6 +651,14 @@ class Token {
     let decimals = await this.decimals();
     return ethers.ethers.utils.parseUnits(amount.toString(), decimals)
   }
+
+  async readable(amount) {
+    let decimals = await this.decimals();
+    let readable = ethers.ethers.utils.formatUnits(amount.toString(), decimals);
+    readable = readable.replace(/0+$/, '');
+    readable = readable.replace(/\.$/, '');
+    return readable
+  }
 }
 
 Token.BigNumber = async ({ amount, blockchain, address }) => {
@@ -658,7 +666,19 @@ Token.BigNumber = async ({ amount, blockchain, address }) => {
   return token.BigNumber(amount)
 };
 
-Token.ethereum = { ERC20 };
-Token.bsc = { BEP20 };
+Token.readable = async ({ amount, blockchain, address }) => {
+  let token = new Token({ blockchain, address });
+  return token.readable(amount)
+};
+
+Token.ethereum = { 
+  DEFAULT: ERC20,
+  ERC20
+};
+
+Token.bsc = { 
+  DEFAULT: BEP20,
+  BEP20
+};
 
 exports.Token = Token;

@@ -112,6 +112,31 @@ Token.BigNumber({
 }) // BigNumber '1000000000000000000'
 ```
 
+### readable
+
+Provides a human readable amount based on a given BigInt number.
+
+- Ending zeros will be eliminated `1.30000` -> `1.3`
+
+- Decimals are dropped if there are none `1.00000` -> `1`
+
+```javascript
+Token.readable({
+  amount: '1231211111210000000',
+  blockchain: 'ethereum',
+  address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
+}) // "1.23121111121"
+```
+
+```javascript
+let token = new Token({
+  blockchain: 'ethereum',
+  address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
+})
+
+token.readable('1231211111210000000') // "1.23121111121"
+```
+
 ### Token Standards
 
 `depay-web3-tokens` exports standard token apis, like `ERC20`, `BEP20` etc.:
@@ -121,6 +146,17 @@ import { Token } from 'depay-web3-tokens'
 
 Token.ethereum.ERC20 // [...] ERC20 ABI
 Token.bsc.BEP20 // [...] BEP20 ABI
+```
+
+`DEFAULT` references the broad default token standard on the respective blockchain:
+
+```javascript
+import { Token } from 'depay-web3-tokens'
+
+Token.ethereum.DEFAULT // ERC20
+Token.bsc.DEFAULT // BEP20
+
+Token[blockchain].DEFAULT
 ```
 
 ## Development
