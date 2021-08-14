@@ -535,7 +535,7 @@
           method: 'decimals',
         },
         {
-          api: ERC20,
+          api: Token[this.blockchain].DEFAULT,
           cache: 86400000, // 1 day
         },
       )
@@ -552,7 +552,7 @@
           method: 'symbol',
         },
         {
-          api: ERC20,
+          api: Token[this.blockchain].DEFAULT,
           cache: 86400000, // 1 day
         },
       )
@@ -569,7 +569,7 @@
           method: 'name',
         },
         {
-          api: ERC20,
+          api: Token[this.blockchain].DEFAULT,
           cache: 86400000, // 1 day
         },
       )
@@ -588,7 +588,7 @@
             method: 'transfer',
           },
           {
-            api: ERC20,
+            api: Token[this.blockchain].DEFAULT,
             params: [await depayWeb3Wallets.getWallet().account(), '1'],
           },
         )
@@ -617,7 +617,7 @@
             method: 'balanceOf',
           },
           {
-            api: ERC20,
+            api: Token[this.blockchain].DEFAULT,
             params: [account],
             cache: 30000, // 30 seconds
           },
@@ -636,7 +636,7 @@
             method: 'allowance',
           },
           {
-            api: ERC20,
+            api: Token[this.blockchain].DEFAULT,
             params: [await depayWeb3Wallets.getWallet().account(), spender],
             cache: 30000, // 30 seconds
           },

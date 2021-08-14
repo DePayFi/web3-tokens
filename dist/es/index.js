@@ -534,7 +534,7 @@ class Token {
         method: 'decimals',
       },
       {
-        api: ERC20,
+        api: Token[this.blockchain].DEFAULT,
         cache: 86400000, // 1 day
       },
     )
@@ -551,7 +551,7 @@ class Token {
         method: 'symbol',
       },
       {
-        api: ERC20,
+        api: Token[this.blockchain].DEFAULT,
         cache: 86400000, // 1 day
       },
     )
@@ -568,7 +568,7 @@ class Token {
         method: 'name',
       },
       {
-        api: ERC20,
+        api: Token[this.blockchain].DEFAULT,
         cache: 86400000, // 1 day
       },
     )
@@ -587,7 +587,7 @@ class Token {
           method: 'transfer',
         },
         {
-          api: ERC20,
+          api: Token[this.blockchain].DEFAULT,
           params: [await getWallet().account(), '1'],
         },
       )
@@ -616,7 +616,7 @@ class Token {
           method: 'balanceOf',
         },
         {
-          api: ERC20,
+          api: Token[this.blockchain].DEFAULT,
           params: [account],
           cache: 30000, // 30 seconds
         },
@@ -635,7 +635,7 @@ class Token {
           method: 'allowance',
         },
         {
-          api: ERC20,
+          api: Token[this.blockchain].DEFAULT,
           params: [await getWallet().account(), spender],
           cache: 30000, // 30 seconds
         },
