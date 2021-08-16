@@ -48,7 +48,7 @@ class Token {
 
   async name() {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return CONSTANTS[this.blockchain].NAME
+      return CONSTANTS[this.blockchain].CURRENCY
     }
     return await request(
       {

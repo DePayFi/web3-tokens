@@ -563,7 +563,7 @@ class Token {
 
   async name() {
     if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
-      return depayWeb3Constants.CONSTANTS[this.blockchain].NAME
+      return depayWeb3Constants.CONSTANTS[this.blockchain].CURRENCY
     }
     return await depayWeb3Client.request(
       {
