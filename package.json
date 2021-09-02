@@ -1,7 +1,7 @@
 {
   "name": "depay-web3-tokens",
   "moduleName": "Web3Tokens",
-  "version": "3.0.3",
+  "version": "3.0.5",
   "description": "JavaScript library providing basic functionalities to interact with web3 tokens.",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
@@ -32,13 +32,13 @@
   },
   "homepage": "https://github.com/DePayFi/depay-web3-token#readme",
   "private": false,
-  "dependencies": {
-    "depay-web3-client": "^4.0.2",
-    "depay-web3-constants": "^3.0.0",
-    "depay-web3-wallets": "^4.2.1",
-    "ethers": "^5.4.4"
+  "dependencies": {},
+  "peerDependencies": {
+    "depay-web3-client": "^4.0.3",
+    "depay-web3-constants": "^3.0.1",
+    "depay-web3-wallets": "^5.1.0",
+    "ethers": "^5.4.6"
   },
-  "peerDependencies": {},
   "engines": {
     "node": ">=10"
   },
@@ -51,7 +51,10 @@
     "@rollup/plugin-sucrase": "^3.1.0",
     "babel-loader": "^8.2.2",
     "babel-preset-env": "^1.7.0",
+    "depay-web3-client": "^4.0.3",
+    "depay-web3-constants": "^3.0.1",
     "depay-web3-mock": "^5.5.5",
+    "depay-web3-wallets": "^5.1.0",
     "eslint": "^7.15.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-import": "^2.22.1",
