@@ -1,7 +1,7 @@
 import { CONSTANTS } from 'depay-web3-constants'
-import BEP20 from '../../../../../src/blockchains/bsc/BEP20'
+import BEP20 from 'src/blockchains/bsc/BEP20'
 import { mock, resetMocks } from 'depay-web3-mock'
-import { Token } from '../../../../../src'
+import { Token } from 'src'
 
 describe('Token', () => {
   describe('transferable', () => {
@@ -9,9 +9,10 @@ describe('Token', () => {
     let token
     let tokenAddress = '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
     let blockchain = 'bsc'
-
+    
     beforeEach(()=>{
       resetMocks()
+      mock(blockchain)
 
       token = new Token({
         blockchain,

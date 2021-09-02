@@ -1,9 +1,13 @@
-import BEP20 from '../../../../../src/blockchains/bsc/BEP20'
+import BEP20 from 'src/blockchains/bsc/BEP20'
 import { mock, resetMocks } from 'depay-web3-mock'
-import { Token } from '../../../../../src'
+import { Token } from 'src'
+import { resetCache, provider as getProvider } from 'depay-web3-client'
 
 describe('Token', () => {
 
+  let provider
+  beforeEach(async()=>{ provider = await getProvider('bsc') })
+  beforeEach(resetCache)
   beforeEach(resetMocks)
   afterEach(resetMocks)
 
@@ -12,6 +16,7 @@ describe('Token', () => {
   it('retrieves basic token data from the blockchain', async ()=> {
 
     let tokenNameMock = mock({
+      provider,
       blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
@@ -22,6 +27,7 @@ describe('Token', () => {
     })
 
     let tokenSymbolMock = mock({
+      provider,
       blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
@@ -32,6 +38,7 @@ describe('Token', () => {
     })
 
     let tokenDecimalMock = mock({
+      provider,
       blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',

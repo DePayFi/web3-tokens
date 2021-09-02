@@ -1,11 +1,15 @@
 import { CONSTANTS } from 'depay-web3-constants'
-import ERC20 from '../../../../../src/blockchains/ethereum/ERC20'
+import ERC20 from 'src/blockchains/ethereum/ERC20'
 import { mock, resetMocks } from 'depay-web3-mock'
-import { Token } from '../../../../../src'
+import { Token } from 'src'
+import { resetCache, provider as getProvider } from 'depay-web3-client'
 
 describe('Token', () => {
   describe('allowance', () => {
 
+    let provider
+    beforeEach(async()=>{ provider = await getProvider('ethereum') })
+    beforeEach(resetCache)
     beforeEach(resetMocks)
     afterEach(resetMocks)
 
@@ -15,7 +19,9 @@ describe('Token', () => {
       let owner = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045'
       let spender = '0xb0252f13850a4823706607524de0b146820F2240'
 
+      mock(blockchain)
       mock({ 
+        provider,
         blockchain,
         call: {
           to: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
