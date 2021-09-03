@@ -1,22 +1,19 @@
 import { Token } from 'src'
 import ERC20 from 'src/blockchains/ethereum/ERC20'
 import { mock, resetMocks } from 'depay-web3-mock'
-import { resetCache, provider as getProvider } from 'depay-web3-client'
+import { resetCache, provider } from 'depay-web3-client'
 
 describe('BigNumber', () => {
 
-  let provider
-  beforeEach(async()=>{ provider = await getProvider('ethereum') })
   beforeEach(resetCache)
   beforeEach(resetMocks)
-  afterEach(resetMocks)
 
   let blockchain = 'ethereum'
 
   it('provides a BigNumber function to convert humand readable amounts to blockchain BigNumbers', async ()=> {
 
     let tokenCallMock = mock({
-      provider,
+      provider: provider(blockchain),
       blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
@@ -38,7 +35,7 @@ describe('BigNumber', () => {
   it('provides a BigNumber for a given float amount', async ()=> {
 
     let tokenCallMock = mock({
-      provider,
+      provider: provider(blockchain),
       blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
@@ -69,7 +66,7 @@ describe('BigNumber', () => {
 
   it('also allows to convert a BigNumber directly on an already initialized token', async ()=>{
     let tokenCallMock = mock({
-      provider,
+      provider: provider(blockchain),
       blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',

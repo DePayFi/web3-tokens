@@ -2,22 +2,19 @@ import { CONSTANTS } from 'depay-web3-constants'
 import BEP20 from 'src/blockchains/bsc/BEP20'
 import { mock, resetMocks } from 'depay-web3-mock'
 import { Token } from 'src'
-import { resetCache, provider as getProvider } from 'depay-web3-client'
+import { resetCache, provider} from 'depay-web3-client'
 
 describe('Token', () => {
   describe('balance', () => {
 
-    let provider
-    beforeEach(async()=>{ provider = await getProvider('bsc') })
     beforeEach(resetCache)
     beforeEach(resetMocks)
-    afterEach(resetMocks)
 
     let blockchain = 'bsc'
 
     it('provides the balance of the token for the given account', async ()=> {
       mock({ 
-        provider,
+        provider: provider(blockchain),
         blockchain,
         call: {
           to: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
@@ -34,7 +31,7 @@ describe('Token', () => {
 
     it('provides the balance of the native token for the given account', async ()=> {
       mock({ 
-        provider,
+        provider: provider(blockchain),
         blockchain,
         balance: {
           for: '0xb0252f13850a4823706607524de0b146820F2240',

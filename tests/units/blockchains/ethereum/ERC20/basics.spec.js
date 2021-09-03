@@ -1,22 +1,19 @@
 import ERC20 from 'src/blockchains/ethereum/ERC20'
 import { mock, resetMocks } from 'depay-web3-mock'
 import { Token } from 'src'
-import { resetCache, provider as getProvider } from 'depay-web3-client'
+import { resetCache, provider } from 'depay-web3-client'
 
 describe('Token', () => {
 
-  let provider
-  beforeEach(async()=>{ provider = await getProvider('ethereum') })
   beforeEach(resetCache)
   beforeEach(resetMocks)
-  afterEach(resetMocks)
 
   let blockchain = 'ethereum'
 
   it('retrieves basic token data from the blockchain', async ()=> {
 
     let tokenNameMock = mock({
-      provider,
+      provider: provider(blockchain),
       blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
@@ -27,7 +24,7 @@ describe('Token', () => {
     })
 
     let tokenSymbolMock = mock({
-      provider,
+      provider: provider(blockchain),
       blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
@@ -38,7 +35,7 @@ describe('Token', () => {
     })
 
     let tokenDecimalMock = mock({
-      provider,
+      provider: provider(blockchain),
       blockchain,
       call: {
         to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',

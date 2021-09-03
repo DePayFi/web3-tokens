@@ -2248,10 +2248,10 @@ depay-web3-blockchains@^2.4.0:
   resolved "https://registry.yarnpkg.com/depay-web3-blockchains/-/depay-web3-blockchains-2.4.0.tgz#4b3bae79a366aa8407148e928a9141fa69877b54"
   integrity sha512-6RZ9SKfrlNbu/EK8sCaW54OfZjcik7AZNDm0rYh5AAGspHY2Uuopka15IMCiuGPnP4/O5YYF06HHXhepsDMq5A==
 
-depay-web3-client@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/depay-web3-client/-/depay-web3-client-5.0.0.tgz#ffc53522b6f26f36a5f82ab1b64386561af9b3a0"
-  integrity sha512-WL1UQ9YvyJFQTpfn7hHl/Ex5Rd6hMGM6B+oQB8ML4yLnByGw8n0SIq4BXyl2PwEsZ1i+e1CBuMlNQdUTFtX3BQ==
+depay-web3-client@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/depay-web3-client/-/depay-web3-client-5.0.1.tgz#71f5765f2d98f6e8eb684697bb476d5dd1a498b8"
+  integrity sha512-ko03hTYHW6kkrOpOowmV9r+aZNbuSC/iDX1zAYa4XCvgW4VLH6E74fw3EOchmMcjb/ppf4J2tq97me5ETRulKA==
 
 depay-web3-constants@^3.0.1:
   version "3.0.1"
