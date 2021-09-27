@@ -77,6 +77,8 @@ Checks if token is transferable:
 await token.transferable() // true
 ```
 
+This requires you to have connected a wallet first. See: [depay-web3-wallets](https://github.com/depayfi/depay-web3-wallets)!
+
 ### balance
 
 Provides the balance (BigNumber) of the given account:
