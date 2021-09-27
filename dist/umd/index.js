@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-web3-constants'), require('ethers'), require('depay-web3-client')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'depay-web3-constants', 'ethers', 'depay-web3-client'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.Web3Constants, global.ethers, global.Web3Client));
-}(this, (function (exports, depayWeb3Constants, ethers, depayWeb3Client) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-web3-constants'), require('ethers'), require('depay-web3-wallets'), require('depay-web3-client')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'depay-web3-constants', 'ethers', 'depay-web3-wallets', 'depay-web3-client'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.Web3Constants, global.ethers, global.Web3Wallets, global.Web3Client));
+}(this, (function (exports, depayWeb3Constants, ethers, depayWeb3Wallets, depayWeb3Client) { 'use strict';
 
   var BEP20 = [
     {
@@ -581,19 +581,17 @@
           resolve(true);
         }
 
-        let wallet = getWallet();
+        let wallet = depayWeb3Wallets.getWallet();
         if(wallet === undefined) { return resolve(false) }
 
         wallet.estimate(
           {
             blockchain: this.blockchain,
-            address: this.address,
+            to: this.address,
             method: 'transfer',
-          },
-          {
             api: Token[this.blockchain].DEFAULT,
-            params: [await getWallet().account(), '1'],
-          },
+            params: [await depayWeb3Wallets.getWallet().account(), '1']
+          }
         )
           .then(() => resolve(true))
           .catch(() => resolve(false));
@@ -640,7 +638,7 @@
           },
           {
             api: Token[this.blockchain].DEFAULT,
-            params: [await getWallet().account(), spender],
+            params: [await depayWeb3Wallets.getWallet().account(), spender],
             cache: 30000, // 30 seconds
           },
         )

@@ -9,10 +9,11 @@ describe('Token', () => {
     let token
     let tokenAddress = '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
     let blockchain = 'ethereum'
+    const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
 
     beforeEach(()=>{
       resetMocks()
-      mock(blockchain)
+      mock({ blockchain, accounts: { return: accounts } })
 
       token = new Token({
         blockchain,

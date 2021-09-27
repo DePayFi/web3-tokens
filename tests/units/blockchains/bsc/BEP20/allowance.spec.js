@@ -11,12 +11,13 @@ describe('Token', () => {
     beforeEach(resetMocks)
 
     let blockchain = 'bsc'
+    const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
 
     it('retrieves allowance amount for given address for an BEP20', async ()=> {
       let owner = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045'
       let spender = '0xb0252f13850a4823706607524de0b146820F2240'
 
-      mock(blockchain)
+      mock({ blockchain, accounts: { return: accounts } })
       mock({ 
         provider: provider(blockchain),
         blockchain,
