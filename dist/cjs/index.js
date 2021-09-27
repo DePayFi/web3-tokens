@@ -4,7 +4,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var depayWeb3Constants = require('depay-web3-constants');
 var ethers = require('ethers');
-var depayWeb3Wallets = require('depay-web3-wallets');
 var depayWeb3Client = require('depay-web3-client');
 
 var BEP20 = [
@@ -584,7 +583,10 @@ class Token {
         resolve(true);
       }
 
-      depayWeb3Client.estimate(
+      let wallet = getWallet();
+      if(wallet === undefined) { return resolve(false) }
+
+      wallet.estimate(
         {
           blockchain: this.blockchain,
           address: this.address,
@@ -592,7 +594,7 @@ class Token {
         },
         {
           api: Token[this.blockchain].DEFAULT,
-          params: [await depayWeb3Wallets.getWallet().account(), '1'],
+          params: [await getWallet().account(), '1'],
         },
       )
         .then(() => resolve(true))
@@ -640,7 +642,7 @@ class Token {
         },
         {
           api: Token[this.blockchain].DEFAULT,
-          params: [await depayWeb3Wallets.getWallet().account(), spender],
+          params: [await getWallet().account(), spender],
           cache: 30000, // 30 seconds
         },
       )

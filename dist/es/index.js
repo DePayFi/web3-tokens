@@ -1,7 +1,6 @@
 import { CONSTANTS } from 'depay-web3-constants';
 import { ethers } from 'ethers';
-import { getWallet } from 'depay-web3-wallets';
-import { request, estimate } from 'depay-web3-client';
+import { request } from 'depay-web3-client';
 
 var BEP20 = [
   {
@@ -580,7 +579,10 @@ class Token {
         resolve(true);
       }
 
-      estimate(
+      let wallet = getWallet();
+      if(wallet === undefined) { return resolve(false) }
+
+      wallet.estimate(
         {
           blockchain: this.blockchain,
           address: this.address,
