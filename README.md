@@ -22,7 +22,6 @@ token.address // '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
 await token.decimals() // 18
 await token.symbol() // 'DEPAY'
 await token.name() // 'DePay'
-await token.transferable() // true
 ```
 
 ## Support
@@ -68,16 +67,6 @@ Retrieves token name
 ```javascript
 await token.name() // DePay
 ```
-
-### transferable
-
-Checks if token is transferable:
-
-```javascript
-await token.transferable() // true
-```
-
-This requires you to have connected a wallet first. See: [depay-web3-wallets](https://github.com/depayfi/depay-web3-wallets)!
 
 ### balance
 

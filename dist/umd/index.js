@@ -575,29 +575,6 @@
       )
     }
 
-    transferable() {
-      return new Promise(async (resolve, reject) => {
-        if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
-          resolve(true);
-        }
-
-        let wallet = depayWeb3Wallets.getWallet();
-        if(wallet === undefined) { return resolve(false) }
-
-        wallet.estimate(
-          {
-            blockchain: this.blockchain,
-            to: this.address,
-            method: 'transfer',
-            api: Token[this.blockchain].DEFAULT,
-            params: [await depayWeb3Wallets.getWallet().account(), '1']
-          }
-        )
-          .then(() => resolve(true))
-          .catch(() => resolve(false));
-      })
-    }
-
     async balance(account) {
       if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
         return await depayWeb3Client.request(

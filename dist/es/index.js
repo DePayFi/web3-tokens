@@ -574,29 +574,6 @@ class Token {
     )
   }
 
-  transferable() {
-    return new Promise(async (resolve, reject) => {
-      if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-        resolve(true);
-      }
-
-      let wallet = getWallet();
-      if(wallet === undefined) { return resolve(false) }
-
-      wallet.estimate(
-        {
-          blockchain: this.blockchain,
-          to: this.address,
-          method: 'transfer',
-          api: Token[this.blockchain].DEFAULT,
-          params: [await getWallet().account(), '1']
-        }
-      )
-        .then(() => resolve(true))
-        .catch(() => resolve(false));
-    })
-  }
-
   async balance(account) {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return await request(
