@@ -113,7 +113,7 @@ Provides a human readable amount based on a given BigInt number.
 - Decimals are dropped if there are none `1.00000` -> `1`
 
 ```javascript
-Token.readable({
+await Token.readable({
   amount: '1231211111210000000',
   blockchain: 'ethereum',
   address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
@@ -126,7 +126,7 @@ let token = new Token({
   address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
 })
 
-token.readable('1231211111210000000') // "1.23121111121"
+await token.readable('1231211111210000000') // "1.23121111121"
 ```
 
 ### Token Standards
