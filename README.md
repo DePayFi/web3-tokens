@@ -93,11 +93,11 @@ let token = new Token({
   address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
 }) 
 
-token.BigNumber(1) // BigNumber '1000000000000000000'
+await token.BigNumber(1) // BigNumber '1000000000000000000'
 ```
 
 ```javascript
-Token.BigNumber({
+await Token.BigNumber({
   amount: 1,
   blockchain: 'ethereum',
   address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
