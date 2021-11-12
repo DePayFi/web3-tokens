@@ -112,7 +112,10 @@ class Token {
 
   async BigNumber(amount) {
     let decimals = await this.decimals()
-    return ethers.utils.parseUnits(amount.toString(), decimals)
+    return ethers.utils.parseUnits(
+      Token.safeAmount({ amount: parseFloat(amount), decimals }).toString(),
+      decimals
+    )
   }
 
   async readable(amount) {
@@ -132,6 +135,10 @@ Token.BigNumber = async ({ amount, blockchain, address }) => {
 Token.readable = async ({ amount, blockchain, address }) => {
   let token = new Token({ blockchain, address })
   return token.readable(amount)
+}
+
+Token.safeAmount = ({ amount, decimals }) => {
+  return parseFloat(amount.toFixed(decimals))
 }
 
 Token.ethereum = { 

@@ -82,4 +82,23 @@ describe('BigNumber', () => {
 
     expect(amountBN.toString()).toEqual('20000000000000000000')
   })
+
+  it('shortens the input decimal number before converting it to big number if passed decimal has more decimals than supported', async ()=> {
+    let tokenCallMock = mock({
+      provider: provider(blockchain),
+      blockchain,
+      call: {
+        to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
+        api: BEP20,
+        method: 'decimals',
+        return: 18
+      }
+    })
+
+    let token = new Token({ blockchain, address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb' })
+
+    let amountBN = await token.BigNumber(0.00001912690397719563)
+
+    expect(amountBN.toString()).toEqual('19126903977196')
+  })
 });
