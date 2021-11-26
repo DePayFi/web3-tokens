@@ -1,7 +1,7 @@
 import { CONSTANTS } from 'depay-web3-constants'
 import { mock, resetMocks } from 'depay-web3-mock'
 import { Token } from 'src'
-import { resetCache, provider } from 'depay-web3-client'
+import { resetCache, provider } from '@depay/web3-client'
 
 describe('Token', () => {
   describe('balance', () => {

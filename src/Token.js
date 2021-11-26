@@ -2,7 +2,7 @@ import BEP20 from './blockchains/bsc/BEP20'
 import ERC20 from './blockchains/ethereum/ERC20'
 import { CONSTANTS } from 'depay-web3-constants'
 import { ethers } from 'ethers'
-import { request } from 'depay-web3-client'
+import { request } from '@depay/web3-client'
 
 class Token {
   
