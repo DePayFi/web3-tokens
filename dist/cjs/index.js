@@ -4,7 +4,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var depayWeb3Constants = require('depay-web3-constants');
 var ethers = require('ethers');
-var depayWeb3Wallets = require('depay-web3-wallets');
 var depayWeb3Client = require('depay-web3-client');
 
 var BEP20 = [
@@ -606,7 +605,7 @@ class Token {
     }
   }
 
-  async allowance(spender) {
+  async allowance(owner, spender) {
     if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
       return ethers.ethers.BigNumber.from(depayWeb3Constants.CONSTANTS[this.blockchain].MAXINT)
     } else {
@@ -618,7 +617,7 @@ class Token {
         },
         {
           api: Token[this.blockchain].DEFAULT,
-          params: [await depayWeb3Wallets.getWallet().account(), spender],
+          params: [owner, spender],
           cache: 30000, // 30 seconds
         },
       )
