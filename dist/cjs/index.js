@@ -2,7 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var depayWeb3Constants = require('depay-web3-constants');
+var web3Constants = require('@depay/web3-constants');
 var ethers = require('ethers');
 var web3Client = require('@depay/web3-client');
 
@@ -527,8 +527,8 @@ class Token {
   }
 
   async decimals() {
-    if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
-      return depayWeb3Constants.CONSTANTS[this.blockchain].DECIMALS
+    if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
+      return web3Constants.CONSTANTS[this.blockchain].DECIMALS
     }
     return await web3Client.request(
       {
@@ -544,8 +544,8 @@ class Token {
   }
 
   async symbol() {
-    if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
-      return depayWeb3Constants.CONSTANTS[this.blockchain].SYMBOL
+    if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
+      return web3Constants.CONSTANTS[this.blockchain].SYMBOL
     }
     return await web3Client.request(
       {
@@ -561,8 +561,8 @@ class Token {
   }
 
   async name() {
-    if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
-      return depayWeb3Constants.CONSTANTS[this.blockchain].CURRENCY
+    if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
+      return web3Constants.CONSTANTS[this.blockchain].CURRENCY
     }
     return await web3Client.request(
       {
@@ -578,7 +578,7 @@ class Token {
   }
 
   async balance(account) {
-    if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
+    if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
       return await web3Client.request(
         {
           blockchain: this.blockchain,
@@ -606,8 +606,8 @@ class Token {
   }
 
   async allowance(owner, spender) {
-    if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
-      return ethers.ethers.BigNumber.from(depayWeb3Constants.CONSTANTS[this.blockchain].MAXINT)
+    if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
+      return ethers.ethers.BigNumber.from(web3Constants.CONSTANTS[this.blockchain].MAXINT)
     } else {
       return await web3Client.request(
         {

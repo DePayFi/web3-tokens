@@ -1,5 +1,5 @@
 import { Token } from 'src'
-import { mock, resetMocks } from 'depay-web3-mock'
+import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, provider } from '@depay/web3-client'
 
 describe('readable', () => {

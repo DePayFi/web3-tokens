@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-web3-constants'), require('ethers'), require('@depay/web3-client')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'depay-web3-constants', 'ethers', '@depay/web3-client'], factory) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-constants'), require('ethers'), require('@depay/web3-client')) :
+  typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-constants', 'ethers', '@depay/web3-client'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.Web3Constants, global.ethers, global.Web3Client));
-}(this, (function (exports, depayWeb3Constants, ethers, web3Client) { 'use strict';
+}(this, (function (exports, web3Constants, ethers, web3Client) { 'use strict';
 
   var BEP20 = [
     {
@@ -525,8 +525,8 @@
     }
 
     async decimals() {
-      if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return depayWeb3Constants.CONSTANTS[this.blockchain].DECIMALS
+      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
+        return web3Constants.CONSTANTS[this.blockchain].DECIMALS
       }
       return await web3Client.request(
         {
@@ -542,8 +542,8 @@
     }
 
     async symbol() {
-      if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return depayWeb3Constants.CONSTANTS[this.blockchain].SYMBOL
+      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
+        return web3Constants.CONSTANTS[this.blockchain].SYMBOL
       }
       return await web3Client.request(
         {
@@ -559,8 +559,8 @@
     }
 
     async name() {
-      if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return depayWeb3Constants.CONSTANTS[this.blockchain].CURRENCY
+      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
+        return web3Constants.CONSTANTS[this.blockchain].CURRENCY
       }
       return await web3Client.request(
         {
@@ -576,7 +576,7 @@
     }
 
     async balance(account) {
-      if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
+      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
         return await web3Client.request(
           {
             blockchain: this.blockchain,
@@ -604,8 +604,8 @@
     }
 
     async allowance(owner, spender) {
-      if (this.address == depayWeb3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return ethers.ethers.BigNumber.from(depayWeb3Constants.CONSTANTS[this.blockchain].MAXINT)
+      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
+        return ethers.ethers.BigNumber.from(web3Constants.CONSTANTS[this.blockchain].MAXINT)
       } else {
         return await web3Client.request(
           {
