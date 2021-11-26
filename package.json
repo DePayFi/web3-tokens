@@ -1,5 +1,5 @@
 {
-  "name": "depay-web3-tokens",
+  "name": "@depay/web3-tokens",
   "moduleName": "Web3Tokens",
   "version": "7.0.0",
   "description": "JavaScript library providing basic functionalities to interact with web3 tokens.",
