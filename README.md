@@ -1,17 +1,17 @@
 ## Quickstart
 
 ```
-yarn add depay-web3-tokens
+yarn add @depay/web3-tokens
 ```
 
 or 
 
 ```
-npm install --save depay-web3-tokens
+npm install --save @depay/web3-tokens
 ```
 
 ```javascript
-import { Token } from 'depay-web3-tokens'
+import { Token } from '@depay/web3-tokens'
 
 let token = new Token({
   blockchain: 'ethereum',
@@ -36,7 +36,7 @@ This library supports the following blockchains:
 ### initalize (new)
 
 ```javascript
-import { Token } from 'depay-web3-tokens'
+import { Token } from '@depay/web3-tokens'
 
 let token = new Token({
   blockchain: 'ethereum',
@@ -131,10 +131,10 @@ await token.readable('1231211111210000000') // "1.23121111121"
 
 ### Token Standards
 
-`depay-web3-tokens` exports standard token apis, like `ERC20`, `BEP20` etc.:
+`@depay/web3-tokens` exports standard token apis, like `ERC20`, `BEP20` etc.:
 
 ```javascript
-import { Token } from 'depay-web3-tokens'
+import { Token } from '@depay/web3-tokens'
 
 Token.ethereum.ERC20 // [...] ERC20 ABI
 Token.bsc.BEP20 // [...] BEP20 ABI
@@ -143,7 +143,7 @@ Token.bsc.BEP20 // [...] BEP20 ABI
 `DEFAULT` references the broad default token standard on the respective blockchain:
 
 ```javascript
-import { Token } from 'depay-web3-tokens'
+import { Token } from '@depay/web3-tokens'
 
 Token.ethereum.DEFAULT // ERC20
 Token.bsc.DEFAULT // BEP20
