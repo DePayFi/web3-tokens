@@ -1,6 +1,5 @@
 import { CONSTANTS } from 'depay-web3-constants';
 import { ethers } from 'ethers';
-import { getWallet } from 'depay-web3-wallets';
 import { request } from 'depay-web3-client';
 
 var BEP20 = [
@@ -602,7 +601,7 @@ class Token {
     }
   }
 
-  async allowance(spender) {
+  async allowance(owner, spender) {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return ethers.BigNumber.from(CONSTANTS[this.blockchain].MAXINT)
     } else {
@@ -614,7 +613,7 @@ class Token {
         },
         {
           api: Token[this.blockchain].DEFAULT,
-          params: [await getWallet().account(), spender],
+          params: [owner, spender],
           cache: 30000, // 30 seconds
         },
       )
