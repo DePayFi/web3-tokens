@@ -528,17 +528,21 @@
       if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
         return web3Constants.CONSTANTS[this.blockchain].DECIMALS
       }
-      return await web3Client.request(
-        {
-          blockchain: this.blockchain,
-          address: this.address,
-          method: 'decimals',
-        },
-        {
-          api: Token[this.blockchain].DEFAULT,
-          cache: 86400000, // 1 day
-        },
-      )
+      let decimals = 0;
+      try {
+        decimals = await web3Client.request(
+          {
+            blockchain: this.blockchain,
+            address: this.address,
+            method: 'decimals',
+          },
+          {
+            api: Token[this.blockchain].DEFAULT,
+            cache: 86400000, // 1 day
+          },
+        );
+      } catch (e) {}
+      return decimals
     }
 
     async symbol() {

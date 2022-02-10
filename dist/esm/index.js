@@ -526,17 +526,21 @@ class Token {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].DECIMALS
     }
-    return await request(
-      {
-        blockchain: this.blockchain,
-        address: this.address,
-        method: 'decimals',
-      },
-      {
-        api: Token[this.blockchain].DEFAULT,
-        cache: 86400000, // 1 day
-      },
-    )
+    let decimals = 0;
+    try {
+      decimals = await request(
+        {
+          blockchain: this.blockchain,
+          address: this.address,
+          method: 'decimals',
+        },
+        {
+          api: Token[this.blockchain].DEFAULT,
+          cache: 86400000, // 1 day
+        },
+      );
+    } catch (e) {}
+    return decimals
   }
 
   async symbol() {
