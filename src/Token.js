@@ -1,5 +1,6 @@
 import BEP20 from './blockchains/bsc/BEP20'
 import ERC20 from './blockchains/ethereum/ERC20'
+import ERC20onPolygon from './blockchains/polygon/ERC20'
 import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
 import { request } from '@depay/web3-client'
@@ -152,6 +153,11 @@ Token.ethereum = {
 Token.bsc = { 
   DEFAULT: BEP20,
   BEP20
+}
+
+Token.polygon = { 
+  DEFAULT: ERC20onPolygon,
+  ERC20: ERC20onPolygon
 }
 
 export default Token

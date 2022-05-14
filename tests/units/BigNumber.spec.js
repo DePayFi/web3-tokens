@@ -4,7 +4,7 @@ import { resetCache, provider } from '@depay/web3-client'
 
 describe('BigNumber', () => {
 
-  ['ethereum', 'bsc'].forEach((blockchain)=>{
+  ['ethereum', 'bsc', 'polygon'].forEach((blockchain)=>{
 
     beforeEach(resetCache)
     beforeEach(resetMocks)

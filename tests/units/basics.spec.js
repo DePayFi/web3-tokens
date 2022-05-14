@@ -5,7 +5,7 @@ import { CONSTANTS } from '@depay/web3-constants'
 
 describe('Token', () => {
 
-  ['ethereum', 'bsc'].forEach((blockchain)=>{
+  ['ethereum', 'bsc', 'polygon'].forEach((blockchain)=>{
 
     beforeEach(resetCache)
     beforeEach(resetMocks)

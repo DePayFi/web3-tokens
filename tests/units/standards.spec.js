@@ -12,5 +12,10 @@ describe('Token', () => {
       expect(typeof(Token.bsc.DEFAULT) != 'undefined').toEqual(true)
       expect(Token.bsc.DEFAULT).toEqual(Token.bsc.BEP20)
     })
+
+    it('exports the "polygon" standard token', async ()=> {
+      expect(typeof(Token.polygon.DEFAULT) != 'undefined').toEqual(true)
+      expect(Token.polygon.DEFAULT).toEqual(Token.polygon.ERC20)
+    })
   })
 })
