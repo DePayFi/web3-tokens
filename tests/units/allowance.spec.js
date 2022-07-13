@@ -21,7 +21,7 @@ describe('Token', () => {
         mock({ 
           provider: provider(blockchain),
           blockchain,
-          call: {
+          request: {
             to: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
             api: Token[blockchain].DEFAULT,
             method: 'allowance',

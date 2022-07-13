@@ -14,7 +14,7 @@ describe('BigNumber', () => {
       let tokenCallMock = mock({
         provider: provider(blockchain),
         blockchain,
-        call: {
+        request: {
           to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
           api: Token[blockchain].DEFAULT,
           method: 'decimals',
@@ -36,7 +36,7 @@ describe('BigNumber', () => {
       let tokenCallMock = mock({
         provider: provider(blockchain),
         blockchain,
-        call: {
+        request: {
           to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
           api: Token[blockchain].DEFAULT,
           method: 'decimals',
@@ -67,7 +67,7 @@ describe('BigNumber', () => {
       let tokenCallMock = mock({
         provider: provider(blockchain),
         blockchain,
-        call: {
+        request: {
           to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
           api: Token[blockchain].DEFAULT,
           method: 'decimals',
@@ -86,7 +86,7 @@ describe('BigNumber', () => {
       let tokenCallMock = mock({
         provider: provider(blockchain),
         blockchain,
-        call: {
+        request: {
           to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
           api: Token[blockchain].DEFAULT,
           method: 'decimals',

@@ -1,21 +1,22 @@
-import { mock, resetMocks } from '@depay/web3-mock'
-import { Token } from 'src'
-import { resetCache, provider } from '@depay/web3-client'
 import { CONSTANTS } from '@depay/web3-constants'
+import { mock, resetMocks } from '@depay/web3-mock'
+import { resetCache, provider } from '@depay/web3-client'
+import { supported } from 'src/blockchains'
+import { Token } from 'src'
 
 describe('Token', () => {
 
-  ['ethereum', 'bsc', 'polygon'].forEach((blockchain)=>{
+  supported.evm.forEach((blockchain)=>{
 
     beforeEach(resetCache)
     beforeEach(resetMocks)
 
-    it('returns 0 if decimal request fails', async ()=> {
+    it('returns "undefined" if decimal request fails', async ()=> {
 
       let tokenDecimalMock = mock({
         provider: provider(blockchain),
         blockchain,
-        call: {
+        request: {
           to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
           api: Token[blockchain].DEFAULT,
           method: 'decimals',
@@ -29,7 +30,7 @@ describe('Token', () => {
       });
 
       expect(token.address).toEqual('0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb')
-      expect(await token.decimals()).toEqual(0)
+      expect(await token.decimals()).toEqual(undefined)
     });
   });
 });

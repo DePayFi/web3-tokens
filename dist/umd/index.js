@@ -646,18 +646,16 @@
       if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
         return web3Constants.CONSTANTS[this.blockchain].DECIMALS
       }
-      let decimals = 0;
+      let decimals;
       try {
         decimals = await web3Client.request(
           {
             blockchain: this.blockchain,
             address: this.address,
             method: 'decimals',
-          },
-          {
             api: Token[this.blockchain].DEFAULT,
             cache: 86400000, // 1 day
-          },
+          }
         );
       } catch (e) {}
       return decimals
@@ -672,8 +670,6 @@
           blockchain: this.blockchain,
           address: this.address,
           method: 'symbol',
-        },
-        {
           api: Token[this.blockchain].DEFAULT,
           cache: 86400000, // 1 day
         },
@@ -689,8 +685,6 @@
           blockchain: this.blockchain,
           address: this.address,
           method: 'name',
-        },
-        {
           api: Token[this.blockchain].DEFAULT,
           cache: 86400000, // 1 day
         },
@@ -715,8 +709,6 @@
             blockchain: this.blockchain,
             address: this.address,
             method: 'balanceOf',
-          },
-          {
             api: Token[this.blockchain].DEFAULT,
             params: [account],
             cache: 30000, // 30 seconds
@@ -734,8 +726,6 @@
             blockchain: this.blockchain,
             address: this.address,
             method: 'allowance',
-          },
-          {
             api: Token[this.blockchain].DEFAULT,
             params: [owner, spender],
             cache: 30000, // 30 seconds

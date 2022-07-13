@@ -16,18 +16,16 @@ class Token {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].DECIMALS
     }
-    let decimals = 0
+    let decimals
     try {
       decimals = await request(
         {
           blockchain: this.blockchain,
           address: this.address,
           method: 'decimals',
-        },
-        {
           api: Token[this.blockchain].DEFAULT,
           cache: 86400000, // 1 day
-        },
+        }
       )
     } catch {}
     return decimals
@@ -42,8 +40,6 @@ class Token {
         blockchain: this.blockchain,
         address: this.address,
         method: 'symbol',
-      },
-      {
         api: Token[this.blockchain].DEFAULT,
         cache: 86400000, // 1 day
       },
@@ -59,8 +55,6 @@ class Token {
         blockchain: this.blockchain,
         address: this.address,
         method: 'name',
-      },
-      {
         api: Token[this.blockchain].DEFAULT,
         cache: 86400000, // 1 day
       },
@@ -85,8 +79,6 @@ class Token {
           blockchain: this.blockchain,
           address: this.address,
           method: 'balanceOf',
-        },
-        {
           api: Token[this.blockchain].DEFAULT,
           params: [account],
           cache: 30000, // 30 seconds
@@ -104,8 +96,6 @@ class Token {
           blockchain: this.blockchain,
           address: this.address,
           method: 'allowance',
-        },
-        {
           api: Token[this.blockchain].DEFAULT,
           params: [owner, spender],
           cache: 30000, // 30 seconds

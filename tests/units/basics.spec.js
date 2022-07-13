@@ -15,7 +15,7 @@ describe('Token', () => {
       let tokenNameMock = mock({
         provider: provider(blockchain),
         blockchain,
-        call: {
+        request: {
           to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
           api: Token[blockchain].DEFAULT,
           method: 'name',
@@ -26,7 +26,7 @@ describe('Token', () => {
       let tokenSymbolMock = mock({
         provider: provider(blockchain),
         blockchain,
-        call: {
+        request: {
           to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
           api: Token[blockchain].DEFAULT,
           method: 'symbol',
@@ -37,7 +37,7 @@ describe('Token', () => {
       let tokenDecimalMock = mock({
         provider: provider(blockchain),
         blockchain,
-        call: {
+        request: {
           to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
           api: Token[blockchain].DEFAULT,
           method: 'decimals',
