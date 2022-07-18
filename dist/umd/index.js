@@ -1,8 +1,75 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-constants'), require('ethers'), require('@depay/web3-client')) :
-  typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-constants', 'ethers', '@depay/web3-client'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.Web3Constants, global.ethers, global.Web3Client));
-}(this, (function (exports, web3Constants, ethers, web3Client) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-client'), require('@depay/web3-constants'), require('ethers'), require('@depay/solana-web3.js')) :
+  typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-client', '@depay/web3-constants', 'ethers', '@depay/solana-web3.js'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.Web3Client, global.Web3Constants, global.ethers, global.SolanaWeb3js));
+}(this, (function (exports, web3Client, web3Constants, ethers, solanaWeb3_js) { 'use strict';
+
+  var allowanceOnEVM = ({ blockchain, address, api, owner, spender })=>{
+    return web3Client.request(
+      {
+        blockchain,
+        address,
+        api,
+        method: 'allowance',
+        params: [owner, spender],
+        cache: 5000, // 5 seconds
+      },
+    )
+  };
+
+  var balanceOnEVM = async ({ blockchain, address, account, api })=>{
+    if (address == web3Constants.CONSTANTS[blockchain].NATIVE) {
+      return await web3Client.request(
+        {
+          blockchain: blockchain,
+          address: account,
+          method: 'balance',
+          cache: 10000, // 10 seconds
+        },
+      )
+    } else {
+      return await web3Client.request(
+        {
+          blockchain: blockchain,
+          address: address,
+          method: 'balanceOf',
+          api,
+          params: [account],
+          cache: 10000, // 10 seconds
+        },
+      )
+    }
+  };
+
+  var balanceOnSolana = async ({ blockchain, address, account, api })=>{
+
+    if(address == web3Constants.CONSTANTS[blockchain].NATIVE) {
+
+       return ethers.ethers.BigNumber.from(await web3Client.request(`solana://${account}/balance`))
+
+    } else {
+
+      let filters = [
+        { dataSize: 165 },
+        { memcmp: { offset: 32, bytes: account }},
+        { memcmp: { offset: 0, bytes: address }}
+      ];
+
+      let tokenAccounts  = await web3Client.request(`solana://TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA/getProgramAccounts`, { params: { filters } });
+
+      let totalBalance = ethers.ethers.BigNumber.from('0');
+
+      await Promise.all(tokenAccounts.map((tokenAccount)=>{
+        return web3Client.request(`solana://${tokenAccount.pubkey.toString()}/getTokenAccountBalance`)
+      })).then((balances)=>{
+        balances.forEach((balance)=>{
+          totalBalance = totalBalance.add(ethers.ethers.BigNumber.from(balance.value.amount));
+        });
+      });
+
+      return totalBalance
+    }
+  };
 
   var BEP20 = [
     {
@@ -399,6 +466,71 @@
     }
   ];
 
+  var decimalsOnEVM = ({ blockchain, address, api })=>{
+    return web3Client.request({
+      blockchain,
+      address,
+      api,
+      method: 'decimals',
+      cache: 86400000, // 1 day
+    })
+  };
+
+  const MINT_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u32('mintAuthorityOption'),
+    solanaWeb3_js.publicKey('mintAuthority'),
+    solanaWeb3_js.u64('supply'),
+    solanaWeb3_js.u8('decimals'),
+    solanaWeb3_js.bool('isInitialized'),
+    solanaWeb3_js.u32('freezeAuthorityOption'),
+    solanaWeb3_js.publicKey('freezeAuthority')
+  ]);
+
+  const KEY_LAYOUT = solanaWeb3_js.rustEnum([
+    solanaWeb3_js.struct([], 'uninitialized'),
+    solanaWeb3_js.struct([], 'editionV1'),
+    solanaWeb3_js.struct([], 'masterEditionV1'),
+    solanaWeb3_js.struct([], 'reservationListV1'),
+    solanaWeb3_js.struct([], 'metadataV1'),
+    solanaWeb3_js.struct([], 'reservationListV2'),
+    solanaWeb3_js.struct([], 'masterEditionV2'),
+    solanaWeb3_js.struct([], 'editionMarker'),
+  ]);
+
+  const CREATOR_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.publicKey('address'),
+    solanaWeb3_js.bool('verified'),
+    solanaWeb3_js.u8('share'),
+  ]);
+
+  const DATA_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.str('name'),
+    solanaWeb3_js.str('symbol'),
+    solanaWeb3_js.str('uri'),
+    solanaWeb3_js.u16('sellerFeeBasisPoints'),
+    solanaWeb3_js.option(
+      solanaWeb3_js.vec(
+        CREATOR_LAYOUT.replicate('creators')
+      ),
+      'creators'
+    )
+  ]);
+
+  const METADATA_LAYOUT = solanaWeb3_js.struct([
+    KEY_LAYOUT.replicate('key'),
+    solanaWeb3_js.publicKey('updateAuthority'),
+    solanaWeb3_js.publicKey('mint'),
+    DATA_LAYOUT.replicate('data'),
+    solanaWeb3_js.bool('primarySaleHappened'),
+    solanaWeb3_js.bool('isMutable'),
+    solanaWeb3_js.option(solanaWeb3_js.u8(), 'editionNonce'),
+  ]);
+
+  var decimalsOnSolana = async ({ blockchain, address })=>{
+    let data = await web3Client.request({ blockchain, address, api: MINT_LAYOUT });
+    return data.decimals
+  };
+
   var ERC20 = [
     {
       constant: true,
@@ -635,30 +767,102 @@
     },
   ];
 
+  var nameOnEVM = ({ blockchain, address, api })=>{
+    return web3Client.request(
+      {
+        blockchain: blockchain,
+        address: address,
+        api,
+        method: 'name',
+        cache: 86400000, // 1 day
+      },
+    )
+  };
+
+  function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  const METADATA_ACCOUNT = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
+
+  const METADATA_REPLACE = new RegExp('\u0000', 'g');
+
+  const getMetaDataPDA = async ({ metaDataPublicKey, mintPublicKey }) => {
+    let seed = [
+      solanaWeb3_js.Buffer.from('metadata'),
+      metaDataPublicKey.toBuffer(),
+      mintPublicKey.toBuffer()  
+    ];
+
+    return (await solanaWeb3_js.PublicKey.findProgramAddress(seed, metaDataPublicKey))[0]
+  };
+
+  const getMetaData = async ({ blockchain, address })=> {
+
+    let mintPublicKey = new solanaWeb3_js.PublicKey(address);
+    let metaDataPublicKey = new solanaWeb3_js.PublicKey(METADATA_ACCOUNT);
+    let tokenMetaDataPublicKey = await getMetaDataPDA({ metaDataPublicKey, mintPublicKey });
+
+    let metaData = await web3Client.request({
+      blockchain, 
+      address: tokenMetaDataPublicKey.toString(),
+      api: METADATA_LAYOUT,
+      cache: 86400000, // 1 day
+    });
+
+    return {
+      name: _optionalChain$2([metaData, 'optionalAccess', _ => _.data, 'optionalAccess', _2 => _2.name, 'optionalAccess', _3 => _3.replace, 'call', _4 => _4(METADATA_REPLACE, '')]),
+      symbol: _optionalChain$2([metaData, 'optionalAccess', _5 => _5.data, 'optionalAccess', _6 => _6.symbol, 'optionalAccess', _7 => _7.replace, 'call', _8 => _8(METADATA_REPLACE, '')])
+    }
+  };
+
+  function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  var nameOnSolana = async ({ blockchain, address })=>{
+    let metaData = await getMetaData({ blockchain, address });
+    return _optionalChain$1([metaData, 'optionalAccess', _ => _.name])
+  };
+
+  var symbolOnEVM = ({ blockchain, address, api })=>{
+    return web3Client.request(
+      {
+        blockchain,
+        address,
+        api,
+        method: 'symbol',
+        cache: 86400000, // 1 day
+      }
+    )
+  };
+
+  function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  var symbolOnSolana = async ({ blockchain, address })=>{
+    let metaData = await getMetaData({ blockchain, address });
+    return _optionalChain([metaData, 'optionalAccess', _ => _.symbol])
+  };
+
+  let supported = ['ethereum', 'bsc', 'polygon', 'solana'];
+  supported.evm = ['ethereum', 'bsc', 'polygon'];
+  supported.solana = ['solana'];
+
   class Token {
     
     constructor({ blockchain, address }) {
       this.blockchain = blockchain;
-      this.address = ethers.ethers.utils.getAddress(address);
+      if(supported.evm.includes(this.blockchain)) {
+        this.address = ethers.ethers.utils.getAddress(address);
+      } else if(supported.solana.includes(this.blockchain)) {
+        this.address = address;
+      }
     }
 
     async decimals() {
       if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
         return web3Constants.CONSTANTS[this.blockchain].DECIMALS
       }
-      let decimals = 0;
+      let decimals;
       try {
-        decimals = await web3Client.request(
-          {
-            blockchain: this.blockchain,
-            address: this.address,
-            method: 'decimals',
-          },
-          {
-            api: Token[this.blockchain].DEFAULT,
-            cache: 86400000, // 1 day
-          },
-        );
+        if(supported.evm.includes(this.blockchain)) {
+          decimals = await decimalsOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT });
+        } else if(supported.solana.includes(this.blockchain)) {
+          decimals = await decimalsOnSolana({ blockchain: this.blockchain, address: this.address });
+        }
       } catch (e) {}
       return decimals
     }
@@ -667,81 +871,41 @@
       if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
         return web3Constants.CONSTANTS[this.blockchain].SYMBOL
       }
-      return await web3Client.request(
-        {
-          blockchain: this.blockchain,
-          address: this.address,
-          method: 'symbol',
-        },
-        {
-          api: Token[this.blockchain].DEFAULT,
-          cache: 86400000, // 1 day
-        },
-      )
+      if(supported.evm.includes(this.blockchain)) {
+        return await symbolOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
+      } else if(supported.solana.includes(this.blockchain)) {
+        return await symbolOnSolana({ blockchain: this.blockchain, address: this.address })
+      }
     }
 
     async name() {
       if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
         return web3Constants.CONSTANTS[this.blockchain].CURRENCY
       }
-      return await web3Client.request(
-        {
-          blockchain: this.blockchain,
-          address: this.address,
-          method: 'name',
-        },
-        {
-          api: Token[this.blockchain].DEFAULT,
-          cache: 86400000, // 1 day
-        },
-      )
+      if(supported.evm.includes(this.blockchain)) {
+        return await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
+      } else if(supported.solana.includes(this.blockchain)) {
+        return await nameOnSolana({ blockchain: this.blockchain, address: this.address })
+      }
     }
 
     async balance(account) {
-      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return await web3Client.request(
-          {
-            blockchain: this.blockchain,
-            address: account,
-            method: 'balance',
-          },
-          {
-            cache: 30000, // 30 seconds
-          },
-        )
-      } else {
-        return await web3Client.request(
-          {
-            blockchain: this.blockchain,
-            address: this.address,
-            method: 'balanceOf',
-          },
-          {
-            api: Token[this.blockchain].DEFAULT,
-            params: [account],
-            cache: 30000, // 30 seconds
-          },
-        )
+      if(supported.evm.includes(this.blockchain)) {
+        return await balanceOnEVM({ blockchain: this.blockchain, account, address: this.address, api: Token[this.blockchain].DEFAULT })
+      } else if(supported.solana.includes(this.blockchain)) {
+        return await balanceOnSolana({ blockchain: this.blockchain, account, address: this.address, api: Token[this.blockchain].DEFAULT })
       }
     }
 
     async allowance(owner, spender) {
       if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
         return ethers.ethers.BigNumber.from(web3Constants.CONSTANTS[this.blockchain].MAXINT)
-      } else {
-        return await web3Client.request(
-          {
-            blockchain: this.blockchain,
-            address: this.address,
-            method: 'allowance',
-          },
-          {
-            api: Token[this.blockchain].DEFAULT,
-            params: [owner, spender],
-            cache: 30000, // 30 seconds
-          },
-        )
       }
+      if(supported.evm.includes(this.blockchain)) {
+        return await allowanceOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, owner, spender })
+      } else if(supported.solana.includes(this.blockchain)) {
+        return ethers.ethers.BigNumber.from(web3Constants.CONSTANTS[this.blockchain].MAXINT)
+      } 
     }
 
     async BigNumber(amount) {
@@ -788,6 +952,12 @@
   Token.polygon = { 
     DEFAULT: ERC20onPolygon,
     ERC20: ERC20onPolygon
+  };
+
+  Token.solana = { 
+    MINT_LAYOUT,
+    METADATA_LAYOUT,
+    METADATA_ACCOUNT,
   };
 
   exports.Token = Token;

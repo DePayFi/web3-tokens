@@ -1,12 +1,13 @@
 import { CONSTANTS } from '@depay/web3-constants'
 import { mock, resetMocks } from '@depay/web3-mock'
-import { Token } from 'src'
 import { resetCache, provider } from '@depay/web3-client'
+import { supported } from 'src/blockchains'
+import { Token } from 'src'
 
 describe('Token', () => {
   describe('allowance', () => {
 
-    ['ethereum', 'bsc', 'polygon'].forEach((blockchain)=>{
+    supported.evm.forEach((blockchain)=>{
 
       beforeEach(resetCache)
       beforeEach(resetMocks)
@@ -21,7 +22,7 @@ describe('Token', () => {
         mock({ 
           provider: provider(blockchain),
           blockchain,
-          call: {
+          request: {
             to: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
             api: Token[blockchain].DEFAULT,
             method: 'allowance',
