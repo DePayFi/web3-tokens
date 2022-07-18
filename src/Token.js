@@ -1,15 +1,31 @@
+import allowanceOnEVM from './platforms/evm/allowance'
+import balanceOnEVM from './platforms/evm/balance'
+import balanceOnSolana from './platforms/solana/balance'
 import BEP20 from './blockchains/bsc/BEP20'
+import decimalsOnEVM from './platforms/evm/decimals'
+import decimalsOnSolana from './platforms/solana/decimals'
 import ERC20 from './blockchains/ethereum/ERC20'
 import ERC20onPolygon from './blockchains/polygon/ERC20'
+import nameOnEVM from './platforms/evm/name'
+import nameOnSolana from './platforms/solana/name'
+import symbolOnEVM from './platforms/evm/symbol'
+import symbolOnSolana from './platforms/solana/symbol'
 import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
+import { METADATA_ACCOUNT } from './platforms/solana/metadata'
+import { MINT_LAYOUT, METADATA_LAYOUT } from './platforms/solana/layouts'
 import { request } from '@depay/web3-client'
+import { supported } from './blockchains'
 
 class Token {
   
   constructor({ blockchain, address }) {
     this.blockchain = blockchain
-    this.address = ethers.utils.getAddress(address)
+    if(supported.evm.includes(this.blockchain)) {
+      this.address = ethers.utils.getAddress(address)
+    } else if(supported.solana.includes(this.blockchain)) {
+      this.address = address
+    }
   }
 
   async decimals() {
@@ -18,15 +34,11 @@ class Token {
     }
     let decimals
     try {
-      decimals = await request(
-        {
-          blockchain: this.blockchain,
-          address: this.address,
-          method: 'decimals',
-          api: Token[this.blockchain].DEFAULT,
-          cache: 86400000, // 1 day
-        }
-      )
+      if(supported.evm.includes(this.blockchain)) {
+        decimals = await decimalsOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
+      } else if(supported.solana.includes(this.blockchain)) {
+        decimals = await decimalsOnSolana({ blockchain: this.blockchain, address: this.address })
+      }
     } catch {}
     return decimals
   }
@@ -35,73 +47,41 @@ class Token {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].SYMBOL
     }
-    return await request(
-      {
-        blockchain: this.blockchain,
-        address: this.address,
-        method: 'symbol',
-        api: Token[this.blockchain].DEFAULT,
-        cache: 86400000, // 1 day
-      },
-    )
+    if(supported.evm.includes(this.blockchain)) {
+      return await symbolOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
+    } else if(supported.solana.includes(this.blockchain)) {
+      return await symbolOnSolana({ blockchain: this.blockchain, address: this.address })
+    }
   }
 
   async name() {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].CURRENCY
     }
-    return await request(
-      {
-        blockchain: this.blockchain,
-        address: this.address,
-        method: 'name',
-        api: Token[this.blockchain].DEFAULT,
-        cache: 86400000, // 1 day
-      },
-    )
+    if(supported.evm.includes(this.blockchain)) {
+      return await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
+    } else if(supported.solana.includes(this.blockchain)) {
+      return await nameOnSolana({ blockchain: this.blockchain, address: this.address })
+    }
   }
 
   async balance(account) {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return await request(
-        {
-          blockchain: this.blockchain,
-          address: account,
-          method: 'balance',
-        },
-        {
-          cache: 30000, // 30 seconds
-        },
-      )
-    } else {
-      return await request(
-        {
-          blockchain: this.blockchain,
-          address: this.address,
-          method: 'balanceOf',
-          api: Token[this.blockchain].DEFAULT,
-          params: [account],
-          cache: 30000, // 30 seconds
-        },
-      )
+    if(supported.evm.includes(this.blockchain)) {
+      return await balanceOnEVM({ blockchain: this.blockchain, account, address: this.address, api: Token[this.blockchain].DEFAULT })
+    } else if(supported.solana.includes(this.blockchain)) {
+      return await balanceOnSolana({ blockchain: this.blockchain, account, address: this.address, api: Token[this.blockchain].DEFAULT })
     }
   }
 
   async allowance(owner, spender) {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return ethers.BigNumber.from(CONSTANTS[this.blockchain].MAXINT)
-    } else {
-      return await request(
-        {
-          blockchain: this.blockchain,
-          address: this.address,
-          method: 'allowance',
-          api: Token[this.blockchain].DEFAULT,
-          params: [owner, spender],
-          cache: 30000, // 30 seconds
-        },
-      )
     }
+    if(supported.evm.includes(this.blockchain)) {
+      return await allowanceOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, owner, spender })
+    } else if(supported.solana.includes(this.blockchain)) {
+      return ethers.BigNumber.from(CONSTANTS[this.blockchain].MAXINT)
+    } 
   }
 
   async BigNumber(amount) {
@@ -148,6 +128,12 @@ Token.bsc = {
 Token.polygon = { 
   DEFAULT: ERC20onPolygon,
   ERC20: ERC20onPolygon
+}
+
+Token.solana = { 
+  MINT_LAYOUT,
+  METADATA_LAYOUT,
+  METADATA_ACCOUNT,
 }
 
 export default Token

@@ -1,10 +1,11 @@
 import { Token } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, provider } from '@depay/web3-client'
+import { supported } from 'src/blockchains'
 
 describe('BigNumber', () => {
 
-  ['ethereum', 'bsc', 'polygon'].forEach((blockchain)=>{
+  supported.evm.forEach((blockchain)=>{
 
     beforeEach(resetCache)
     beforeEach(resetMocks)

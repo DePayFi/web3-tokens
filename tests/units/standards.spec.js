@@ -17,5 +17,11 @@ describe('Token', () => {
       expect(typeof(Token.polygon.DEFAULT) != 'undefined').toEqual(true)
       expect(Token.polygon.DEFAULT).toEqual(Token.polygon.ERC20)
     })
+
+    it('exports Solana standards for layout and metadata account', async ()=> {
+      expect(typeof(Token.solana.MINT_LAYOUT) != 'undefined').toEqual(true)
+      expect(typeof(Token.solana.METADATA_LAYOUT) != 'undefined').toEqual(true)
+      expect(typeof(Token.solana.METADATA_ACCOUNT) != 'undefined').toEqual(true)
+    })
   })
 })
