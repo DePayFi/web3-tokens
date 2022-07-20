@@ -1,4 +1,4 @@
-import { request } from '@depay/web3-client';
+import { request, provider } from '@depay/web3-client';
 import { CONSTANTS } from '@depay/web3-constants';
 import { ethers } from 'ethers';
 import { struct, u32, publicKey, u64, u8, bool, rustEnum, str, u16, option, vec, PublicKey, Buffer } from '@depay/solana-web3.js';
@@ -766,6 +766,28 @@ var ERC20onPolygon = [
   },
 ];
 
+const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
+
+function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+var findProgramAddress = async ({ mint, owner })=>{
+
+  const [address] = await PublicKey.findProgramAddress(
+    [
+      (new PublicKey(owner)).toBuffer(),
+      (new PublicKey(TOKEN_PROGRAM)).toBuffer(),
+      (new PublicKey(mint)).toBuffer()
+    ],
+    new PublicKey(ASSOCIATED_TOKEN_PROGRAM)
+  );
+
+  let exists = await provider('solana').getAccountInfo(address);
+
+  if(exists) {
+    return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
+  }
+};
+
 var nameOnEVM = ({ blockchain, address, api })=>{
   return request(
     {
@@ -953,10 +975,13 @@ Token.polygon = {
   ERC20: ERC20onPolygon
 };
 
-Token.solana = { 
+Token.solana = {
   MINT_LAYOUT,
   METADATA_LAYOUT,
   METADATA_ACCOUNT,
+  TOKEN_PROGRAM,
+  ASSOCIATED_TOKEN_PROGRAM,
+  findProgramAddress,
 };
 
 export { Token };

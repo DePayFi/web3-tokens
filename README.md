@@ -133,7 +133,7 @@ await token.readable('1231211111210000000') // "1.23121111121"
 
 ### Token Standards
 
-`@depay/web3-tokens` exports standard token apis, like `ERC20`, `BEP20` etc.:
+#### EVM: Token Standards
 
 ```javascript
 import { Token } from '@depay/web3-tokens'
@@ -151,6 +151,20 @@ Token.ethereum.DEFAULT // ERC20
 Token.bsc.DEFAULT // BEP20
 
 Token[blockchain].DEFAULT
+```
+
+#### Solana: Token Standards, Constants, Layouts and helper methods
+
+```javascript
+import { Token } from '@depay/web3-tokens'
+
+Token.solana
+// MINT_LAYOUT,
+// METADATA_LAYOUT,
+// METADATA_ACCOUNT,
+// TOKEN_PROGRAM,
+// ASSOCIATED_TOKEN_PROGRAM,
+// findProgramAddress({ mint, owner })
 ```
 
 ## Development
