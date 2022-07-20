@@ -71,12 +71,12 @@ describe('createTransferInstructions', () => {
         to
       })
 
-      expect(instructions.keys[0].pubkey.toString()).toEqual(fromTokenAccount)
-      expect(instructions.keys[1].pubkey.toString()).toEqual(toTokenAccount)
-      expect(instructions.keys[2].pubkey.toString()).toEqual(from)
-      expect(instructions.programId.toString()).toEqual(Token.solana.TOKEN_PROGRAM)
+      expect(instructions[0].keys[0].pubkey.toString()).toEqual(fromTokenAccount)
+      expect(instructions[0].keys[1].pubkey.toString()).toEqual(toTokenAccount)
+      expect(instructions[0].keys[2].pubkey.toString()).toEqual(from)
+      expect(instructions[0].programId.toString()).toEqual(Token.solana.TOKEN_PROGRAM)
 
-      let decoded = Token.solana.TRANSFER_LAYOUT.decode(instructions.data)
+      let decoded = Token.solana.TRANSFER_LAYOUT.decode(instructions[0].data)
       
       expect(decoded.instruction).toEqual(3)
       expect(decoded.amount.toString()).toEqual(amount)

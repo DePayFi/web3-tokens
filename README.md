@@ -166,7 +166,7 @@ Token.solana
 // TOKEN_PROGRAM,
 // ASSOCIATED_TOKEN_PROGRAM,
 // findProgramAddress({ token, owner })
-// createTransferInstructions({ token, amount, from, to })
+// createTransferInstructions({ token, amount, from, to }):Array
 ```
 
 ## Development

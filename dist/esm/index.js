@@ -559,7 +559,7 @@ var createTransferInstructions = async ({ token, amount, from, to })=>{
     amount: new BN(amount)
   }, data);
   
-  return new TransactionInstruction({ keys, programId: new PublicKey(TOKEN_PROGRAM), data })
+  return [new TransactionInstruction({ keys, programId: new PublicKey(TOKEN_PROGRAM), data })]
 };
 
 var decimalsOnEVM = ({ blockchain, address, api })=>{

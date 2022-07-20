@@ -560,7 +560,7 @@
       amount: new solanaWeb3_js.BN(amount)
     }, data);
     
-    return new solanaWeb3_js.TransactionInstruction({ keys, programId: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM), data })
+    return [new solanaWeb3_js.TransactionInstruction({ keys, programId: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM), data })]
   };
 
   var decimalsOnEVM = ({ blockchain, address, api })=>{
