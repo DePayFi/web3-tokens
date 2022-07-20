@@ -37,7 +37,7 @@ describe('findProgramAddress', () => {
 
       let tokenAccountAddress = await Token.solana.findProgramAddress({ 
         owner: '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1',
-        mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' 
+        token: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' 
       })
 
       expect(tokenAccountAddress).toEqual('F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9')
@@ -57,7 +57,7 @@ describe('findProgramAddress', () => {
 
       let tokenAccountAddress = await Token.solana.findProgramAddress({ 
         owner: '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1',
-        mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+        token: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
       })
 
       expect(tokenAccountAddress).toEqual(undefined)

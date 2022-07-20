@@ -50,7 +50,13 @@ const METADATA_LAYOUT = struct([
   option(u8(), 'editionNonce'),
 ])
 
+const TRANSFER_LAYOUT = struct([
+  u8('instruction'),
+  u64('amount'),
+])
+
 export {
   MINT_LAYOUT,
   METADATA_LAYOUT,
+  TRANSFER_LAYOUT,
 }

@@ -161,10 +161,12 @@ import { Token } from '@depay/web3-tokens'
 Token.solana
 // MINT_LAYOUT,
 // METADATA_LAYOUT,
+// TRANSFER_LAYOUT,
 // METADATA_ACCOUNT,
 // TOKEN_PROGRAM,
 // ASSOCIATED_TOKEN_PROGRAM,
-// findProgramAddress({ mint, owner })
+// findProgramAddress({ token, owner })
+// createTransferInstructions({ token, amount, from, to })
 ```
 
 ## Development

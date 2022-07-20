@@ -2,6 +2,7 @@ import allowanceOnEVM from './platforms/evm/allowance'
 import balanceOnEVM from './platforms/evm/balance'
 import balanceOnSolana from './platforms/solana/balance'
 import BEP20 from './blockchains/bsc/BEP20'
+import createTransferInstructions from './platforms/solana/createTransferInstructions'
 import decimalsOnEVM from './platforms/evm/decimals'
 import decimalsOnSolana from './platforms/solana/decimals'
 import ERC20 from './blockchains/ethereum/ERC20'
@@ -14,7 +15,7 @@ import symbolOnSolana from './platforms/solana/symbol'
 import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
 import { METADATA_ACCOUNT } from './platforms/solana/metadata'
-import { MINT_LAYOUT, METADATA_LAYOUT } from './platforms/solana/layouts'
+import { MINT_LAYOUT, METADATA_LAYOUT, TRANSFER_LAYOUT } from './platforms/solana/layouts'
 import { request } from '@depay/web3-client'
 import { supported } from './blockchains'
 import { TOKEN_PROGRAM, ASSOCIATED_TOKEN_PROGRAM } from './platforms/solana/constants'
@@ -135,10 +136,12 @@ Token.polygon = {
 Token.solana = {
   MINT_LAYOUT,
   METADATA_LAYOUT,
+  TRANSFER_LAYOUT,
   METADATA_ACCOUNT,
   TOKEN_PROGRAM,
   ASSOCIATED_TOKEN_PROGRAM,
   findProgramAddress,
+  createTransferInstructions,
 }
 
 export default Token

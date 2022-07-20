@@ -466,14 +466,26 @@
     }
   ];
 
-  var decimalsOnEVM = ({ blockchain, address, api })=>{
-    return web3Client.request({
-      blockchain,
-      address,
-      api,
-      method: 'decimals',
-      cache: 86400000, // 1 day
-    })
+  const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+  const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
+
+  function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  var findProgramAddress = async ({ token, owner })=>{
+
+    const [address] = await solanaWeb3_js.PublicKey.findProgramAddress(
+      [
+        (new solanaWeb3_js.PublicKey(owner)).toBuffer(),
+        (new solanaWeb3_js.PublicKey(TOKEN_PROGRAM)).toBuffer(),
+        (new solanaWeb3_js.PublicKey(token)).toBuffer()
+      ],
+      new solanaWeb3_js.PublicKey(ASSOCIATED_TOKEN_PROGRAM)
+    );
+
+    let exists = await web3Client.provider('solana').getAccountInfo(address);
+
+    if(exists) {
+      return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
+    }
   };
 
   const MINT_LAYOUT = solanaWeb3_js.struct([
@@ -525,6 +537,41 @@
     solanaWeb3_js.bool('isMutable'),
     solanaWeb3_js.option(solanaWeb3_js.u8(), 'editionNonce'),
   ]);
+
+  const TRANSFER_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u8('instruction'),
+    solanaWeb3_js.u64('amount'),
+  ]);
+
+  var createTransferInstructions = async ({ token, amount, from, to })=>{
+
+    let fromTokenAccount = await findProgramAddress({ token, owner: from });
+    let toTokenAccount = await findProgramAddress({ token, owner: to });
+
+    const keys = [
+      { pubkey: new solanaWeb3_js.PublicKey(fromTokenAccount), isSigner: false, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(toTokenAccount), isSigner: false, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(from), isSigner: true, isWritable: false }
+    ];
+
+    const data = solanaWeb3_js.Buffer.alloc(TRANSFER_LAYOUT.span);
+    TRANSFER_LAYOUT.encode({
+      instruction: 3, // TRANSFER
+      amount: new solanaWeb3_js.BN(amount)
+    }, data);
+    
+    return new solanaWeb3_js.TransactionInstruction({ keys, programId: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM), data })
+  };
+
+  var decimalsOnEVM = ({ blockchain, address, api })=>{
+    return web3Client.request({
+      blockchain,
+      address,
+      api,
+      method: 'decimals',
+      cache: 86400000, // 1 day
+    })
+  };
 
   var decimalsOnSolana = async ({ blockchain, address })=>{
     let data = await web3Client.request({ blockchain, address, api: MINT_LAYOUT });
@@ -767,28 +814,6 @@
     },
   ];
 
-  const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
-  const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
-
-  function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
-  var findProgramAddress = async ({ mint, owner })=>{
-
-    const [address] = await solanaWeb3_js.PublicKey.findProgramAddress(
-      [
-        (new solanaWeb3_js.PublicKey(owner)).toBuffer(),
-        (new solanaWeb3_js.PublicKey(TOKEN_PROGRAM)).toBuffer(),
-        (new solanaWeb3_js.PublicKey(mint)).toBuffer()
-      ],
-      new solanaWeb3_js.PublicKey(ASSOCIATED_TOKEN_PROGRAM)
-    );
-
-    let exists = await web3Client.provider('solana').getAccountInfo(address);
-
-    if(exists) {
-      return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
-    }
-  };
-
   var nameOnEVM = ({ blockchain, address, api })=>{
     return web3Client.request(
       {
@@ -979,10 +1004,12 @@
   Token.solana = {
     MINT_LAYOUT,
     METADATA_LAYOUT,
+    TRANSFER_LAYOUT,
     METADATA_ACCOUNT,
     TOKEN_PROGRAM,
     ASSOCIATED_TOKEN_PROGRAM,
     findProgramAddress,
+    createTransferInstructions,
   };
 
   exports.Token = Token;

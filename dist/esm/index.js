@@ -1,7 +1,7 @@
 import { request, provider } from '@depay/web3-client';
 import { CONSTANTS } from '@depay/web3-constants';
 import { ethers } from 'ethers';
-import { struct, u32, publicKey, u64, u8, bool, rustEnum, str, u16, option, vec, PublicKey, Buffer } from '@depay/solana-web3.js';
+import { PublicKey, struct, u32, publicKey, u64, u8, bool, rustEnum, str, u16, option, vec, Buffer, BN, TransactionInstruction } from '@depay/solana-web3.js';
 
 var allowanceOnEVM = ({ blockchain, address, api, owner, spender })=>{
   return request(
@@ -465,14 +465,26 @@ var BEP20 = [
   }
 ];
 
-var decimalsOnEVM = ({ blockchain, address, api })=>{
-  return request({
-    blockchain,
-    address,
-    api,
-    method: 'decimals',
-    cache: 86400000, // 1 day
-  })
+const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
+
+function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+var findProgramAddress = async ({ token, owner })=>{
+
+  const [address] = await PublicKey.findProgramAddress(
+    [
+      (new PublicKey(owner)).toBuffer(),
+      (new PublicKey(TOKEN_PROGRAM)).toBuffer(),
+      (new PublicKey(token)).toBuffer()
+    ],
+    new PublicKey(ASSOCIATED_TOKEN_PROGRAM)
+  );
+
+  let exists = await provider('solana').getAccountInfo(address);
+
+  if(exists) {
+    return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
+  }
 };
 
 const MINT_LAYOUT = struct([
@@ -524,6 +536,41 @@ const METADATA_LAYOUT = struct([
   bool('isMutable'),
   option(u8(), 'editionNonce'),
 ]);
+
+const TRANSFER_LAYOUT = struct([
+  u8('instruction'),
+  u64('amount'),
+]);
+
+var createTransferInstructions = async ({ token, amount, from, to })=>{
+
+  let fromTokenAccount = await findProgramAddress({ token, owner: from });
+  let toTokenAccount = await findProgramAddress({ token, owner: to });
+
+  const keys = [
+    { pubkey: new PublicKey(fromTokenAccount), isSigner: false, isWritable: true },
+    { pubkey: new PublicKey(toTokenAccount), isSigner: false, isWritable: true },
+    { pubkey: new PublicKey(from), isSigner: true, isWritable: false }
+  ];
+
+  const data = Buffer.alloc(TRANSFER_LAYOUT.span);
+  TRANSFER_LAYOUT.encode({
+    instruction: 3, // TRANSFER
+    amount: new BN(amount)
+  }, data);
+  
+  return new TransactionInstruction({ keys, programId: new PublicKey(TOKEN_PROGRAM), data })
+};
+
+var decimalsOnEVM = ({ blockchain, address, api })=>{
+  return request({
+    blockchain,
+    address,
+    api,
+    method: 'decimals',
+    cache: 86400000, // 1 day
+  })
+};
 
 var decimalsOnSolana = async ({ blockchain, address })=>{
   let data = await request({ blockchain, address, api: MINT_LAYOUT });
@@ -766,28 +813,6 @@ var ERC20onPolygon = [
   },
 ];
 
-const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
-const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
-
-function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
-var findProgramAddress = async ({ mint, owner })=>{
-
-  const [address] = await PublicKey.findProgramAddress(
-    [
-      (new PublicKey(owner)).toBuffer(),
-      (new PublicKey(TOKEN_PROGRAM)).toBuffer(),
-      (new PublicKey(mint)).toBuffer()
-    ],
-    new PublicKey(ASSOCIATED_TOKEN_PROGRAM)
-  );
-
-  let exists = await provider('solana').getAccountInfo(address);
-
-  if(exists) {
-    return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
-  }
-};
-
 var nameOnEVM = ({ blockchain, address, api })=>{
   return request(
     {
@@ -978,10 +1003,12 @@ Token.polygon = {
 Token.solana = {
   MINT_LAYOUT,
   METADATA_LAYOUT,
+  TRANSFER_LAYOUT,
   METADATA_ACCOUNT,
   TOKEN_PROGRAM,
   ASSOCIATED_TOKEN_PROGRAM,
   findProgramAddress,
+  createTransferInstructions,
 };
 
 export { Token };
