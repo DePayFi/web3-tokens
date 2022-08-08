@@ -14,6 +14,7 @@ import symbolOnEVM from './platforms/evm/symbol'
 import symbolOnSolana from './platforms/solana/symbol'
 import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
+import { getMetaData } from './platforms/solana/metadata'
 import { METADATA_ACCOUNT } from './platforms/solana/metadata'
 import { MINT_LAYOUT, METADATA_LAYOUT, TRANSFER_LAYOUT } from './platforms/solana/layouts'
 import { request } from '@depay/web3-client'
@@ -142,6 +143,7 @@ Token.solana = {
   ASSOCIATED_TOKEN_PROGRAM,
   findProgramAddress,
   createTransferInstructions,
+  getMetaData,
 }
 
 export default Token
