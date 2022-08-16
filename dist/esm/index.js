@@ -853,6 +853,8 @@ const getMetaData = async ({ blockchain, address })=> {
     cache: 86400000, // 1 day
   });
 
+  console.log(metaData);
+
   return {
     name: _optionalChain$2([metaData, 'optionalAccess', _ => _.data, 'optionalAccess', _2 => _2.name, 'optionalAccess', _3 => _3.replace, 'call', _4 => _4(METADATA_REPLACE, '')]),
     symbol: _optionalChain$2([metaData, 'optionalAccess', _5 => _5.data, 'optionalAccess', _6 => _6.symbol, 'optionalAccess', _7 => _7.replace, 'call', _8 => _8(METADATA_REPLACE, '')])
@@ -1009,6 +1011,7 @@ Token.solana = {
   ASSOCIATED_TOKEN_PROGRAM,
   findProgramAddress,
   createTransferInstructions,
+  getMetaData,
 };
 
 export { Token };
