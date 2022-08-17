@@ -29,8 +29,6 @@ const getMetaData = async ({ blockchain, address })=> {
     cache: 86400000, // 1 day
   })
 
-  console.log(metaData)
-
   return {
     name: metaData?.data?.name?.replace(METADATA_REPLACE, ''),
     symbol: metaData?.data?.symbol?.replace(METADATA_REPLACE, '')

@@ -901,10 +901,10 @@
   resolved "https://registry.yarnpkg.com/@depay/solana-web3.js/-/solana-web3.js-1.13.0.tgz#78630d87a54b535f588ae94c0740b24188d9200c"
   integrity sha512-x4hT4sEubmUV/Y4/RKCBxdVGdARvJ3Ij2RhW0wXiS/PmTiDSem8wSBAoQml7JufftjSCQeZWs8CIJx4wksGdFQ==
 
-"@depay/web3-blockchains@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-5.0.2.tgz#d83ec94a781fa536b515d9776ef191c3681646df"
-  integrity sha512-rziOmQNjcENroas13cSn+/eoBDXfIu8gGV9+dpPUNIbhyLJ9wNr/hv7w1hLEXVfa1fVvhc4ORnO71uv+sZfk1A==
+"@depay/web3-blockchains@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-6.0.0.tgz#d841964646d8bf9c82bd65072f00a2dd053f68f5"
+  integrity sha512-ZkJmcOqSc4jfPMQLryCk/lRDQtn2zeFE8zTy3oP8F4STF8G3OUaXqkXTLIpoUckZ4SDQ/HzPGmIjLvwk7MGX7w==
 
 "@depay/web3-client@^9.2.0":
   version "9.2.0"
