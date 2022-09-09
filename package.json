@@ -1,7 +1,7 @@
 {
   "name": "@depay/web3-tokens",
   "moduleName": "Web3Tokens",
-  "version": "9.4.1",
+  "version": "9.4.2",
   "description": "JavaScript library providing basic functionalities to interact with web3 tokens.",
   "main": "dist/umd/index.js",
   "module": "dist/esm/index.js",
@@ -30,7 +30,7 @@
   "bugs": {
     "url": "https://github.com/DePayFi/web3-tokens/issues"
   },
-  "homepage": "https://github.com/DePayFi/web3-tokens#readme",
+  "homepage": "https://depay.com",
   "private": false,
   "dependencies": {},
   "peerDependencies": {
