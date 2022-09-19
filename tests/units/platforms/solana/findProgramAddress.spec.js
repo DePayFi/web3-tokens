@@ -43,7 +43,7 @@ describe('findProgramAddress', () => {
       expect(tokenAccountAddress).toEqual('F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9')
     })
 
-    it('returns undefined if programAddress has no account created yet', async ()=> {
+    it('returns associated programAddress if account has not been created yet', async ()=> {
 
       mock({
         blockchain,
@@ -60,7 +60,7 @@ describe('findProgramAddress', () => {
         token: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
       })
 
-      expect(tokenAccountAddress).toEqual(undefined)
+      expect(tokenAccountAddress).toEqual('F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9')
     })
   })
 })

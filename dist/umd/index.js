@@ -481,11 +481,7 @@
       new solanaWeb3_js.PublicKey(ASSOCIATED_TOKEN_PROGRAM)
     );
 
-    let exists = await web3Client.provider('solana').getAccountInfo(address);
-
-    if(exists) {
-      return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
-    }
+    return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
   };
 
   const MINT_LAYOUT = solanaWeb3_js.struct([
@@ -541,6 +537,20 @@
   const TRANSFER_LAYOUT = solanaWeb3_js.struct([
     solanaWeb3_js.u8('instruction'),
     solanaWeb3_js.u64('amount'),
+  ]);
+
+  const TOKEN_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.publicKey('mint'),
+    solanaWeb3_js.publicKey('owner'),
+    solanaWeb3_js.u64('amount'),
+    solanaWeb3_js.u32('delegateOption'),
+    solanaWeb3_js.publicKey('delegate'),
+    solanaWeb3_js.u8('state'),
+    solanaWeb3_js.u32('isNativeOption'),
+    solanaWeb3_js.u64('isNative'),
+    solanaWeb3_js.u64('delegatedAmount'),
+    solanaWeb3_js.u32('closeAuthorityOption'),
+    solanaWeb3_js.publicKey('closeAuthority')
   ]);
 
   var createTransferInstructions = async ({ token, amount, from, to })=>{
@@ -814,6 +824,24 @@
     },
   ];
 
+  var findAccount = async ({ token, owner })=>{
+
+    let existingAccounts = await web3Client.request(`solana://${TOKEN_PROGRAM}/getProgramAccounts`, {
+      api: TOKEN_LAYOUT,
+      params: { filters: [
+        { dataSize: 165 },
+        { memcmp: { offset: 32, bytes: owner }},
+        { memcmp: { offset: 0, bytes: token }}
+      ]} 
+    });
+
+    let existingAccount = existingAccounts.sort((a, b) => (a.account.data.amount.lt(b.account.data.amount) ? 1 : -1))[0];
+
+    if(existingAccount){
+      return existingAccount.pubkey.toString()
+    } 
+  };
+
   var nameOnEVM = ({ blockchain, address, api })=>{
     return web3Client.request(
       {
@@ -1007,8 +1035,10 @@
     TRANSFER_LAYOUT,
     METADATA_ACCOUNT,
     TOKEN_PROGRAM,
+    TOKEN_LAYOUT,
     ASSOCIATED_TOKEN_PROGRAM,
     findProgramAddress,
+    findAccount,
     createTransferInstructions,
     getMetaData,
   };

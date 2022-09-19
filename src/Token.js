@@ -7,6 +7,7 @@ import decimalsOnEVM from './platforms/evm/decimals'
 import decimalsOnSolana from './platforms/solana/decimals'
 import ERC20 from './blockchains/ethereum/ERC20'
 import ERC20onPolygon from './blockchains/polygon/ERC20'
+import findAccount from './platforms/solana/findAccount'
 import findProgramAddress from './platforms/solana/findProgramAddress'
 import nameOnEVM from './platforms/evm/name'
 import nameOnSolana from './platforms/solana/name'
@@ -16,7 +17,7 @@ import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
 import { getMetaData } from './platforms/solana/metadata'
 import { METADATA_ACCOUNT } from './platforms/solana/metadata'
-import { MINT_LAYOUT, METADATA_LAYOUT, TRANSFER_LAYOUT } from './platforms/solana/layouts'
+import { MINT_LAYOUT, METADATA_LAYOUT, TRANSFER_LAYOUT, TOKEN_LAYOUT } from './platforms/solana/layouts'
 import { request } from '@depay/web3-client'
 import { supported } from './blockchains'
 import { TOKEN_PROGRAM, ASSOCIATED_TOKEN_PROGRAM } from './platforms/solana/constants'
@@ -140,8 +141,10 @@ Token.solana = {
   TRANSFER_LAYOUT,
   METADATA_ACCOUNT,
   TOKEN_PROGRAM,
+  TOKEN_LAYOUT,
   ASSOCIATED_TOKEN_PROGRAM,
   findProgramAddress,
+  findAccount,
   createTransferInstructions,
   getMetaData,
 }

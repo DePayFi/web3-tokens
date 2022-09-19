@@ -13,9 +13,5 @@ export default async ({ token, owner })=>{
     new PublicKey(ASSOCIATED_TOKEN_PROGRAM)
   )
 
-  let exists = await provider('solana').getAccountInfo(address)
-
-  if(exists) {
-    return address?.toString()
-  }
+  return address?.toString()
 }

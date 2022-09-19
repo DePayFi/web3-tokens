@@ -1,4 +1,4 @@
-import { request, provider } from '@depay/web3-client';
+import { request } from '@depay/web3-client';
 import { CONSTANTS } from '@depay/web3-constants';
 import { ethers } from 'ethers';
 import { PublicKey, struct, u32, publicKey, u64, u8, bool, rustEnum, str, u16, option, vec, Buffer, BN, TransactionInstruction } from '@depay/solana-web3.js';
@@ -480,11 +480,7 @@ var findProgramAddress = async ({ token, owner })=>{
     new PublicKey(ASSOCIATED_TOKEN_PROGRAM)
   );
 
-  let exists = await provider('solana').getAccountInfo(address);
-
-  if(exists) {
-    return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
-  }
+  return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
 };
 
 const MINT_LAYOUT = struct([
@@ -540,6 +536,20 @@ const METADATA_LAYOUT = struct([
 const TRANSFER_LAYOUT = struct([
   u8('instruction'),
   u64('amount'),
+]);
+
+const TOKEN_LAYOUT = struct([
+  publicKey('mint'),
+  publicKey('owner'),
+  u64('amount'),
+  u32('delegateOption'),
+  publicKey('delegate'),
+  u8('state'),
+  u32('isNativeOption'),
+  u64('isNative'),
+  u64('delegatedAmount'),
+  u32('closeAuthorityOption'),
+  publicKey('closeAuthority')
 ]);
 
 var createTransferInstructions = async ({ token, amount, from, to })=>{
@@ -813,6 +823,24 @@ var ERC20onPolygon = [
   },
 ];
 
+var findAccount = async ({ token, owner })=>{
+
+  let existingAccounts = await request(`solana://${TOKEN_PROGRAM}/getProgramAccounts`, {
+    api: TOKEN_LAYOUT,
+    params: { filters: [
+      { dataSize: 165 },
+      { memcmp: { offset: 32, bytes: owner }},
+      { memcmp: { offset: 0, bytes: token }}
+    ]} 
+  });
+
+  let existingAccount = existingAccounts.sort((a, b) => (a.account.data.amount.lt(b.account.data.amount) ? 1 : -1))[0];
+
+  if(existingAccount){
+    return existingAccount.pubkey.toString()
+  } 
+};
+
 var nameOnEVM = ({ blockchain, address, api })=>{
   return request(
     {
@@ -1006,8 +1034,10 @@ Token.solana = {
   TRANSFER_LAYOUT,
   METADATA_ACCOUNT,
   TOKEN_PROGRAM,
+  TOKEN_LAYOUT,
   ASSOCIATED_TOKEN_PROGRAM,
   findProgramAddress,
+  findAccount,
   createTransferInstructions,
   getMetaData,
 };
