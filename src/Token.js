@@ -1,8 +1,8 @@
+import * as instructions from './platforms/solana/instructions'
 import allowanceOnEVM from './platforms/evm/allowance'
 import balanceOnEVM from './platforms/evm/balance'
 import balanceOnSolana from './platforms/solana/balance'
 import BEP20 from './blockchains/bsc/BEP20'
-import createTransferInstructions from './platforms/solana/createTransferInstructions'
 import decimalsOnEVM from './platforms/evm/decimals'
 import decimalsOnSolana from './platforms/solana/decimals'
 import ERC20 from './blockchains/ethereum/ERC20'
@@ -145,8 +145,8 @@ Token.solana = {
   ASSOCIATED_TOKEN_PROGRAM,
   findProgramAddress,
   findAccount,
-  createTransferInstructions,
   getMetaData,
+  ...instructions
 }
 
 export default Token

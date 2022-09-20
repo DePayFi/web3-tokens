@@ -1,7 +1,144 @@
 import { request } from '@depay/web3-client';
+import { PublicKey, struct, u32, publicKey, u64, u8, bool, rustEnum, str, u16, option, vec, Buffer, BN, TransactionInstruction, SystemProgram } from '@depay/solana-web3.js';
 import { CONSTANTS } from '@depay/web3-constants';
 import { ethers } from 'ethers';
-import { PublicKey, struct, u32, publicKey, u64, u8, bool, rustEnum, str, u16, option, vec, Buffer, BN, TransactionInstruction } from '@depay/solana-web3.js';
+
+const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
+
+function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+var findProgramAddress = async ({ token, owner })=>{
+
+  const [address] = await PublicKey.findProgramAddress(
+    [
+      (new PublicKey(owner)).toBuffer(),
+      (new PublicKey(TOKEN_PROGRAM)).toBuffer(),
+      (new PublicKey(token)).toBuffer()
+    ],
+    new PublicKey(ASSOCIATED_TOKEN_PROGRAM)
+  );
+
+  return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
+};
+
+const MINT_LAYOUT = struct([
+  u32('mintAuthorityOption'),
+  publicKey('mintAuthority'),
+  u64('supply'),
+  u8('decimals'),
+  bool('isInitialized'),
+  u32('freezeAuthorityOption'),
+  publicKey('freezeAuthority')
+]);
+
+const KEY_LAYOUT = rustEnum([
+  struct([], 'uninitialized'),
+  struct([], 'editionV1'),
+  struct([], 'masterEditionV1'),
+  struct([], 'reservationListV1'),
+  struct([], 'metadataV1'),
+  struct([], 'reservationListV2'),
+  struct([], 'masterEditionV2'),
+  struct([], 'editionMarker'),
+]);
+
+const CREATOR_LAYOUT = struct([
+  publicKey('address'),
+  bool('verified'),
+  u8('share'),
+]);
+
+const DATA_LAYOUT = struct([
+  str('name'),
+  str('symbol'),
+  str('uri'),
+  u16('sellerFeeBasisPoints'),
+  option(
+    vec(
+      CREATOR_LAYOUT.replicate('creators')
+    ),
+    'creators'
+  )
+]);
+
+const METADATA_LAYOUT = struct([
+  KEY_LAYOUT.replicate('key'),
+  publicKey('updateAuthority'),
+  publicKey('mint'),
+  DATA_LAYOUT.replicate('data'),
+  bool('primarySaleHappened'),
+  bool('isMutable'),
+  option(u8(), 'editionNonce'),
+]);
+
+const TRANSFER_LAYOUT = struct([
+  u8('instruction'),
+  u64('amount'),
+]);
+
+const TOKEN_LAYOUT = struct([
+  publicKey('mint'),
+  publicKey('owner'),
+  u64('amount'),
+  u32('delegateOption'),
+  publicKey('delegate'),
+  u8('state'),
+  u32('isNativeOption'),
+  u64('isNative'),
+  u64('delegatedAmount'),
+  u32('closeAuthorityOption'),
+  publicKey('closeAuthority')
+]);
+
+const createTransferInstruction = async ({ token, amount, from, to })=>{
+
+  let fromTokenAccount = await findProgramAddress({ token, owner: from });
+  let toTokenAccount = await findProgramAddress({ token, owner: to });
+
+  const keys = [
+    { pubkey: new PublicKey(fromTokenAccount), isSigner: false, isWritable: true },
+    { pubkey: new PublicKey(toTokenAccount), isSigner: false, isWritable: true },
+    { pubkey: new PublicKey(from), isSigner: true, isWritable: false }
+  ];
+
+  const data = Buffer.alloc(TRANSFER_LAYOUT.span);
+  TRANSFER_LAYOUT.encode({
+    instruction: 3, // TRANSFER
+    amount: new BN(amount)
+  }, data);
+  
+  return new TransactionInstruction({ 
+    keys,
+    programId: new PublicKey(TOKEN_PROGRAM),
+    data 
+  })
+};
+
+const createAssociatedTokenAccountInstruction = async ({ token, owner, payer }) => {
+
+  let associatedToken = await findProgramAddress({ token, owner });
+
+  const keys = [
+    { pubkey: new PublicKey(payer), isSigner: true, isWritable: true },
+    { pubkey: new PublicKey(associatedToken), isSigner: false, isWritable: true },
+    { pubkey: new PublicKey(owner), isSigner: false, isWritable: false },
+    { pubkey: new PublicKey(token), isSigner: false, isWritable: false },
+    { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+    { pubkey: new PublicKey(TOKEN_PROGRAM), isSigner: false, isWritable: false },
+  ];
+
+ return new TransactionInstruction({
+    keys,
+    programId: ASSOCIATED_TOKEN_PROGRAM,
+    data: Buffer.alloc(0)
+  })
+};
+
+var instructions = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  createTransferInstruction: createTransferInstruction,
+  createAssociatedTokenAccountInstruction: createAssociatedTokenAccountInstruction
+});
 
 var allowanceOnEVM = ({ blockchain, address, api, owner, spender })=>{
   return request(
@@ -464,113 +601,6 @@ var BEP20 = [
     "type": "function"
   }
 ];
-
-const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
-const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
-
-function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
-var findProgramAddress = async ({ token, owner })=>{
-
-  const [address] = await PublicKey.findProgramAddress(
-    [
-      (new PublicKey(owner)).toBuffer(),
-      (new PublicKey(TOKEN_PROGRAM)).toBuffer(),
-      (new PublicKey(token)).toBuffer()
-    ],
-    new PublicKey(ASSOCIATED_TOKEN_PROGRAM)
-  );
-
-  return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
-};
-
-const MINT_LAYOUT = struct([
-  u32('mintAuthorityOption'),
-  publicKey('mintAuthority'),
-  u64('supply'),
-  u8('decimals'),
-  bool('isInitialized'),
-  u32('freezeAuthorityOption'),
-  publicKey('freezeAuthority')
-]);
-
-const KEY_LAYOUT = rustEnum([
-  struct([], 'uninitialized'),
-  struct([], 'editionV1'),
-  struct([], 'masterEditionV1'),
-  struct([], 'reservationListV1'),
-  struct([], 'metadataV1'),
-  struct([], 'reservationListV2'),
-  struct([], 'masterEditionV2'),
-  struct([], 'editionMarker'),
-]);
-
-const CREATOR_LAYOUT = struct([
-  publicKey('address'),
-  bool('verified'),
-  u8('share'),
-]);
-
-const DATA_LAYOUT = struct([
-  str('name'),
-  str('symbol'),
-  str('uri'),
-  u16('sellerFeeBasisPoints'),
-  option(
-    vec(
-      CREATOR_LAYOUT.replicate('creators')
-    ),
-    'creators'
-  )
-]);
-
-const METADATA_LAYOUT = struct([
-  KEY_LAYOUT.replicate('key'),
-  publicKey('updateAuthority'),
-  publicKey('mint'),
-  DATA_LAYOUT.replicate('data'),
-  bool('primarySaleHappened'),
-  bool('isMutable'),
-  option(u8(), 'editionNonce'),
-]);
-
-const TRANSFER_LAYOUT = struct([
-  u8('instruction'),
-  u64('amount'),
-]);
-
-const TOKEN_LAYOUT = struct([
-  publicKey('mint'),
-  publicKey('owner'),
-  u64('amount'),
-  u32('delegateOption'),
-  publicKey('delegate'),
-  u8('state'),
-  u32('isNativeOption'),
-  u64('isNative'),
-  u64('delegatedAmount'),
-  u32('closeAuthorityOption'),
-  publicKey('closeAuthority')
-]);
-
-var createTransferInstructions = async ({ token, amount, from, to })=>{
-
-  let fromTokenAccount = await findProgramAddress({ token, owner: from });
-  let toTokenAccount = await findProgramAddress({ token, owner: to });
-
-  const keys = [
-    { pubkey: new PublicKey(fromTokenAccount), isSigner: false, isWritable: true },
-    { pubkey: new PublicKey(toTokenAccount), isSigner: false, isWritable: true },
-    { pubkey: new PublicKey(from), isSigner: true, isWritable: false }
-  ];
-
-  const data = Buffer.alloc(TRANSFER_LAYOUT.span);
-  TRANSFER_LAYOUT.encode({
-    instruction: 3, // TRANSFER
-    amount: new BN(amount)
-  }, data);
-  
-  return [new TransactionInstruction({ keys, programId: new PublicKey(TOKEN_PROGRAM), data })]
-};
 
 var decimalsOnEVM = ({ blockchain, address, api })=>{
   return request({
@@ -1038,8 +1068,8 @@ Token.solana = {
   ASSOCIATED_TOKEN_PROGRAM,
   findProgramAddress,
   findAccount,
-  createTransferInstructions,
   getMetaData,
+  ...instructions
 };
 
 export { Token };

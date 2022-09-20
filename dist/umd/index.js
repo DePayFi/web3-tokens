@@ -1,8 +1,145 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-client'), require('@depay/web3-constants'), require('ethers'), require('@depay/solana-web3.js')) :
-  typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-client', '@depay/web3-constants', 'ethers', '@depay/solana-web3.js'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.Web3Client, global.Web3Constants, global.ethers, global.SolanaWeb3js));
-}(this, (function (exports, web3Client, web3Constants, ethers, solanaWeb3_js) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-client'), require('@depay/solana-web3.js'), require('@depay/web3-constants'), require('ethers')) :
+  typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-client', '@depay/solana-web3.js', '@depay/web3-constants', 'ethers'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.Web3Client, global.SolanaWeb3js, global.Web3Constants, global.ethers));
+}(this, (function (exports, web3Client, solanaWeb3_js, web3Constants, ethers) { 'use strict';
+
+  const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+  const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
+
+  function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  var findProgramAddress = async ({ token, owner })=>{
+
+    const [address] = await solanaWeb3_js.PublicKey.findProgramAddress(
+      [
+        (new solanaWeb3_js.PublicKey(owner)).toBuffer(),
+        (new solanaWeb3_js.PublicKey(TOKEN_PROGRAM)).toBuffer(),
+        (new solanaWeb3_js.PublicKey(token)).toBuffer()
+      ],
+      new solanaWeb3_js.PublicKey(ASSOCIATED_TOKEN_PROGRAM)
+    );
+
+    return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
+  };
+
+  const MINT_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u32('mintAuthorityOption'),
+    solanaWeb3_js.publicKey('mintAuthority'),
+    solanaWeb3_js.u64('supply'),
+    solanaWeb3_js.u8('decimals'),
+    solanaWeb3_js.bool('isInitialized'),
+    solanaWeb3_js.u32('freezeAuthorityOption'),
+    solanaWeb3_js.publicKey('freezeAuthority')
+  ]);
+
+  const KEY_LAYOUT = solanaWeb3_js.rustEnum([
+    solanaWeb3_js.struct([], 'uninitialized'),
+    solanaWeb3_js.struct([], 'editionV1'),
+    solanaWeb3_js.struct([], 'masterEditionV1'),
+    solanaWeb3_js.struct([], 'reservationListV1'),
+    solanaWeb3_js.struct([], 'metadataV1'),
+    solanaWeb3_js.struct([], 'reservationListV2'),
+    solanaWeb3_js.struct([], 'masterEditionV2'),
+    solanaWeb3_js.struct([], 'editionMarker'),
+  ]);
+
+  const CREATOR_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.publicKey('address'),
+    solanaWeb3_js.bool('verified'),
+    solanaWeb3_js.u8('share'),
+  ]);
+
+  const DATA_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.str('name'),
+    solanaWeb3_js.str('symbol'),
+    solanaWeb3_js.str('uri'),
+    solanaWeb3_js.u16('sellerFeeBasisPoints'),
+    solanaWeb3_js.option(
+      solanaWeb3_js.vec(
+        CREATOR_LAYOUT.replicate('creators')
+      ),
+      'creators'
+    )
+  ]);
+
+  const METADATA_LAYOUT = solanaWeb3_js.struct([
+    KEY_LAYOUT.replicate('key'),
+    solanaWeb3_js.publicKey('updateAuthority'),
+    solanaWeb3_js.publicKey('mint'),
+    DATA_LAYOUT.replicate('data'),
+    solanaWeb3_js.bool('primarySaleHappened'),
+    solanaWeb3_js.bool('isMutable'),
+    solanaWeb3_js.option(solanaWeb3_js.u8(), 'editionNonce'),
+  ]);
+
+  const TRANSFER_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u8('instruction'),
+    solanaWeb3_js.u64('amount'),
+  ]);
+
+  const TOKEN_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.publicKey('mint'),
+    solanaWeb3_js.publicKey('owner'),
+    solanaWeb3_js.u64('amount'),
+    solanaWeb3_js.u32('delegateOption'),
+    solanaWeb3_js.publicKey('delegate'),
+    solanaWeb3_js.u8('state'),
+    solanaWeb3_js.u32('isNativeOption'),
+    solanaWeb3_js.u64('isNative'),
+    solanaWeb3_js.u64('delegatedAmount'),
+    solanaWeb3_js.u32('closeAuthorityOption'),
+    solanaWeb3_js.publicKey('closeAuthority')
+  ]);
+
+  const createTransferInstruction = async ({ token, amount, from, to })=>{
+
+    let fromTokenAccount = await findProgramAddress({ token, owner: from });
+    let toTokenAccount = await findProgramAddress({ token, owner: to });
+
+    const keys = [
+      { pubkey: new solanaWeb3_js.PublicKey(fromTokenAccount), isSigner: false, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(toTokenAccount), isSigner: false, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(from), isSigner: true, isWritable: false }
+    ];
+
+    const data = solanaWeb3_js.Buffer.alloc(TRANSFER_LAYOUT.span);
+    TRANSFER_LAYOUT.encode({
+      instruction: 3, // TRANSFER
+      amount: new solanaWeb3_js.BN(amount)
+    }, data);
+    
+    return new solanaWeb3_js.TransactionInstruction({ 
+      keys,
+      programId: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM),
+      data 
+    })
+  };
+
+  const createAssociatedTokenAccountInstruction = async ({ token, owner, payer }) => {
+
+    let associatedToken = await findProgramAddress({ token, owner });
+
+    const keys = [
+      { pubkey: new solanaWeb3_js.PublicKey(payer), isSigner: true, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(associatedToken), isSigner: false, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(owner), isSigner: false, isWritable: false },
+      { pubkey: new solanaWeb3_js.PublicKey(token), isSigner: false, isWritable: false },
+      { pubkey: solanaWeb3_js.SystemProgram.programId, isSigner: false, isWritable: false },
+      { pubkey: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM), isSigner: false, isWritable: false },
+    ];
+
+   return new solanaWeb3_js.TransactionInstruction({
+      keys,
+      programId: ASSOCIATED_TOKEN_PROGRAM,
+      data: solanaWeb3_js.Buffer.alloc(0)
+    })
+  };
+
+  var instructions = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    createTransferInstruction: createTransferInstruction,
+    createAssociatedTokenAccountInstruction: createAssociatedTokenAccountInstruction
+  });
 
   var allowanceOnEVM = ({ blockchain, address, api, owner, spender })=>{
     return web3Client.request(
@@ -465,113 +602,6 @@
       "type": "function"
     }
   ];
-
-  const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
-  const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
-
-  function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
-  var findProgramAddress = async ({ token, owner })=>{
-
-    const [address] = await solanaWeb3_js.PublicKey.findProgramAddress(
-      [
-        (new solanaWeb3_js.PublicKey(owner)).toBuffer(),
-        (new solanaWeb3_js.PublicKey(TOKEN_PROGRAM)).toBuffer(),
-        (new solanaWeb3_js.PublicKey(token)).toBuffer()
-      ],
-      new solanaWeb3_js.PublicKey(ASSOCIATED_TOKEN_PROGRAM)
-    );
-
-    return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
-  };
-
-  const MINT_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.u32('mintAuthorityOption'),
-    solanaWeb3_js.publicKey('mintAuthority'),
-    solanaWeb3_js.u64('supply'),
-    solanaWeb3_js.u8('decimals'),
-    solanaWeb3_js.bool('isInitialized'),
-    solanaWeb3_js.u32('freezeAuthorityOption'),
-    solanaWeb3_js.publicKey('freezeAuthority')
-  ]);
-
-  const KEY_LAYOUT = solanaWeb3_js.rustEnum([
-    solanaWeb3_js.struct([], 'uninitialized'),
-    solanaWeb3_js.struct([], 'editionV1'),
-    solanaWeb3_js.struct([], 'masterEditionV1'),
-    solanaWeb3_js.struct([], 'reservationListV1'),
-    solanaWeb3_js.struct([], 'metadataV1'),
-    solanaWeb3_js.struct([], 'reservationListV2'),
-    solanaWeb3_js.struct([], 'masterEditionV2'),
-    solanaWeb3_js.struct([], 'editionMarker'),
-  ]);
-
-  const CREATOR_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.publicKey('address'),
-    solanaWeb3_js.bool('verified'),
-    solanaWeb3_js.u8('share'),
-  ]);
-
-  const DATA_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.str('name'),
-    solanaWeb3_js.str('symbol'),
-    solanaWeb3_js.str('uri'),
-    solanaWeb3_js.u16('sellerFeeBasisPoints'),
-    solanaWeb3_js.option(
-      solanaWeb3_js.vec(
-        CREATOR_LAYOUT.replicate('creators')
-      ),
-      'creators'
-    )
-  ]);
-
-  const METADATA_LAYOUT = solanaWeb3_js.struct([
-    KEY_LAYOUT.replicate('key'),
-    solanaWeb3_js.publicKey('updateAuthority'),
-    solanaWeb3_js.publicKey('mint'),
-    DATA_LAYOUT.replicate('data'),
-    solanaWeb3_js.bool('primarySaleHappened'),
-    solanaWeb3_js.bool('isMutable'),
-    solanaWeb3_js.option(solanaWeb3_js.u8(), 'editionNonce'),
-  ]);
-
-  const TRANSFER_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.u8('instruction'),
-    solanaWeb3_js.u64('amount'),
-  ]);
-
-  const TOKEN_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.publicKey('mint'),
-    solanaWeb3_js.publicKey('owner'),
-    solanaWeb3_js.u64('amount'),
-    solanaWeb3_js.u32('delegateOption'),
-    solanaWeb3_js.publicKey('delegate'),
-    solanaWeb3_js.u8('state'),
-    solanaWeb3_js.u32('isNativeOption'),
-    solanaWeb3_js.u64('isNative'),
-    solanaWeb3_js.u64('delegatedAmount'),
-    solanaWeb3_js.u32('closeAuthorityOption'),
-    solanaWeb3_js.publicKey('closeAuthority')
-  ]);
-
-  var createTransferInstructions = async ({ token, amount, from, to })=>{
-
-    let fromTokenAccount = await findProgramAddress({ token, owner: from });
-    let toTokenAccount = await findProgramAddress({ token, owner: to });
-
-    const keys = [
-      { pubkey: new solanaWeb3_js.PublicKey(fromTokenAccount), isSigner: false, isWritable: true },
-      { pubkey: new solanaWeb3_js.PublicKey(toTokenAccount), isSigner: false, isWritable: true },
-      { pubkey: new solanaWeb3_js.PublicKey(from), isSigner: true, isWritable: false }
-    ];
-
-    const data = solanaWeb3_js.Buffer.alloc(TRANSFER_LAYOUT.span);
-    TRANSFER_LAYOUT.encode({
-      instruction: 3, // TRANSFER
-      amount: new solanaWeb3_js.BN(amount)
-    }, data);
-    
-    return [new solanaWeb3_js.TransactionInstruction({ keys, programId: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM), data })]
-  };
 
   var decimalsOnEVM = ({ blockchain, address, api })=>{
     return web3Client.request({
@@ -1039,8 +1069,8 @@
     ASSOCIATED_TOKEN_PROGRAM,
     findProgramAddress,
     findAccount,
-    createTransferInstructions,
     getMetaData,
+    ...instructions
   };
 
   exports.Token = Token;

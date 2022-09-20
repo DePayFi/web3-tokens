@@ -4,7 +4,7 @@ import { resetCache, provider } from '@depay/web3-client'
 import { supported } from 'src/blockchains'
 import { Token } from 'src'
 
-describe('createTransferInstructions', () => {
+describe('createTransferInstruction', () => {
 
   supported.solana.forEach((blockchain)=>{
 
@@ -64,19 +64,19 @@ describe('createTransferInstructions', () => {
         }
       })
 
-      let instructions = await Token.solana.createTransferInstructions({ 
+      let instruction = await Token.solana.createTransferInstruction({ 
         token,
         amount,
         from,
         to
       })
 
-      expect(instructions[0].keys[0].pubkey.toString()).toEqual(fromTokenAccount)
-      expect(instructions[0].keys[1].pubkey.toString()).toEqual(toTokenAccount)
-      expect(instructions[0].keys[2].pubkey.toString()).toEqual(from)
-      expect(instructions[0].programId.toString()).toEqual(Token.solana.TOKEN_PROGRAM)
+      expect(instruction.keys[0].pubkey.toString()).toEqual(fromTokenAccount)
+      expect(instruction.keys[1].pubkey.toString()).toEqual(toTokenAccount)
+      expect(instruction.keys[2].pubkey.toString()).toEqual(from)
+      expect(instruction.programId.toString()).toEqual(Token.solana.TOKEN_PROGRAM)
 
-      let decoded = Token.solana.TRANSFER_LAYOUT.decode(instructions[0].data)
+      let decoded = Token.solana.TRANSFER_LAYOUT.decode(instruction.data)
       
       expect(decoded.instruction).toEqual(3)
       expect(decoded.amount.toString()).toEqual(amount)
