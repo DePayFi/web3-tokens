@@ -1,7 +1,7 @@
 import findProgramAddress from './findProgramAddress'
 import { SystemProgram, PublicKey, TransactionInstruction, Buffer, BN } from '@depay/solana-web3.js'
 import { TOKEN_PROGRAM, ASSOCIATED_TOKEN_PROGRAM } from './constants'
-import { TRANSFER_LAYOUT } from './layouts'
+import { TRANSFER_LAYOUT, INITIALIZE_LAYOUT, CLOSE_LAYOUT } from './layouts'
 
 const createTransferInstruction = async ({ token, amount, from, to })=>{
 
@@ -47,7 +47,42 @@ const createAssociatedTokenAccountInstruction = async ({ token, owner, payer }) 
   })
 }
 
+const initializeAccountInstruction = async ({ account, token, owner })=>{
+
+  const keys = [
+    { pubkey: new PublicKey(account), isSigner: false, isWritable: true },
+    { pubkey: new PublicKey(token), isSigner: false, isWritable: false },
+  ]
+
+  const data = Buffer.alloc(INITIALIZE_LAYOUT.span)
+  INITIALIZE_LAYOUT.encode({
+    instruction: 18, // InitializeAccount3
+    owner: new PublicKey(owner)
+  }, data)
+  
+  return new TransactionInstruction({ keys, programId: new PublicKey(TOKEN_PROGRAM), data })
+}
+
+
+const closeAccountInstruction = async ({ account, owner })=>{
+
+  const keys = [
+    { pubkey: new PublicKey(account), isSigner: false, isWritable: true },
+    { pubkey: new PublicKey(owner), isSigner: false, isWritable: true },
+    { pubkey: new PublicKey(owner), isSigner: true, isWritable: false }
+  ]
+
+  const data = Buffer.alloc(CLOSE_LAYOUT.span)
+  CLOSE_LAYOUT.encode({
+    instruction: 9 // CloseAccount
+  }, data)
+
+  return new TransactionInstruction({ keys, programId: new PublicKey(TOKEN_PROGRAM), data })
+}
+
 export {
   createTransferInstruction,
   createAssociatedTokenAccountInstruction,
+  initializeAccountInstruction,
+  closeAccountInstruction,
 }

@@ -169,6 +169,8 @@ Token.solana
 // findAccount({ token, owner })
 // createTransferInstruction({ token, amount, from, to })
 // createAssociatedTokenAccountInstruction({ token, owner, payer })
+// initializeAccountInstruction({ account, token, owner })
+// closeAccountInstruction({ account, owner })
 ```
 
 ## Development

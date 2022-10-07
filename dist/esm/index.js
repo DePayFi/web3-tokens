@@ -90,6 +90,15 @@ const TOKEN_LAYOUT = struct([
   publicKey('closeAuthority')
 ]);
 
+const INITIALIZE_LAYOUT = struct([
+  u8('instruction'),
+  publicKey('owner')
+]);
+
+const CLOSE_LAYOUT = struct([
+  u8('instruction')
+]);
+
 const createTransferInstruction = async ({ token, amount, from, to })=>{
 
   let fromTokenAccount = await findProgramAddress({ token, owner: from });
@@ -134,10 +143,45 @@ const createAssociatedTokenAccountInstruction = async ({ token, owner, payer }) 
   })
 };
 
+const initializeAccountInstruction = async ({ account, token, owner })=>{
+
+  const keys = [
+    { pubkey: new PublicKey(account), isSigner: false, isWritable: true },
+    { pubkey: new PublicKey(token), isSigner: false, isWritable: false },
+  ];
+
+  const data = Buffer.alloc(INITIALIZE_LAYOUT.span);
+  INITIALIZE_LAYOUT.encode({
+    instruction: 18, // InitializeAccount3
+    owner: new PublicKey(owner)
+  }, data);
+  
+  return new TransactionInstruction({ keys, programId: new PublicKey(TOKEN_PROGRAM), data })
+};
+
+
+const closeAccountInstruction = async ({ account, owner })=>{
+
+  const keys = [
+    { pubkey: new PublicKey(account), isSigner: false, isWritable: true },
+    { pubkey: new PublicKey(owner), isSigner: false, isWritable: true },
+    { pubkey: new PublicKey(owner), isSigner: true, isWritable: false }
+  ];
+
+  const data = Buffer.alloc(CLOSE_LAYOUT.span);
+  CLOSE_LAYOUT.encode({
+    instruction: 9 // CloseAccount
+  }, data);
+
+  return new TransactionInstruction({ keys, programId: new PublicKey(TOKEN_PROGRAM), data })
+};
+
 var instructions = /*#__PURE__*/Object.freeze({
   __proto__: null,
   createTransferInstruction: createTransferInstruction,
-  createAssociatedTokenAccountInstruction: createAssociatedTokenAccountInstruction
+  createAssociatedTokenAccountInstruction: createAssociatedTokenAccountInstruction,
+  initializeAccountInstruction: initializeAccountInstruction,
+  closeAccountInstruction: closeAccountInstruction
 });
 
 var allowanceOnEVM = ({ blockchain, address, api, owner, spender })=>{

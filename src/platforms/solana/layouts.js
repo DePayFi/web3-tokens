@@ -69,9 +69,20 @@ const TOKEN_LAYOUT = struct([
   publicKey('closeAuthority')
 ])
 
+const INITIALIZE_LAYOUT = struct([
+  u8('instruction'),
+  publicKey('owner')
+])
+
+const CLOSE_LAYOUT = struct([
+  u8('instruction')
+])
+
 export {
   MINT_LAYOUT,
   METADATA_LAYOUT,
   TRANSFER_LAYOUT,
   TOKEN_LAYOUT,
+  INITIALIZE_LAYOUT,
+  CLOSE_LAYOUT,
 }
