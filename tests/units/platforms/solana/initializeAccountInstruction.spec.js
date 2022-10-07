@@ -23,7 +23,7 @@ describe('initializeAccountInstruction', () => {
         provider: provider(blockchain),
       })
 
-      let instruction = await Token.solana.initializeAccountInstruction({ 
+      let instruction = Token.solana.initializeAccountInstruction({ 
         account,
         token,
         owner,

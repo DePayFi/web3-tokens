@@ -47,7 +47,7 @@ const createAssociatedTokenAccountInstruction = async ({ token, owner, payer }) 
   })
 }
 
-const initializeAccountInstruction = async ({ account, token, owner })=>{
+const initializeAccountInstruction = ({ account, token, owner })=>{
 
   const keys = [
     { pubkey: new PublicKey(account), isSigner: false, isWritable: true },
@@ -64,7 +64,7 @@ const initializeAccountInstruction = async ({ account, token, owner })=>{
 }
 
 
-const closeAccountInstruction = async ({ account, owner })=>{
+const closeAccountInstruction = ({ account, owner })=>{
 
   const keys = [
     { pubkey: new PublicKey(account), isSigner: false, isWritable: true },

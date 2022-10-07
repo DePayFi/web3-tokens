@@ -144,7 +144,7 @@
     })
   };
 
-  const initializeAccountInstruction = async ({ account, token, owner })=>{
+  const initializeAccountInstruction = ({ account, token, owner })=>{
 
     const keys = [
       { pubkey: new solanaWeb3_js.PublicKey(account), isSigner: false, isWritable: true },
@@ -161,7 +161,7 @@
   };
 
 
-  const closeAccountInstruction = async ({ account, owner })=>{
+  const closeAccountInstruction = ({ account, owner })=>{
 
     const keys = [
       { pubkey: new solanaWeb3_js.PublicKey(account), isSigner: false, isWritable: true },

@@ -167,8 +167,8 @@ Token.solana
 // ASSOCIATED_TOKEN_PROGRAM,
 // findProgramAddress({ token, owner })
 // findAccount({ token, owner })
-// createTransferInstruction({ token, amount, from, to })
-// createAssociatedTokenAccountInstruction({ token, owner, payer })
+// async createTransferInstruction({ token, amount, from, to })
+// async createAssociatedTokenAccountInstruction({ token, owner, payer })
 // initializeAccountInstruction({ account, token, owner })
 // closeAccountInstruction({ account, owner })
 ```

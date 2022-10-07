@@ -22,7 +22,7 @@ describe('closeAccountInstruction', () => {
         provider: provider(blockchain),
       })
 
-      let instruction = await Token.solana.closeAccountInstruction({ 
+      let instruction = Token.solana.closeAccountInstruction({ 
         account,
         owner,
       })
