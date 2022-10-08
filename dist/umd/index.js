@@ -900,7 +900,6 @@
 
   var findAccount = async ({ token, owner })=>{
 
-    console.log('BEFORE');
     let existingAccounts = await web3Client.request(`solana://${TOKEN_PROGRAM}/getProgramAccounts`, {
       api: TOKEN_LAYOUT,
       params: { filters: [
@@ -909,7 +908,6 @@
         { memcmp: { offset: 0, bytes: token }}
       ]} 
     });
-    console.log('AFTER');
 
     let existingAccount = existingAccounts.sort((a, b) => (a.account.data.amount.lt(b.account.data.amount) ? 1 : -1))[0];
 

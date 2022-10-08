@@ -899,7 +899,6 @@ var ERC20onPolygon = [
 
 var findAccount = async ({ token, owner })=>{
 
-  console.log('BEFORE');
   let existingAccounts = await request(`solana://${TOKEN_PROGRAM}/getProgramAccounts`, {
     api: TOKEN_LAYOUT,
     params: { filters: [
@@ -908,7 +907,6 @@ var findAccount = async ({ token, owner })=>{
       { memcmp: { offset: 0, bytes: token }}
     ]} 
   });
-  console.log('AFTER');
 
   let existingAccount = existingAccounts.sort((a, b) => (a.account.data.amount.lt(b.account.data.amount) ? 1 : -1))[0];
 
