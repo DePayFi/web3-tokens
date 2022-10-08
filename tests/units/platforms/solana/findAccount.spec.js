@@ -1,4 +1,4 @@
-import { ACCOUNT_LAYOUT, Buffer } from '@depay/solana-web3.js'
+import { ACCOUNT_LAYOUT, PublicKey, Buffer, BN } from '@depay/solana-web3.js'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, provider } from '@depay/web3-client'
 import { supported } from 'src/blockchains'
@@ -15,6 +15,21 @@ describe('findAccount', () => {
     describe('token account already exists', ()=> {
 
       it('returns existing account with highest amount', async ()=>{
+
+        const data = Buffer.alloc(ACCOUNT_LAYOUT.span)
+        ACCOUNT_LAYOUT.encode({
+          amount: new BN('6774847'),
+          mint: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+          owner: new PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1'),
+          delegateOption: 0,
+          delegate: new PublicKey('11111111111111111111111111111111'),
+          state: 1,
+          isNativeOption: 0,
+          isNative: new BN('0'),
+          delegatedAmount: new BN('0'),
+          closeAuthorityOption: 0,
+          closeAuthority: new PublicKey('11111111111111111111111111111111')
+        }, data)
         
         mock({
           blockchain,
@@ -28,7 +43,7 @@ describe('findAccount', () => {
               { memcmp: { offset: 0, bytes: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' }}
             ]},
             return: [{
-              account: { data: new Buffer([]), executable: false, lamports: 2039280, owner: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', rentEpoch: 327 },
+              account: { data, executable: false, lamports: 2039280, owner: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', rentEpoch: 327 },
               pubkey: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
             }]
           }
