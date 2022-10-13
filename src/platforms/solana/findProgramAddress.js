@@ -1,4 +1,3 @@
-import { provider } from '@depay/web3-client'
 import { PublicKey, Buffer } from '@depay/solana-web3.js'
 import { TOKEN_PROGRAM, ASSOCIATED_TOKEN_PROGRAM } from './constants'
 
