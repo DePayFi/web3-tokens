@@ -33,6 +33,14 @@ This library supports the following blockchains:
 - [Polygon](https://polygon.technology)
 - [Solana](https://solana.com)
 
+## Platform specific packaging
+
+In case you want to use and package only specific platforms, use platform specific entrypoints:
+
+```javascript
+import { Token } from '@depay/web3-tokens/dist/umd/index.evm'
+```
+
 ## Functionalities
 
 ### initalize (new)
