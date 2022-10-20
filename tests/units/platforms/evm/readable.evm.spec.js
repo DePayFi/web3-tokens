@@ -1,9 +1,9 @@
-import { Token } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
-import { resetCache, getProvider } from '@depay/web3-client'
-import { supported } from 'src/blockchains'
+import { resetCache, getProvider } from '@depay/web3-client/dist/umd/index.evm'
+import { supported } from 'src/blockchains.evm'
+import { Token } from 'src/index.evm'
 
-describe('readable', () => {
+describe('readable (evm)', () => {
 
   supported.evm.forEach((blockchain)=>{
 

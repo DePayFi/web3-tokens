@@ -1,10 +1,10 @@
 import { CONSTANTS } from '@depay/web3-constants'
 import { mock, resetMocks } from '@depay/web3-mock'
-import { resetCache, getProvider } from '@depay/web3-client'
-import { supported } from 'src/blockchains'
-import { Token } from 'src'
+import { resetCache, getProvider } from '@depay/web3-client/dist/umd/index.evm'
+import { supported } from 'src/blockchains.evm'
+import { Token } from 'src/index.evm'
 
-describe('Token balance', () => {
+describe('Token balance (evm)', () => {
 
   supported.evm.forEach((blockchain)=>{
 
