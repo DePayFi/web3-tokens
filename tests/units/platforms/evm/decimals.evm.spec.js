@@ -1,5 +1,5 @@
 import { mock, resetMocks } from '@depay/web3-mock'
-import { resetCache, provider } from '@depay/web3-client/umd/index.evm'
+import { resetCache, getProvider } from '@depay/web3-client/dist/umd/index.evm'
 import { supported } from 'src/blockchains.evm'
 import { Token } from 'src/index.evm'
 
@@ -7,51 +7,59 @@ describe('Token decimals (evm)', () => {
 
   supported.evm.forEach((blockchain)=>{
 
-    beforeEach(resetCache)
-    beforeEach(resetMocks)
+    describe(blockchain, ()=>{
 
-    it('returns decimals', async ()=> {
-
-      let tokenDecimalMock = mock({
-        provider: provider(blockchain),
-        blockchain,
-        request: {
-          to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
-          api: Token[blockchain].DEFAULT,
-          method: 'decimals',
-          return: 18
-        }
+      let provider
+      
+      beforeEach(async()=>{
+        resetCache()
+        resetMocks()
+        provider = await getProvider(blockchain)
       })
 
-      let token = new Token({
-        blockchain,
-        address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
-      });
+      it('returns decimals', async ()=> {
 
-      expect(token.address).toEqual('0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb')
-      expect(await token.decimals()).toEqual(18)
-    });
+        let tokenDecimalMock = mock({
+          provider,
+          blockchain,
+          request: {
+            to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
+            api: Token[blockchain].DEFAULT,
+            method: 'decimals',
+            return: 18
+          }
+        })
 
-    it('returns "undefined" if decimal request fails', async ()=> {
+        let token = new Token({
+          blockchain,
+          address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
+        })
 
-      let tokenDecimalMock = mock({
-        provider: provider(blockchain),
-        blockchain,
-        request: {
-          to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
-          api: Token[blockchain].DEFAULT,
-          method: 'decimals',
-          return: Error('SOMETHING WENT WRONG')
-        }
+        expect(token.address).toEqual('0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb')
+        expect(await token.decimals()).toEqual(18)
       })
 
-      let token = new Token({
-        blockchain,
-        address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
-      });
+      it('returns "undefined" if decimal request fails', async ()=> {
 
-      expect(token.address).toEqual('0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb')
-      expect(await token.decimals()).toEqual(undefined)
-    });
-  });
-});
+        let tokenDecimalMock = mock({
+          provider,
+          blockchain,
+          request: {
+            to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
+            api: Token[blockchain].DEFAULT,
+            method: 'decimals',
+            return: Error('SOMETHING WENT WRONG')
+          }
+        })
+
+        let token = new Token({
+          blockchain,
+          address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
+        })
+
+        expect(token.address).toEqual('0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb')
+        expect(await token.decimals()).toEqual(undefined)
+      })
+    })
+  })
+})
