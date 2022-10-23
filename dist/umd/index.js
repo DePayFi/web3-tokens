@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/solana-web3.js'), require('@depay/web3-client'), require('@depay/web3-constants'), require('ethers')) :
   typeof define === 'function' && define.amd ? define(['exports', '@depay/solana-web3.js', '@depay/web3-client', '@depay/web3-constants', 'ethers'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.SolanaWeb3js, global.Web3Client, global.Web3Constants, global.ethers));
-}(this, (function (exports, solanaWeb3_js, web3Client, web3Constants, ethers) { 'use strict';
+})(this, (function (exports, solanaWeb3_js, web3Client, web3Constants, ethers) { 'use strict';
 
   const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
   const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
@@ -1121,4 +1121,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));

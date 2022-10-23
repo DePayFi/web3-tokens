@@ -1,5 +1,5 @@
 import { mock, resetMocks } from '@depay/web3-mock'
-import { resetCache, getProvider } from '@depay/web3-client/dist/umd/index.evm'
+import { resetCache, getProvider } from '@depay/web3-client-evm'
 import { supported } from 'src/blockchains.evm'
 import { Token } from 'src/index.evm'
 

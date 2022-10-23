@@ -35,10 +35,10 @@ This library supports the following blockchains:
 
 ## Platform specific packaging
 
-In case you want to use and package only specific platforms, use platform specific entrypoints:
+In case you want to use and package only specific platforms, use platform-specific packages:
 
 ```javascript
-import { Token } from '@depay/web3-tokens/dist/umd/index.evm'
+import { Token } from '@depay/web3-tokens-evm'
 ```
 
 ## Functionalities

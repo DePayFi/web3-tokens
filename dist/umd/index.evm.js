@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-client'), require('@depay/web3-constants'), require('ethers')) :
   typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-client', '@depay/web3-constants', 'ethers'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.Web3Client, global.Web3Constants, global.ethers));
-}(this, (function (exports, web3Client, web3Constants, ethers) { 'use strict';
+})(this, (function (exports, web3Client, web3Constants, ethers) { 'use strict';
 
   var allowanceOnEVM = ({ blockchain, address, api, owner, spender })=>{
     return web3Client.request(
@@ -815,4 +815,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
