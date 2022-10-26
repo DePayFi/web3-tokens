@@ -13,6 +13,7 @@ import nameOnEVM from './platforms/evm/name'
 import nameOnSolana from './platforms/solana/name'
 import symbolOnEVM from './platforms/evm/symbol'
 import symbolOnSolana from './platforms/solana/symbol'
+import VRC20 from './blockchains/velas/VRC20'
 import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
 import { getMetaData } from './platforms/solana/metadata'
@@ -133,6 +134,11 @@ Token.bsc = {
 Token.polygon = { 
   DEFAULT: ERC20onPolygon,
   ERC20: ERC20onPolygon
+}
+
+Token.velas = {
+  DEFAULT: VRC20,
+  VRC20
 }
 
 Token.solana = {
