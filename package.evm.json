@@ -1,7 +1,7 @@
 {
   "name": "@depay/web3-tokens-evm",
   "moduleName": "Web3Tokens",
-  "version": "9.12.2",
+  "version": "9.12.3",
   "description": "JavaScript library providing basic functionalities to interact with web3 tokens.",
   "main": "dist/umd/index.evm.js",
   "module": "dist/esm/index.evm.js",
@@ -9,15 +9,6 @@
   "files": [
     "dist"
   ],
-  "scripts": {
-    "build": "rm -rf dist && rollup -c rollup.module.evm.config.js",
-    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
-    "lint:fix": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
-    "prepublishOnly": "yarn build",
-    "dev": "rollup -c rollup.dev.config.js -w",
-    "test:units": "yarn build && npx jest --no-cache",
-    "test": "yarn test:units"
-  },
   "repository": "git@github.com:DePayFi/web3-tokens.git",
   "keywords": [
     "token",
@@ -34,40 +25,11 @@
   "private": false,
   "dependencies": {},
   "peerDependencies": {
-    "@depay/web3-client-evm": "^10.1.17",
-    "@depay/web3-constants": "^6.3.1",
+    "@depay/web3-client-evm": "^10.1.18",
+    "@depay/web3-constants": "^6.3.2",
     "ethers": "^5.7.1"
   },
   "engines": {
     "node": ">=16"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@babel/preset-env": "^7.12.7",
-    "@depay/web3-blockchains": "^6.2.2",
-    "@depay/web3-client": "^10.1.17",
-    "@depay/web3-client-evm": "^10.1.17",
-    "@depay/web3-constants": "^6.3.1",
-    "@depay/web3-mock": "^13.22.7",
-    "@peculiar/webcrypto": "^1.4.0",
-    "@rollup/plugin-commonjs": "^18.0.0",
-    "@rollup/plugin-node-resolve": "^11.2.1",
-    "@rollup/plugin-replace": "^2.4.2",
-    "@rollup/plugin-sucrase": "^3.1.0",
-    "babel-loader": "^8.2.2",
-    "babel-preset-env": "^1.7.0",
-    "cross-fetch": "^3.1.5",
-    "eslint": "^7.15.0",
-    "eslint-loader": "^4.0.2",
-    "eslint-plugin-import": "^2.22.1",
-    "ethers": "^5.7.1",
-    "jest-environment-jsdom": "^28.1.0",
-    "regenerator-runtime": "^0.13.7",
-    "rollup": "^2.34.2",
-    "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-serve": "^1.1.0",
-    "tslib": "^2.3.1",
-    "webpack": "^5.73.0"
   }
 }
