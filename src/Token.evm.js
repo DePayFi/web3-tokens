@@ -6,6 +6,7 @@ import ERC20 from './blockchains/ethereum/ERC20'
 import ERC20onPolygon from './blockchains/polygon/ERC20'
 import nameOnEVM from './platforms/evm/name.evm'
 import symbolOnEVM from './platforms/evm/symbol.evm'
+import VRC20 from './blockchains/velas/VRC20'
 import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
 import { request } from '@depay/web3-client-evm'
@@ -110,6 +111,11 @@ Token.bsc = {
 Token.polygon = { 
   DEFAULT: ERC20onPolygon,
   ERC20: ERC20onPolygon
+}
+
+Token.velas = {
+  DEFAULT: VRC20,
+  VRC20
 }
 
 export default Token

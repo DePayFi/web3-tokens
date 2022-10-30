@@ -1,4 +1,4 @@
-import { Token } from 'src'
+import { Token } from 'src/index.evm'
 
 describe('Token', () => {
   describe('standards', () => {
@@ -21,12 +21,6 @@ describe('Token', () => {
     it('exports the "velas" standard token', async ()=> {
       expect(typeof(Token.velas.DEFAULT) != 'undefined').toEqual(true)
       expect(Token.velas.DEFAULT).toEqual(Token.velas.VRC20)
-    })
-
-    it('exports Solana standards for layout and metadata account', async ()=> {
-      expect(typeof(Token.solana.MINT_LAYOUT) != 'undefined').toEqual(true)
-      expect(typeof(Token.solana.METADATA_LAYOUT) != 'undefined').toEqual(true)
-      expect(typeof(Token.solana.METADATA_ACCOUNT) != 'undefined').toEqual(true)
     })
   })
 })
