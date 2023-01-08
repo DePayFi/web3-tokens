@@ -79,6 +79,14 @@ Retrieves token name
 await token.name() // DePay
 ```
 
+### name for NFT by id
+
+Retrieves token name for token address by NFT id:
+
+```javascript
+await token.name({ id: '42745998150656004690816543961586238000273307462307754421658803578179357246440' }) // NFT Butler Lifetime License
+```
+
 ### balance
 
 Provides the balance (BigNumber) of the given account:

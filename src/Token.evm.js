@@ -43,12 +43,12 @@ class Token {
     }
   }
 
-  async name() {
+  async name(args) {
     if (this.address == CONSTANTS[this.blockchain].NATIVE) {
       return CONSTANTS[this.blockchain].CURRENCY
     }
     if(supported.evm.includes(this.blockchain)) {
-      return await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
+      return await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, id: args?.id })
     }
   }
 

@@ -682,16 +682,50 @@
     },
   ];
 
-  var nameOnEVM = ({ blockchain, address, api })=>{
-    return web3ClientEvm.request(
-      {
-        blockchain: blockchain,
-        address: address,
-        api,
-        method: 'name',
-        cache: 86400000, // 1 day
-      },
-    )
+  const uriAPI = [{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"uri","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}];
+
+  const uriToName = (tokenURI)=>{
+    return new Promise((resolve)=>{
+      if(tokenURI.match(/^ipfs/)) {
+        tokenURI = `https://ipfs.io/ipfs/${tokenURI.split('://')[1]}`;
+      }
+      fetch(tokenURI).then((response) => {
+        if (response.ok) { return response.json() }
+        resolve();
+      })
+      .then((responseJson) => {
+        if(responseJson) {
+          let name = responseJson.name;
+          if(name){
+            resolve(name);
+          } else {
+            resolve();
+          }
+        }
+      }).catch(()=>resolve());
+    })
+  };
+
+  var nameOnEVM = ({ blockchain, address, api, id })=>{
+
+    if(id) {
+      return new Promise((resolve)=>{
+        web3ClientEvm.request({ blockchain, address, api: uriAPI, method: 'uri', params: [id] }).then((uri)=>{
+          uri = uri.match('0x{id}') ? uri.replace('0x{id}', id) : uri;
+          uriToName(uri).then(resolve);
+        }).catch(()=>resolve());
+      })
+    } else {
+      return web3ClientEvm.request(
+        {
+          blockchain: blockchain,
+          address: address,
+          api,
+          method: 'name',
+          cache: 86400000, // 1 day
+        },
+      )
+    }
   };
 
   var symbolOnEVM = ({ blockchain, address, api })=>{
@@ -712,6 +746,7 @@
   supported.evm = ['ethereum', 'bsc', 'polygon'];
   supported.solana = [];
 
+  function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
   class Token {
     
     constructor({ blockchain, address }) {
@@ -743,12 +778,12 @@
       }
     }
 
-    async name() {
+    async name(args) {
       if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
         return web3Constants.CONSTANTS[this.blockchain].CURRENCY
       }
       if(supported.evm.includes(this.blockchain)) {
-        return await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
+        return await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, id: _optionalChain([args, 'optionalAccess', _ => _.id]) })
       }
     }
 

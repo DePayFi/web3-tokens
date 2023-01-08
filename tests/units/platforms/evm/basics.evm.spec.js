@@ -1,10 +1,11 @@
+import fetchMock from 'fetch-mock'
 import { CONSTANTS } from '@depay/web3-constants'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, getProvider } from '@depay/web3-client-evm'
 import { supported } from 'src/blockchains.evm'
 import { Token } from 'src/index.evm'
 
-describe('Token basics (evm)', () => {
+describe('Token basics', () => {
 
   supported.evm.forEach((blockchain)=>{
 
@@ -13,6 +14,7 @@ describe('Token basics (evm)', () => {
       let provider
       
       beforeEach(async()=>{
+        fetchMock.restore()
         resetCache()
         resetMocks()
         provider = await getProvider(blockchain)
@@ -89,6 +91,41 @@ describe('Token basics (evm)', () => {
         expect(await token.decimals()).toEqual(18)
         expect(await token.symbol()).toEqual(CONSTANTS[blockchain].SYMBOL)
         expect(await token.name()).toEqual(CONSTANTS[blockchain].CURRENCY)
+      })
+
+      describe('name for NFT token by id', ()=>{
+
+        beforeEach(async()=>{
+          fetchMock.get({
+            url: "https://api.opensea.io/api/v1/metadata/0x495f947276749Ce646f68AC8c248420045cb7b5e/42745998150656004690816543961586238000273307462307754421658803578179357246440",
+          }, {
+            "name": "NFT Butler"
+          })
+
+          mock({
+            provider,
+            blockchain,
+            request: {
+              to: '0x495f947276749ce646f68ac8c248420045cb7b5e',
+              api: [{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"uri","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}],
+              method: 'uri',
+              return: 'https://api.opensea.io/api/v1/metadata/0x495f947276749Ce646f68AC8c248420045cb7b5e/0x{id}',
+              params: ['42745998150656004690816543961586238000273307462307754421658803578179357246440']
+            }
+          })
+        })
+        
+        it('provides the name for the id of an NFT', async()=>{
+
+          let token = new Token({
+            blockchain,
+            address: '0x495f947276749ce646f68ac8c248420045cb7b5e'
+          })
+
+          let name = await token.name({ id: '42745998150656004690816543961586238000273307462307754421658803578179357246440' })
+
+          expect(name).toEqual('NFT Butler')
+        })        
       })
     })
   })
