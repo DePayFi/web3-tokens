@@ -1,7 +1,7 @@
 import { CONSTANTS } from '@depay/web3-constants'
 import { request } from '@depay/web3-client-evm'
 
-export default async ({ blockchain, address, account, api })=>{
+export default async ({ blockchain, address, account, api, id })=>{
   if (address == CONSTANTS[blockchain].NATIVE) {
     return await request(
       {
@@ -18,7 +18,7 @@ export default async ({ blockchain, address, account, api })=>{
         address: address,
         method: 'balanceOf',
         api,
-        params: [account],
+        params: id ? [account, id] : [account],
         cache: 10000, // 10 seconds
       },
     )

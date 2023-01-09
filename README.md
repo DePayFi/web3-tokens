@@ -102,6 +102,14 @@ let token = new Token({ ..., address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEe
 await token.balance('0xb0252f13850a4823706607524de0b146820F2240') // BigNumber {_hex: "0x0b896d5e9eeaabf4f1", _isBigNumber: true}
 ```
 
+#### balance for NFTs (by id)
+
+If you pass a second parameter, it will be used to get the balance for the given account for the given token id:
+
+```javascript
+await token.balance('0xb0252f13850a4823706607524de0b146820F2240', '42745998150656004690816543961586238000273307462307754421658803578179357246440')
+```
+
 ### BigNumber
 
 Provides the BigNumber amount for a given token (based on the tokens decimals) based on a human readable amount:

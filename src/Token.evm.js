@@ -1,12 +1,16 @@
 import allowanceOnEVM from './platforms/evm/allowance.evm'
 import balanceOnEVM from './platforms/evm/balance.evm'
-import BEP20 from './blockchains/bsc/BEP20'
+import BEP20 from './blockchains/bsc/20'
+import bsc1155 from './blockchains/bsc/1155'
 import decimalsOnEVM from './platforms/evm/decimals.evm'
-import ERC20 from './blockchains/ethereum/ERC20'
-import ERC20onPolygon from './blockchains/polygon/ERC20'
+import ERC20 from './blockchains/ethereum/20'
+import ERC20onPolygon from './blockchains/polygon/20'
+import ethereum1155 from './blockchains/ethereum/1155'
 import nameOnEVM from './platforms/evm/name.evm'
+import polygon1155 from './blockchains/polygon/1155'
 import symbolOnEVM from './platforms/evm/symbol.evm'
-import VRC20 from './blockchains/velas/VRC20'
+import velas1155 from './blockchains/velas/1155'
+import VRC20 from './blockchains/velas/20'
 import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
 import { request } from '@depay/web3-client-evm'
@@ -52,9 +56,9 @@ class Token {
     }
   }
 
-  async balance(account) {
+  async balance(account, id) {
     if(supported.evm.includes(this.blockchain)) {
-      return await balanceOnEVM({ blockchain: this.blockchain, account, address: this.address, api: Token[this.blockchain].DEFAULT })
+      return await balanceOnEVM({ blockchain: this.blockchain, account, address: this.address, api: id ? Token[this.blockchain][1155] : Token[this.blockchain].DEFAULT, id })
     }
   }
 
@@ -100,22 +104,30 @@ Token.safeAmount = ({ amount, decimals }) => {
 
 Token.ethereum = { 
   DEFAULT: ERC20,
-  ERC20
+  ERC20,
+  20: ERC20,
+  1155: ethereum1155,
 }
 
 Token.bsc = { 
   DEFAULT: BEP20,
-  BEP20
+  BEP20,
+  20: BEP20,
+  1155: bsc1155,
 }
 
 Token.polygon = { 
   DEFAULT: ERC20onPolygon,
-  ERC20: ERC20onPolygon
+  ERC20: ERC20onPolygon,
+  20: ERC20onPolygon,
+  1155: bsc1155,
 }
 
 Token.velas = {
   DEFAULT: VRC20,
-  VRC20
+  VRC20,
+  20: VRC20,
+  1155: bsc1155,
 }
 
 export default Token
