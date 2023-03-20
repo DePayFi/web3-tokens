@@ -1,189 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/solana-web3.js'), require('@depay/web3-client'), require('@depay/web3-constants'), require('ethers')) :
-  typeof define === 'function' && define.amd ? define(['exports', '@depay/solana-web3.js', '@depay/web3-client', '@depay/web3-constants', 'ethers'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.SolanaWeb3js, global.Web3Client, global.Web3Constants, global.ethers));
-})(this, (function (exports, solanaWeb3_js, web3Client, web3Constants, ethers) { 'use strict';
-
-  const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
-  const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
-
-  function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
-  var findProgramAddress = async ({ token, owner })=>{
-
-    const [address] = await solanaWeb3_js.PublicKey.findProgramAddress(
-      [
-        (new solanaWeb3_js.PublicKey(owner)).toBuffer(),
-        (new solanaWeb3_js.PublicKey(TOKEN_PROGRAM)).toBuffer(),
-        (new solanaWeb3_js.PublicKey(token)).toBuffer()
-      ],
-      new solanaWeb3_js.PublicKey(ASSOCIATED_TOKEN_PROGRAM)
-    );
-
-    return _optionalChain$4([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
-  };
-
-  const MINT_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.u32('mintAuthorityOption'),
-    solanaWeb3_js.publicKey('mintAuthority'),
-    solanaWeb3_js.u64('supply'),
-    solanaWeb3_js.u8('decimals'),
-    solanaWeb3_js.bool('isInitialized'),
-    solanaWeb3_js.u32('freezeAuthorityOption'),
-    solanaWeb3_js.publicKey('freezeAuthority')
-  ]);
-
-  const KEY_LAYOUT = solanaWeb3_js.rustEnum([
-    solanaWeb3_js.struct([], 'uninitialized'),
-    solanaWeb3_js.struct([], 'editionV1'),
-    solanaWeb3_js.struct([], 'masterEditionV1'),
-    solanaWeb3_js.struct([], 'reservationListV1'),
-    solanaWeb3_js.struct([], 'metadataV1'),
-    solanaWeb3_js.struct([], 'reservationListV2'),
-    solanaWeb3_js.struct([], 'masterEditionV2'),
-    solanaWeb3_js.struct([], 'editionMarker'),
-  ]);
-
-  const CREATOR_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.publicKey('address'),
-    solanaWeb3_js.bool('verified'),
-    solanaWeb3_js.u8('share'),
-  ]);
-
-  const DATA_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.str('name'),
-    solanaWeb3_js.str('symbol'),
-    solanaWeb3_js.str('uri'),
-    solanaWeb3_js.u16('sellerFeeBasisPoints'),
-    solanaWeb3_js.option(
-      solanaWeb3_js.vec(
-        CREATOR_LAYOUT.replicate('creators')
-      ),
-      'creators'
-    )
-  ]);
-
-  const METADATA_LAYOUT = solanaWeb3_js.struct([
-    KEY_LAYOUT.replicate('key'),
-    solanaWeb3_js.publicKey('updateAuthority'),
-    solanaWeb3_js.publicKey('mint'),
-    DATA_LAYOUT.replicate('data'),
-    solanaWeb3_js.bool('primarySaleHappened'),
-    solanaWeb3_js.bool('isMutable'),
-    solanaWeb3_js.option(solanaWeb3_js.u8(), 'editionNonce'),
-  ]);
-
-  const TRANSFER_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.u8('instruction'),
-    solanaWeb3_js.u64('amount'),
-  ]);
-
-  const TOKEN_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.publicKey('mint'),
-    solanaWeb3_js.publicKey('owner'),
-    solanaWeb3_js.u64('amount'),
-    solanaWeb3_js.u32('delegateOption'),
-    solanaWeb3_js.publicKey('delegate'),
-    solanaWeb3_js.u8('state'),
-    solanaWeb3_js.u32('isNativeOption'),
-    solanaWeb3_js.u64('isNative'),
-    solanaWeb3_js.u64('delegatedAmount'),
-    solanaWeb3_js.u32('closeAuthorityOption'),
-    solanaWeb3_js.publicKey('closeAuthority')
-  ]);
-
-  const INITIALIZE_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.u8('instruction'),
-    solanaWeb3_js.publicKey('owner')
-  ]);
-
-  const CLOSE_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.u8('instruction')
-  ]);
-
-  const createTransferInstruction = async ({ token, amount, from, to })=>{
-
-    let fromTokenAccount = await findProgramAddress({ token, owner: from });
-    let toTokenAccount = await findProgramAddress({ token, owner: to });
-
-    const keys = [
-      { pubkey: new solanaWeb3_js.PublicKey(fromTokenAccount), isSigner: false, isWritable: true },
-      { pubkey: new solanaWeb3_js.PublicKey(toTokenAccount), isSigner: false, isWritable: true },
-      { pubkey: new solanaWeb3_js.PublicKey(from), isSigner: true, isWritable: false }
-    ];
-
-    const data = solanaWeb3_js.Buffer.alloc(TRANSFER_LAYOUT.span);
-    TRANSFER_LAYOUT.encode({
-      instruction: 3, // TRANSFER
-      amount: new solanaWeb3_js.BN(amount)
-    }, data);
-    
-    return new solanaWeb3_js.TransactionInstruction({ 
-      keys,
-      programId: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM),
-      data 
-    })
-  };
-
-  const createAssociatedTokenAccountInstruction = async ({ token, owner, payer }) => {
-
-    let associatedToken = await findProgramAddress({ token, owner });
-
-    const keys = [
-      { pubkey: new solanaWeb3_js.PublicKey(payer), isSigner: true, isWritable: true },
-      { pubkey: new solanaWeb3_js.PublicKey(associatedToken), isSigner: false, isWritable: true },
-      { pubkey: new solanaWeb3_js.PublicKey(owner), isSigner: false, isWritable: false },
-      { pubkey: new solanaWeb3_js.PublicKey(token), isSigner: false, isWritable: false },
-      { pubkey: solanaWeb3_js.SystemProgram.programId, isSigner: false, isWritable: false },
-      { pubkey: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM), isSigner: false, isWritable: false },
-    ];
-
-   return new solanaWeb3_js.TransactionInstruction({
-      keys,
-      programId: ASSOCIATED_TOKEN_PROGRAM,
-      data: solanaWeb3_js.Buffer.alloc(0)
-    })
-  };
-
-  const initializeAccountInstruction = ({ account, token, owner })=>{
-
-    const keys = [
-      { pubkey: new solanaWeb3_js.PublicKey(account), isSigner: false, isWritable: true },
-      { pubkey: new solanaWeb3_js.PublicKey(token), isSigner: false, isWritable: false },
-    ];
-
-    const data = solanaWeb3_js.Buffer.alloc(INITIALIZE_LAYOUT.span);
-    INITIALIZE_LAYOUT.encode({
-      instruction: 18, // InitializeAccount3
-      owner: new solanaWeb3_js.PublicKey(owner)
-    }, data);
-    
-    return new solanaWeb3_js.TransactionInstruction({ keys, programId: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM), data })
-  };
-
-
-  const closeAccountInstruction = ({ account, owner })=>{
-
-    const keys = [
-      { pubkey: new solanaWeb3_js.PublicKey(account), isSigner: false, isWritable: true },
-      { pubkey: new solanaWeb3_js.PublicKey(owner), isSigner: false, isWritable: true },
-      { pubkey: new solanaWeb3_js.PublicKey(owner), isSigner: true, isWritable: false }
-    ];
-
-    const data = solanaWeb3_js.Buffer.alloc(CLOSE_LAYOUT.span);
-    CLOSE_LAYOUT.encode({
-      instruction: 9 // CloseAccount
-    }, data);
-
-    return new solanaWeb3_js.TransactionInstruction({ keys, programId: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM), data })
-  };
-
-  var instructions = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    createTransferInstruction: createTransferInstruction,
-    createAssociatedTokenAccountInstruction: createAssociatedTokenAccountInstruction,
-    initializeAccountInstruction: initializeAccountInstruction,
-    closeAccountInstruction: closeAccountInstruction
-  });
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-client'), require('@depay/web3-constants'), require('@depay/solana-web3.js'), require('ethers')) :
+  typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-client', '@depay/web3-constants', '@depay/solana-web3.js', 'ethers'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.Web3Client, global.Web3Constants, global.SolanaWeb3js, global.ethers));
+})(this, (function (exports, web3Client, web3Constants, solanaWeb3_js, ethers) { 'use strict';
 
   var allowanceOnEVM = ({ blockchain, address, api, owner, spender })=>{
     return web3Client.request(
@@ -219,36 +38,6 @@
           cache: 10000, // 10 seconds
         },
       )
-    }
-  };
-
-  var balanceOnSolana = async ({ blockchain, address, account, api })=>{
-
-    if(address == web3Constants.CONSTANTS[blockchain].NATIVE) {
-
-       return ethers.ethers.BigNumber.from(await web3Client.request(`solana://${account}/balance`))
-
-    } else {
-
-      let filters = [
-        { dataSize: 165 },
-        { memcmp: { offset: 32, bytes: account }},
-        { memcmp: { offset: 0, bytes: address }}
-      ];
-
-      let tokenAccounts  = await web3Client.request(`solana://TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA/getProgramAccounts`, { params: { filters } });
-
-      let totalBalance = ethers.ethers.BigNumber.from('0');
-
-      await Promise.all(tokenAccounts.map((tokenAccount)=>{
-        return web3Client.request(`solana://${tokenAccount.pubkey.toString()}/getTokenAccountBalance`)
-      })).then((balances)=>{
-        balances.forEach((balance)=>{
-          totalBalance = totalBalance.add(ethers.ethers.BigNumber.from(balance.value.amount));
-        });
-      });
-
-      return totalBalance
     }
   };
 
@@ -972,11 +761,6 @@
     })
   };
 
-  var decimalsOnSolana = async ({ blockchain, address })=>{
-    let data = await web3Client.request({ blockchain, address, api: MINT_LAYOUT });
-    return data.decimals
-  };
-
   var ERC20 = [
     {
       constant: true,
@@ -1528,23 +1312,438 @@
     }
   ];
 
-  var findAccount = async ({ token, owner })=>{
+  var ftm1155 = [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        }
+      ],
+      "name": "ApprovalForAll",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "ids",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "values",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "TransferBatch",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "TransferSingle",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "value",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "URI",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "accounts",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "ids",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "balanceOfBatch",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        }
+      ],
+      "name": "isApprovedForAll",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "ids",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "amounts",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "safeBatchTransferFrom",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "safeTransferFrom",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        }
+      ],
+      "name": "setApprovalForAll",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "interfaceId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "uri",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
 
-    let existingAccounts = await web3Client.request(`solana://${TOKEN_PROGRAM}/getProgramAccounts`, {
-      api: TOKEN_LAYOUT,
-      params: { filters: [
-        { dataSize: 165 },
-        { memcmp: { offset: 32, bytes: owner }},
-        { memcmp: { offset: 0, bytes: token }}
-      ]} 
-    });
-
-    let existingAccount = existingAccounts.sort((a, b) => (a.account.data.amount.lt(b.account.data.amount) ? 1 : -1))[0];
-
-    if(existingAccount){
-      return existingAccount.pubkey.toString()
-    } 
-  };
+  var FTM20 = [
+    {
+      constant: true,
+      inputs: [],
+      name: 'name',
+      outputs: [{ name: '', type: 'string' }],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      constant: false,
+      inputs: [
+        { name: '_spender', type: 'address' },
+        { name: '_value', type: 'uint256' },
+      ],
+      name: 'approve',
+      outputs: [{ name: '', type: 'bool' }],
+      payable: false,
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      constant: true,
+      inputs: [],
+      name: 'totalSupply',
+      outputs: [{ name: '', type: 'uint256' }],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      constant: false,
+      inputs: [
+        { name: '_from', type: 'address' },
+        { name: '_to', type: 'address' },
+        { name: '_value', type: 'uint256' },
+      ],
+      name: 'transferFrom',
+      outputs: [{ name: '', type: 'bool' }],
+      payable: false,
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      constant: true,
+      inputs: [],
+      name: 'decimals',
+      outputs: [{ name: '', type: 'uint8' }],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      constant: true,
+      inputs: [{ name: '_owner', type: 'address' }],
+      name: 'balanceOf',
+      outputs: [{ name: 'balance', type: 'uint256' }],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      constant: true,
+      inputs: [],
+      name: 'symbol',
+      outputs: [{ name: '', type: 'string' }],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      constant: false,
+      inputs: [
+        { name: '_to', type: 'address' },
+        { name: '_value', type: 'uint256' },
+      ],
+      name: 'transfer',
+      outputs: [{ name: '', type: 'bool' }],
+      payable: false,
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      constant: true,
+      inputs: [
+        { name: '_owner', type: 'address' },
+        { name: '_spender', type: 'address' },
+      ],
+      name: 'allowance',
+      outputs: [{ name: '', type: 'uint256' }],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function',
+    },
+    { payable: true, stateMutability: 'payable', type: 'fallback' },
+    {
+      anonymous: false,
+      inputs: [
+        { indexed: true, name: 'owner', type: 'address' },
+        { indexed: true, name: 'spender', type: 'address' },
+        { indexed: false, name: 'value', type: 'uint256' },
+      ],
+      name: 'Approval',
+      type: 'event',
+    },
+    {
+      anonymous: false,
+      inputs: [
+        { indexed: true, name: 'from', type: 'address' },
+        { indexed: true, name: 'to', type: 'address' },
+        { indexed: false, name: 'value', type: 'uint256' },
+      ],
+      name: 'Transfer',
+      type: 'event',
+    },
+  ];
 
   const uriAPI = [{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"uri","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}];
 
@@ -1595,6 +1794,254 @@
     }
   };
 
+  var symbolOnEVM = ({ blockchain, address, api })=>{
+    return web3Client.request(
+      {
+        blockchain,
+        address,
+        api,
+        method: 'symbol',
+        cache: 86400000, // 1 day
+      }
+    )
+  };
+
+  var VRC20 = [{"name": "Approval", "type": "event", "inputs": [{"name": "src", "type": "address", "indexed": true, "internalType": "address"}, {"name": "guy", "type": "address", "indexed": true, "internalType": "address"}, {"name": "wad", "type": "uint256", "indexed": false, "internalType": "uint256"}], "anonymous": false}, {"name": "Deposit", "type": "event", "inputs": [{"name": "dst", "type": "address", "indexed": true, "internalType": "address"}, {"name": "wad", "type": "uint256", "indexed": false, "internalType": "uint256"}], "anonymous": false}, {"name": "Transfer", "type": "event", "inputs": [{"name": "src", "type": "address", "indexed": true, "internalType": "address"}, {"name": "dst", "type": "address", "indexed": true, "internalType": "address"}, {"name": "wad", "type": "uint256", "indexed": false, "internalType": "uint256"}], "anonymous": false}, {"name": "Withdrawal", "type": "event", "inputs": [{"name": "src", "type": "address", "indexed": true, "internalType": "address"}, {"name": "wad", "type": "uint256", "indexed": false, "internalType": "uint256"}], "anonymous": false}, {"type": "fallback", "stateMutability": "payable"}, {"name": "allowance", "type": "function", "inputs": [{"name": "", "type": "address", "internalType": "address"}, {"name": "", "type": "address", "internalType": "address"}], "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}], "stateMutability": "view"}, {"name": "approve", "type": "function", "inputs": [{"name": "guy", "type": "address", "internalType": "address"}, {"name": "wad", "type": "uint256", "internalType": "uint256"}], "outputs": [{"name": "", "type": "bool", "internalType": "bool"}], "stateMutability": "nonpayable"}, {"name": "balanceOf", "type": "function", "inputs": [{"name": "", "type": "address", "internalType": "address"}], "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}], "stateMutability": "view"}, {"name": "decimals", "type": "function", "inputs": [], "outputs": [{"name": "", "type": "uint8", "internalType": "uint8"}], "stateMutability": "view"}, {"name": "deposit", "type": "function", "inputs": [], "outputs": [], "stateMutability": "payable"}, {"name": "name", "type": "function", "inputs": [], "outputs": [{"name": "", "type": "string", "internalType": "string"}], "stateMutability": "view"}, {"name": "symbol", "type": "function", "inputs": [], "outputs": [{"name": "", "type": "string", "internalType": "string"}], "stateMutability": "view"}, {"name": "totalSupply", "type": "function", "inputs": [], "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}], "stateMutability": "view"}, {"name": "transfer", "type": "function", "inputs": [{"name": "dst", "type": "address", "internalType": "address"}, {"name": "wad", "type": "uint256", "internalType": "uint256"}], "outputs": [{"name": "", "type": "bool", "internalType": "bool"}], "stateMutability": "nonpayable"}, {"name": "transferFrom", "type": "function", "inputs": [{"name": "src", "type": "address", "internalType": "address"}, {"name": "dst", "type": "address", "internalType": "address"}, {"name": "wad", "type": "uint256", "internalType": "uint256"}], "outputs": [{"name": "", "type": "bool", "internalType": "bool"}], "stateMutability": "nonpayable"}, {"name": "withdraw", "type": "function", "inputs": [{"name": "wad", "type": "uint256", "internalType": "uint256"}], "outputs": [], "stateMutability": "nonpayable"}];
+
+  const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+  const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
+
+  function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  var findProgramAddress = async ({ token, owner })=>{
+
+    const [address] = await solanaWeb3_js.PublicKey.findProgramAddress(
+      [
+        (new solanaWeb3_js.PublicKey(owner)).toBuffer(),
+        (new solanaWeb3_js.PublicKey(TOKEN_PROGRAM)).toBuffer(),
+        (new solanaWeb3_js.PublicKey(token)).toBuffer()
+      ],
+      new solanaWeb3_js.PublicKey(ASSOCIATED_TOKEN_PROGRAM)
+    );
+
+    return _optionalChain$4([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
+  };
+
+  const MINT_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u32('mintAuthorityOption'),
+    solanaWeb3_js.publicKey('mintAuthority'),
+    solanaWeb3_js.u64('supply'),
+    solanaWeb3_js.u8('decimals'),
+    solanaWeb3_js.bool('isInitialized'),
+    solanaWeb3_js.u32('freezeAuthorityOption'),
+    solanaWeb3_js.publicKey('freezeAuthority')
+  ]);
+
+  const KEY_LAYOUT = solanaWeb3_js.rustEnum([
+    solanaWeb3_js.struct([], 'uninitialized'),
+    solanaWeb3_js.struct([], 'editionV1'),
+    solanaWeb3_js.struct([], 'masterEditionV1'),
+    solanaWeb3_js.struct([], 'reservationListV1'),
+    solanaWeb3_js.struct([], 'metadataV1'),
+    solanaWeb3_js.struct([], 'reservationListV2'),
+    solanaWeb3_js.struct([], 'masterEditionV2'),
+    solanaWeb3_js.struct([], 'editionMarker'),
+  ]);
+
+  const CREATOR_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.publicKey('address'),
+    solanaWeb3_js.bool('verified'),
+    solanaWeb3_js.u8('share'),
+  ]);
+
+  const DATA_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.str('name'),
+    solanaWeb3_js.str('symbol'),
+    solanaWeb3_js.str('uri'),
+    solanaWeb3_js.u16('sellerFeeBasisPoints'),
+    solanaWeb3_js.option(
+      solanaWeb3_js.vec(
+        CREATOR_LAYOUT.replicate('creators')
+      ),
+      'creators'
+    )
+  ]);
+
+  const METADATA_LAYOUT = solanaWeb3_js.struct([
+    KEY_LAYOUT.replicate('key'),
+    solanaWeb3_js.publicKey('updateAuthority'),
+    solanaWeb3_js.publicKey('mint'),
+    DATA_LAYOUT.replicate('data'),
+    solanaWeb3_js.bool('primarySaleHappened'),
+    solanaWeb3_js.bool('isMutable'),
+    solanaWeb3_js.option(solanaWeb3_js.u8(), 'editionNonce'),
+  ]);
+
+  const TRANSFER_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u8('instruction'),
+    solanaWeb3_js.u64('amount'),
+  ]);
+
+  const TOKEN_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.publicKey('mint'),
+    solanaWeb3_js.publicKey('owner'),
+    solanaWeb3_js.u64('amount'),
+    solanaWeb3_js.u32('delegateOption'),
+    solanaWeb3_js.publicKey('delegate'),
+    solanaWeb3_js.u8('state'),
+    solanaWeb3_js.u32('isNativeOption'),
+    solanaWeb3_js.u64('isNative'),
+    solanaWeb3_js.u64('delegatedAmount'),
+    solanaWeb3_js.u32('closeAuthorityOption'),
+    solanaWeb3_js.publicKey('closeAuthority')
+  ]);
+
+  const INITIALIZE_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u8('instruction'),
+    solanaWeb3_js.publicKey('owner')
+  ]);
+
+  const CLOSE_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u8('instruction')
+  ]);
+
+  const createTransferInstruction = async ({ token, amount, from, to })=>{
+
+    let fromTokenAccount = await findProgramAddress({ token, owner: from });
+    let toTokenAccount = await findProgramAddress({ token, owner: to });
+
+    const keys = [
+      { pubkey: new solanaWeb3_js.PublicKey(fromTokenAccount), isSigner: false, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(toTokenAccount), isSigner: false, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(from), isSigner: true, isWritable: false }
+    ];
+
+    const data = solanaWeb3_js.Buffer.alloc(TRANSFER_LAYOUT.span);
+    TRANSFER_LAYOUT.encode({
+      instruction: 3, // TRANSFER
+      amount: new solanaWeb3_js.BN(amount)
+    }, data);
+    
+    return new solanaWeb3_js.TransactionInstruction({ 
+      keys,
+      programId: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM),
+      data 
+    })
+  };
+
+  const createAssociatedTokenAccountInstruction = async ({ token, owner, payer }) => {
+
+    let associatedToken = await findProgramAddress({ token, owner });
+
+    const keys = [
+      { pubkey: new solanaWeb3_js.PublicKey(payer), isSigner: true, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(associatedToken), isSigner: false, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(owner), isSigner: false, isWritable: false },
+      { pubkey: new solanaWeb3_js.PublicKey(token), isSigner: false, isWritable: false },
+      { pubkey: solanaWeb3_js.SystemProgram.programId, isSigner: false, isWritable: false },
+      { pubkey: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM), isSigner: false, isWritable: false },
+    ];
+
+   return new solanaWeb3_js.TransactionInstruction({
+      keys,
+      programId: ASSOCIATED_TOKEN_PROGRAM,
+      data: solanaWeb3_js.Buffer.alloc(0)
+    })
+  };
+
+  const initializeAccountInstruction = ({ account, token, owner })=>{
+
+    const keys = [
+      { pubkey: new solanaWeb3_js.PublicKey(account), isSigner: false, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(token), isSigner: false, isWritable: false },
+    ];
+
+    const data = solanaWeb3_js.Buffer.alloc(INITIALIZE_LAYOUT.span);
+    INITIALIZE_LAYOUT.encode({
+      instruction: 18, // InitializeAccount3
+      owner: new solanaWeb3_js.PublicKey(owner)
+    }, data);
+    
+    return new solanaWeb3_js.TransactionInstruction({ keys, programId: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM), data })
+  };
+
+
+  const closeAccountInstruction = ({ account, owner })=>{
+
+    const keys = [
+      { pubkey: new solanaWeb3_js.PublicKey(account), isSigner: false, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(owner), isSigner: false, isWritable: true },
+      { pubkey: new solanaWeb3_js.PublicKey(owner), isSigner: true, isWritable: false }
+    ];
+
+    const data = solanaWeb3_js.Buffer.alloc(CLOSE_LAYOUT.span);
+    CLOSE_LAYOUT.encode({
+      instruction: 9 // CloseAccount
+    }, data);
+
+    return new solanaWeb3_js.TransactionInstruction({ keys, programId: new solanaWeb3_js.PublicKey(TOKEN_PROGRAM), data })
+  };
+
+  var instructions = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    createTransferInstruction: createTransferInstruction,
+    createAssociatedTokenAccountInstruction: createAssociatedTokenAccountInstruction,
+    initializeAccountInstruction: initializeAccountInstruction,
+    closeAccountInstruction: closeAccountInstruction
+  });
+
+  var balanceOnSolana = async ({ blockchain, address, account, api })=>{
+
+    if(address == web3Constants.CONSTANTS[blockchain].NATIVE) {
+
+       return ethers.ethers.BigNumber.from(await web3Client.request(`solana://${account}/balance`))
+
+    } else {
+
+      let filters = [
+        { dataSize: 165 },
+        { memcmp: { offset: 32, bytes: account }},
+        { memcmp: { offset: 0, bytes: address }}
+      ];
+
+      let tokenAccounts  = await web3Client.request(`solana://TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA/getProgramAccounts`, { params: { filters } });
+
+      let totalBalance = ethers.ethers.BigNumber.from('0');
+
+      await Promise.all(tokenAccounts.map((tokenAccount)=>{
+        return web3Client.request(`solana://${tokenAccount.pubkey.toString()}/getTokenAccountBalance`)
+      })).then((balances)=>{
+        balances.forEach((balance)=>{
+          totalBalance = totalBalance.add(ethers.ethers.BigNumber.from(balance.value.amount));
+        });
+      });
+
+      return totalBalance
+    }
+  };
+
+  var decimalsOnSolana = async ({ blockchain, address })=>{
+    let data = await web3Client.request({ blockchain, address, api: MINT_LAYOUT });
+    return data.decimals
+  };
+
+  var findAccount = async ({ token, owner })=>{
+
+    let existingAccounts = await web3Client.request(`solana://${TOKEN_PROGRAM}/getProgramAccounts`, {
+      api: TOKEN_LAYOUT,
+      params: { filters: [
+        { dataSize: 165 },
+        { memcmp: { offset: 32, bytes: owner }},
+        { memcmp: { offset: 0, bytes: token }}
+      ]} 
+    });
+
+    let existingAccount = existingAccounts.sort((a, b) => (a.account.data.amount.lt(b.account.data.amount) ? 1 : -1))[0];
+
+    if(existingAccount){
+      return existingAccount.pubkey.toString()
+    } 
+  };
+
   function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
   const METADATA_ACCOUNT = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 
@@ -1635,31 +2082,18 @@
     return _optionalChain$2([metaData, 'optionalAccess', _ => _.name])
   };
 
-  var symbolOnEVM = ({ blockchain, address, api })=>{
-    return web3Client.request(
-      {
-        blockchain,
-        address,
-        api,
-        method: 'symbol',
-        cache: 86400000, // 1 day
-      }
-    )
-  };
-
   function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
   var symbolOnSolana = async ({ blockchain, address })=>{
     let metaData = await getMetaData({ blockchain, address });
     return _optionalChain$1([metaData, 'optionalAccess', _ => _.symbol])
   };
 
-  var VRC20 = [{"name": "Approval", "type": "event", "inputs": [{"name": "src", "type": "address", "indexed": true, "internalType": "address"}, {"name": "guy", "type": "address", "indexed": true, "internalType": "address"}, {"name": "wad", "type": "uint256", "indexed": false, "internalType": "uint256"}], "anonymous": false}, {"name": "Deposit", "type": "event", "inputs": [{"name": "dst", "type": "address", "indexed": true, "internalType": "address"}, {"name": "wad", "type": "uint256", "indexed": false, "internalType": "uint256"}], "anonymous": false}, {"name": "Transfer", "type": "event", "inputs": [{"name": "src", "type": "address", "indexed": true, "internalType": "address"}, {"name": "dst", "type": "address", "indexed": true, "internalType": "address"}, {"name": "wad", "type": "uint256", "indexed": false, "internalType": "uint256"}], "anonymous": false}, {"name": "Withdrawal", "type": "event", "inputs": [{"name": "src", "type": "address", "indexed": true, "internalType": "address"}, {"name": "wad", "type": "uint256", "indexed": false, "internalType": "uint256"}], "anonymous": false}, {"type": "fallback", "stateMutability": "payable"}, {"name": "allowance", "type": "function", "inputs": [{"name": "", "type": "address", "internalType": "address"}, {"name": "", "type": "address", "internalType": "address"}], "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}], "stateMutability": "view"}, {"name": "approve", "type": "function", "inputs": [{"name": "guy", "type": "address", "internalType": "address"}, {"name": "wad", "type": "uint256", "internalType": "uint256"}], "outputs": [{"name": "", "type": "bool", "internalType": "bool"}], "stateMutability": "nonpayable"}, {"name": "balanceOf", "type": "function", "inputs": [{"name": "", "type": "address", "internalType": "address"}], "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}], "stateMutability": "view"}, {"name": "decimals", "type": "function", "inputs": [], "outputs": [{"name": "", "type": "uint8", "internalType": "uint8"}], "stateMutability": "view"}, {"name": "deposit", "type": "function", "inputs": [], "outputs": [], "stateMutability": "payable"}, {"name": "name", "type": "function", "inputs": [], "outputs": [{"name": "", "type": "string", "internalType": "string"}], "stateMutability": "view"}, {"name": "symbol", "type": "function", "inputs": [], "outputs": [{"name": "", "type": "string", "internalType": "string"}], "stateMutability": "view"}, {"name": "totalSupply", "type": "function", "inputs": [], "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}], "stateMutability": "view"}, {"name": "transfer", "type": "function", "inputs": [{"name": "dst", "type": "address", "internalType": "address"}, {"name": "wad", "type": "uint256", "internalType": "uint256"}], "outputs": [{"name": "", "type": "bool", "internalType": "bool"}], "stateMutability": "nonpayable"}, {"name": "transferFrom", "type": "function", "inputs": [{"name": "src", "type": "address", "internalType": "address"}, {"name": "dst", "type": "address", "internalType": "address"}, {"name": "wad", "type": "uint256", "internalType": "uint256"}], "outputs": [{"name": "", "type": "bool", "internalType": "bool"}], "stateMutability": "nonpayable"}, {"name": "withdraw", "type": "function", "inputs": [{"name": "wad", "type": "uint256", "internalType": "uint256"}], "outputs": [], "stateMutability": "nonpayable"}];
-
-  let supported = ['ethereum', 'bsc', 'polygon', 'solana', 'velas'];
-  supported.evm = ['ethereum', 'bsc', 'polygon', 'velas'];
+  let supported = ['ethereum', 'bsc', 'polygon', 'solana', 'fantom', 'velas'];
+  supported.evm = ['ethereum', 'bsc', 'polygon', 'fantom', 'velas'];
   supported.solana = ['solana'];
 
   function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+
   class Token {
     
     constructor({ blockchain, address }) {
@@ -1678,9 +2112,14 @@
       let decimals;
       try {
         if(supported.evm.includes(this.blockchain)) {
+
           decimals = await decimalsOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT });
+
         } else if(supported.solana.includes(this.blockchain)) {
+
           decimals = await decimalsOnSolana({ blockchain: this.blockchain, address: this.address });
+
+          
         }
       } catch (e) {}
       return decimals
@@ -1691,9 +2130,13 @@
         return web3Constants.CONSTANTS[this.blockchain].SYMBOL
       }
       if(supported.evm.includes(this.blockchain)) {
+
         return await symbolOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
+
       } else if(supported.solana.includes(this.blockchain)) {
+
         return await symbolOnSolana({ blockchain: this.blockchain, address: this.address })
+
       }
     }
 
@@ -1702,17 +2145,25 @@
         return web3Constants.CONSTANTS[this.blockchain].CURRENCY
       }
       if(supported.evm.includes(this.blockchain)) {
+
         return await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, id: _optionalChain([args, 'optionalAccess', _ => _.id]) })
+
       } else if(supported.solana.includes(this.blockchain)) {
+
         return await nameOnSolana({ blockchain: this.blockchain, address: this.address })
+
       }
     }
 
     async balance(account, id) {
       if(supported.evm.includes(this.blockchain)) {
+
         return await balanceOnEVM({ blockchain: this.blockchain, account, address: this.address, api: id ? Token[this.blockchain][1155] : Token[this.blockchain].DEFAULT, id })
+
       } else if(supported.solana.includes(this.blockchain)) {
+
         return await balanceOnSolana({ blockchain: this.blockchain, account, address: this.address, api: Token[this.blockchain].DEFAULT })
+
       }
     }
 
@@ -1721,7 +2172,9 @@
         return ethers.ethers.BigNumber.from(web3Constants.CONSTANTS[this.blockchain].MAXINT)
       }
       if(supported.evm.includes(this.blockchain)) {
+
         return await allowanceOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, owner, spender })
+
       } else if(supported.solana.includes(this.blockchain)) {
         return ethers.ethers.BigNumber.from(web3Constants.CONSTANTS[this.blockchain].MAXINT)
       } 
@@ -1758,6 +2211,7 @@
     return parseFloat(amount.toFixed(decimals))
   };
 
+
   Token.ethereum = { 
     DEFAULT: ERC20,
     ERC20,
@@ -1777,6 +2231,13 @@
     ERC20: ERC20onPolygon,
     20: ERC20onPolygon,
     1155: bsc1155,
+  };
+
+  Token.fantom = {
+    DEFAULT: FTM20,
+    FTM20,
+    20: FTM20,
+    1155: ftm1155,
   };
 
   Token.velas = {

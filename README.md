@@ -32,14 +32,23 @@ This library supports the following blockchains:
 - [BNB Smart Chain](https://www.binance.org/smartChain)
 - [Polygon](https://polygon.technology)
 - [Solana](https://solana.com)
+- [Fantom](https://fantom.foundation)
 - [Velas](https://velas.com)
 
 ## Platform specific packaging
 
 In case you want to use and package only specific platforms, use platform-specific packages:
 
+### EVM specific packaging
+
 ```javascript
 import { Token } from '@depay/web3-tokens-evm'
+```
+
+### SOLANA specific packaging
+
+```javascript
+import { Token } from '@depay/web3-tokens-solana'
 ```
 
 ## Functionalities

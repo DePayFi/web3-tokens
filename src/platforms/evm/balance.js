@@ -1,5 +1,18 @@
-import { CONSTANTS } from '@depay/web3-constants'
+/*#if _EVM
+
+import { request } from '@depay/web3-client-evm'
+
+/*#elif _SOLANA
+
+import { request } from '@depay/web3-client-solana'
+
+//#else */
+
 import { request } from '@depay/web3-client'
+
+//#endif
+
+import { CONSTANTS } from '@depay/web3-constants'
 
 export default async ({ blockchain, address, account, api, id })=>{
   if (address == CONSTANTS[blockchain].NATIVE) {

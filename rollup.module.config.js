@@ -1,5 +1,6 @@
 import commonjs from '@rollup/plugin-commonjs'
 import globals from './rollup.globals.js'
+import jscc from 'rollup-plugin-jscc'
 import pkg from './package.json'
 import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
@@ -26,6 +27,7 @@ export default {
     ...Object.keys(pkg.peerDependencies || {}),
   ],
   plugins: [
+    jscc(),
     sucrase({
       exclude: ['node_modules/**'],
       transforms: ['jsx']

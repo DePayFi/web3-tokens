@@ -1,4 +1,4 @@
-import { Token } from 'src/index.evm'
+import { Token } from 'dist/esm/index.evm'
 
 describe('Token', () => {
   describe('standards', () => {
