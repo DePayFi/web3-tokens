@@ -1,10 +1,10 @@
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
 import { request } from '@depay/web3-client'
 
 export default async ({ blockchain, address, account, api })=>{
 
-  if(address == CONSTANTS[blockchain].NATIVE) {
+  if(address == Blockchains[blockchain].currency.address) {
 
      return ethers.BigNumber.from(await request(`solana://${account}/balance`))
 

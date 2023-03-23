@@ -1,4 +1,4 @@
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, getProvider } from '@depay/web3-client-evm'
 import { supported } from 'src/blockchains'
@@ -44,7 +44,7 @@ describe('Token balance (evm)', () => {
             return: '12345'
           }
         })
-        let token = new Token({ blockchain, address: CONSTANTS[blockchain].NATIVE })
+        let token = new Token({ blockchain, address: Blockchains[blockchain].currency.address })
         let balance = await token.balance('0xb0252f13850a4823706607524de0b146820F2240')
         expect(balance.toString()).toEqual('12345')
       })

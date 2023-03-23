@@ -1,8 +1,12 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-client'), require('@depay/web3-constants'), require('@depay/solana-web3.js'), require('ethers')) :
-  typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-client', '@depay/web3-constants', '@depay/solana-web3.js', 'ethers'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.Web3Client, global.Web3Constants, global.SolanaWeb3js, global.ethers));
-})(this, (function (exports, web3Client, web3Constants, solanaWeb3_js, ethers) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-client'), require('@depay/web3-blockchains'), require('@depay/solana-web3.js'), require('ethers')) :
+  typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-client', '@depay/web3-blockchains', '@depay/solana-web3.js', 'ethers'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.Web3Client, global.Web3Blockchains, global.SolanaWeb3js, global.ethers));
+})(this, (function (exports, web3Client, Blockchains, solanaWeb3_js, ethers) { 'use strict';
+
+  function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+  var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
 
   var allowanceOnEVM = ({ blockchain, address, api, owner, spender })=>{
     return web3Client.request(
@@ -18,7 +22,7 @@
   };
 
   var balanceOnEVM = async ({ blockchain, address, account, api, id })=>{
-    if (address == web3Constants.CONSTANTS[blockchain].NATIVE) {
+    if (address == Blockchains__default["default"][blockchain].currency.address) {
       return await web3Client.request(
         {
           blockchain: blockchain,
@@ -1991,7 +1995,7 @@
 
   var balanceOnSolana = async ({ blockchain, address, account, api })=>{
 
-    if(address == web3Constants.CONSTANTS[blockchain].NATIVE) {
+    if(address == Blockchains__default["default"][blockchain].currency.address) {
 
        return ethers.ethers.BigNumber.from(await web3Client.request(`solana://${account}/balance`))
 
@@ -2106,8 +2110,8 @@
     }
 
     async decimals() {
-      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return web3Constants.CONSTANTS[this.blockchain].DECIMALS
+      if (this.address == Blockchains__default["default"].findByName(this.blockchain).currency.address) {
+        return Blockchains__default["default"].findByName(this.blockchain).currency.decimals
       }
       let decimals;
       try {
@@ -2126,8 +2130,8 @@
     }
 
     async symbol() {
-      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return web3Constants.CONSTANTS[this.blockchain].SYMBOL
+      if (this.address == Blockchains__default["default"].findByName(this.blockchain).currency.address) {
+        return Blockchains__default["default"].findByName(this.blockchain).currency.symbol
       }
       if(supported.evm.includes(this.blockchain)) {
 
@@ -2141,8 +2145,8 @@
     }
 
     async name(args) {
-      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return web3Constants.CONSTANTS[this.blockchain].CURRENCY
+      if (this.address == Blockchains__default["default"].findByName(this.blockchain).currency.address) {
+        return Blockchains__default["default"].findByName(this.blockchain).currency.name
       }
       if(supported.evm.includes(this.blockchain)) {
 
@@ -2168,15 +2172,15 @@
     }
 
     async allowance(owner, spender) {
-      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return ethers.ethers.BigNumber.from(web3Constants.CONSTANTS[this.blockchain].MAXINT)
+      if (this.address == Blockchains__default["default"].findByName(this.blockchain).currency.address) {
+        return ethers.ethers.BigNumber.from(Blockchains__default["default"].findByName(this.blockchain).maxInt)
       }
       if(supported.evm.includes(this.blockchain)) {
 
         return await allowanceOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, owner, spender })
 
       } else if(supported.solana.includes(this.blockchain)) {
-        return ethers.ethers.BigNumber.from(web3Constants.CONSTANTS[this.blockchain].MAXINT)
+        return ethers.ethers.BigNumber.from(Blockchains__default["default"].findByName(this.blockchain).maxInt)
       } 
     }
 

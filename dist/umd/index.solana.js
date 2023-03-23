@@ -1,13 +1,17 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/solana-web3.js'), require('@depay/web3-constants'), require('ethers'), require('@depay/web3-blockchains')) :
-  typeof define === 'function' && define.amd ? define(['exports', '@depay/solana-web3.js', '@depay/web3-constants', 'ethers', '@depay/web3-blockchains'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.SolanaWeb3js, global.Web3Constants, global.ethers, global.Web3Blockchains));
-})(this, (function (exports, solanaWeb3_js, web3Constants, ethers, web3Blockchains) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/solana-web3.js'), require('@depay/web3-blockchains'), require('ethers')) :
+  typeof define === 'function' && define.amd ? define(['exports', '@depay/solana-web3.js', '@depay/web3-blockchains', 'ethers'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.SolanaWeb3js, global.Web3Blockchains, global.ethers));
+})(this, (function (exports, solanaWeb3_js, Blockchains, ethers) { 'use strict';
+
+  function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+  var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
 
   const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
   const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
 
-  function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
   var findProgramAddress = async ({ token, owner })=>{
 
     const [address] = await solanaWeb3_js.PublicKey.findProgramAddress(
@@ -19,7 +23,7 @@
       new solanaWeb3_js.PublicKey(ASSOCIATED_TOKEN_PROGRAM)
     );
 
-    return _optionalChain$4([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
+    return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
   };
 
   const MINT_LAYOUT = solanaWeb3_js.struct([
@@ -198,7 +202,7 @@
     }
 
     detectNetwork() {
-      return Promise.resolve(web3Blockchains.Blockchain.findByName(this._network).id)
+      return Promise.resolve(Blockchains__default["default"].findByName(this._network).id)
     }
 
     requestChunk(chunk, endpoint) {
@@ -475,7 +479,7 @@
   supported$1.evm = ['ethereum', 'bsc', 'polygon', 'fantom', 'velas'];
   supported$1.solana = ['solana'];
 
-  function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  function _optionalChain$1$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
   let getCacheStore = () => {
     if (getWindow()._cacheStore == undefined) {
       resetCache();
@@ -505,7 +509,7 @@
 
   let get = function ({ key, expires }) {
     let cachedEntry = getCacheStore()[key];
-    if (_optionalChain$3([cachedEntry, 'optionalAccess', _ => _.expiresAt]) > Date.now()) {
+    if (_optionalChain$1$1([cachedEntry, 'optionalAccess', _ => _.expiresAt]) > Date.now()) {
       return cachedEntry.value
     }
   };
@@ -714,7 +718,7 @@
 
   var balanceOnSolana = async ({ blockchain, address, account, api })=>{
 
-    if(address == web3Constants.CONSTANTS[blockchain].NATIVE) {
+    if(address == Blockchains__default["default"][blockchain].currency.address) {
 
        return ethers.ethers.BigNumber.from(await request(`solana://${account}/balance`))
 
@@ -827,8 +831,8 @@
     }
 
     async decimals() {
-      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return web3Constants.CONSTANTS[this.blockchain].DECIMALS
+      if (this.address == Blockchains__default["default"].findByName(this.blockchain).currency.address) {
+        return Blockchains__default["default"].findByName(this.blockchain).currency.decimals
       }
       let decimals;
       try {
@@ -845,8 +849,8 @@
     }
 
     async symbol() {
-      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return web3Constants.CONSTANTS[this.blockchain].SYMBOL
+      if (this.address == Blockchains__default["default"].findByName(this.blockchain).currency.address) {
+        return Blockchains__default["default"].findByName(this.blockchain).currency.symbol
       }
       if(supported.evm.includes(this.blockchain)) ; else if(supported.solana.includes(this.blockchain)) {
 
@@ -856,8 +860,8 @@
     }
 
     async name(args) {
-      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return web3Constants.CONSTANTS[this.blockchain].CURRENCY
+      if (this.address == Blockchains__default["default"].findByName(this.blockchain).currency.address) {
+        return Blockchains__default["default"].findByName(this.blockchain).currency.name
       }
       if(supported.evm.includes(this.blockchain)) ; else if(supported.solana.includes(this.blockchain)) {
 
@@ -875,11 +879,11 @@
     }
 
     async allowance(owner, spender) {
-      if (this.address == web3Constants.CONSTANTS[this.blockchain].NATIVE) {
-        return ethers.ethers.BigNumber.from(web3Constants.CONSTANTS[this.blockchain].MAXINT)
+      if (this.address == Blockchains__default["default"].findByName(this.blockchain).currency.address) {
+        return ethers.ethers.BigNumber.from(Blockchains__default["default"].findByName(this.blockchain).maxInt)
       }
       if(supported.evm.includes(this.blockchain)) ; else if(supported.solana.includes(this.blockchain)) {
-        return ethers.ethers.BigNumber.from(web3Constants.CONSTANTS[this.blockchain].MAXINT)
+        return ethers.ethers.BigNumber.from(Blockchains__default["default"].findByName(this.blockchain).maxInt)
       } 
     }
 

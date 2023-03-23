@@ -1,12 +1,11 @@
 import { PublicKey, struct, u32, publicKey, u64, u8, bool, rustEnum, str, u16, option, vec, Buffer, BN, TransactionInstruction, SystemProgram, ACCOUNT_LAYOUT, Connection } from '@depay/solana-web3.js';
-import { CONSTANTS } from '@depay/web3-constants';
+import Blockchains from '@depay/web3-blockchains';
 import { ethers } from 'ethers';
-import { Blockchain } from '@depay/web3-blockchains';
 
 const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
 const ASSOCIATED_TOKEN_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
 
-function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 var findProgramAddress = async ({ token, owner })=>{
 
   const [address] = await PublicKey.findProgramAddress(
@@ -18,7 +17,7 @@ var findProgramAddress = async ({ token, owner })=>{
     new PublicKey(ASSOCIATED_TOKEN_PROGRAM)
   );
 
-  return _optionalChain$4([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
+  return _optionalChain$3([address, 'optionalAccess', _ => _.toString, 'call', _2 => _2()])
 };
 
 const MINT_LAYOUT = struct([
@@ -197,7 +196,7 @@ class StaticJsonRpcBatchProvider extends ethers.providers.JsonRpcProvider {
   }
 
   detectNetwork() {
-    return Promise.resolve(Blockchain.findByName(this._network).id)
+    return Promise.resolve(Blockchains.findByName(this._network).id)
   }
 
   requestChunk(chunk, endpoint) {
@@ -474,7 +473,7 @@ let supported$1 = ['ethereum', 'bsc', 'polygon', 'solana', 'fantom', 'velas'];
 supported$1.evm = ['ethereum', 'bsc', 'polygon', 'fantom', 'velas'];
 supported$1.solana = ['solana'];
 
-function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+function _optionalChain$1$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 let getCacheStore = () => {
   if (getWindow()._cacheStore == undefined) {
     resetCache();
@@ -504,7 +503,7 @@ let set = function ({ key, value, expires }) {
 
 let get = function ({ key, expires }) {
   let cachedEntry = getCacheStore()[key];
-  if (_optionalChain$3([cachedEntry, 'optionalAccess', _ => _.expiresAt]) > Date.now()) {
+  if (_optionalChain$1$1([cachedEntry, 'optionalAccess', _ => _.expiresAt]) > Date.now()) {
     return cachedEntry.value
   }
 };
@@ -713,7 +712,7 @@ let request = async function (url, options) {
 
 var balanceOnSolana = async ({ blockchain, address, account, api })=>{
 
-  if(address == CONSTANTS[blockchain].NATIVE) {
+  if(address == Blockchains[blockchain].currency.address) {
 
      return ethers.BigNumber.from(await request(`solana://${account}/balance`))
 
@@ -826,8 +825,8 @@ class Token {
   }
 
   async decimals() {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return CONSTANTS[this.blockchain].DECIMALS
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return Blockchains.findByName(this.blockchain).currency.decimals
     }
     let decimals;
     try {
@@ -844,8 +843,8 @@ class Token {
   }
 
   async symbol() {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return CONSTANTS[this.blockchain].SYMBOL
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return Blockchains.findByName(this.blockchain).currency.symbol
     }
     if(supported.evm.includes(this.blockchain)) ; else if(supported.solana.includes(this.blockchain)) {
 
@@ -855,8 +854,8 @@ class Token {
   }
 
   async name(args) {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return CONSTANTS[this.blockchain].CURRENCY
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return Blockchains.findByName(this.blockchain).currency.name
     }
     if(supported.evm.includes(this.blockchain)) ; else if(supported.solana.includes(this.blockchain)) {
 
@@ -874,11 +873,11 @@ class Token {
   }
 
   async allowance(owner, spender) {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return ethers.BigNumber.from(CONSTANTS[this.blockchain].MAXINT)
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return ethers.BigNumber.from(Blockchains.findByName(this.blockchain).maxInt)
     }
     if(supported.evm.includes(this.blockchain)) ; else if(supported.solana.includes(this.blockchain)) {
-      return ethers.BigNumber.from(CONSTANTS[this.blockchain].MAXINT)
+      return ethers.BigNumber.from(Blockchains.findByName(this.blockchain).maxInt)
     } 
   }
 

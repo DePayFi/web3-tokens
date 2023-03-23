@@ -1,5 +1,5 @@
 import { Buffer } from '@depay/solana-web3.js'
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, getProvider } from '@depay/web3-client'
 import { supported } from 'src/blockchains'
@@ -81,7 +81,7 @@ describe('Token', () => {
             }
           })
 
-          let token = new Token({ blockchain, address: CONSTANTS[blockchain].NATIVE })
+          let token = new Token({ blockchain, address: Blockchains[blockchain].currency.address })
           let balance = await token.balance('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1')
 
           expect(balance.toString()).toEqual('232111122321')

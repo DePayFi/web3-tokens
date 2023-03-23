@@ -1,5 +1,5 @@
 import { request } from '@depay/web3-client';
-import { CONSTANTS } from '@depay/web3-constants';
+import Blockchains from '@depay/web3-blockchains';
 import { PublicKey, struct, u32, publicKey, u64, u8, bool, rustEnum, str, u16, option, vec, Buffer, BN, TransactionInstruction, SystemProgram } from '@depay/solana-web3.js';
 import { ethers } from 'ethers';
 
@@ -17,7 +17,7 @@ var allowanceOnEVM = ({ blockchain, address, api, owner, spender })=>{
 };
 
 var balanceOnEVM = async ({ blockchain, address, account, api, id })=>{
-  if (address == CONSTANTS[blockchain].NATIVE) {
+  if (address == Blockchains[blockchain].currency.address) {
     return await request(
       {
         blockchain: blockchain,
@@ -1990,7 +1990,7 @@ var instructions = /*#__PURE__*/Object.freeze({
 
 var balanceOnSolana = async ({ blockchain, address, account, api })=>{
 
-  if(address == CONSTANTS[blockchain].NATIVE) {
+  if(address == Blockchains[blockchain].currency.address) {
 
      return ethers.BigNumber.from(await request(`solana://${account}/balance`))
 
@@ -2105,8 +2105,8 @@ class Token {
   }
 
   async decimals() {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return CONSTANTS[this.blockchain].DECIMALS
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return Blockchains.findByName(this.blockchain).currency.decimals
     }
     let decimals;
     try {
@@ -2125,8 +2125,8 @@ class Token {
   }
 
   async symbol() {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return CONSTANTS[this.blockchain].SYMBOL
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return Blockchains.findByName(this.blockchain).currency.symbol
     }
     if(supported.evm.includes(this.blockchain)) {
 
@@ -2140,8 +2140,8 @@ class Token {
   }
 
   async name(args) {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return CONSTANTS[this.blockchain].CURRENCY
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return Blockchains.findByName(this.blockchain).currency.name
     }
     if(supported.evm.includes(this.blockchain)) {
 
@@ -2167,15 +2167,15 @@ class Token {
   }
 
   async allowance(owner, spender) {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return ethers.BigNumber.from(CONSTANTS[this.blockchain].MAXINT)
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return ethers.BigNumber.from(Blockchains.findByName(this.blockchain).maxInt)
     }
     if(supported.evm.includes(this.blockchain)) {
 
       return await allowanceOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, owner, spender })
 
     } else if(supported.solana.includes(this.blockchain)) {
-      return ethers.BigNumber.from(CONSTANTS[this.blockchain].MAXINT)
+      return ethers.BigNumber.from(Blockchains.findByName(this.blockchain).maxInt)
     } 
   }
 

@@ -1,5 +1,5 @@
 import fetchMock from 'fetch-mock'
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, getProvider } from '@depay/web3-client-evm'
 import { supported } from 'src/blockchains'
@@ -89,8 +89,8 @@ describe('Token basics', () => {
 
         expect(token.address).toEqual('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
         expect(await token.decimals()).toEqual(18)
-        expect(await token.symbol()).toEqual(CONSTANTS[blockchain].SYMBOL)
-        expect(await token.name()).toEqual(CONSTANTS[blockchain].CURRENCY)
+        expect(await token.symbol()).toEqual(Blockchains[blockchain].currency.symbol)
+        expect(await token.name()).toEqual(Blockchains[blockchain].currency.name)
       })
 
       describe('name for NFT token by id', ()=>{

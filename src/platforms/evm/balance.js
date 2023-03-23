@@ -12,10 +12,10 @@ import { request } from '@depay/web3-client'
 
 //#endif
 
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 
 export default async ({ blockchain, address, account, api, id })=>{
-  if (address == CONSTANTS[blockchain].NATIVE) {
+  if (address == Blockchains[blockchain].currency.address) {
     return await request(
       {
         blockchain: blockchain,

@@ -62,7 +62,7 @@ import { TOKEN_PROGRAM, ASSOCIATED_TOKEN_PROGRAM } from './platforms/solana/cons
 
 //#endif
 
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
 import { supported } from './blockchains'
 
@@ -78,8 +78,8 @@ class Token {
   }
 
   async decimals() {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return CONSTANTS[this.blockchain].DECIMALS
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return Blockchains.findByName(this.blockchain).currency.decimals
     }
     let decimals
     try {
@@ -114,8 +114,8 @@ class Token {
   }
 
   async symbol() {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return CONSTANTS[this.blockchain].SYMBOL
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return Blockchains.findByName(this.blockchain).currency.symbol
     }
     if(supported.evm.includes(this.blockchain)) {
       /*#if _EVM
@@ -145,8 +145,8 @@ class Token {
   }
 
   async name(args) {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return CONSTANTS[this.blockchain].CURRENCY
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return Blockchains.findByName(this.blockchain).currency.name
     }
     if(supported.evm.includes(this.blockchain)) {
       /*#if _EVM
@@ -204,8 +204,8 @@ class Token {
   }
 
   async allowance(owner, spender) {
-    if (this.address == CONSTANTS[this.blockchain].NATIVE) {
-      return ethers.BigNumber.from(CONSTANTS[this.blockchain].MAXINT)
+    if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
+      return ethers.BigNumber.from(Blockchains.findByName(this.blockchain).maxInt)
     }
     if(supported.evm.includes(this.blockchain)) {
       /*#if _EVM
@@ -220,7 +220,7 @@ class Token {
 
       //#endif
     } else if(supported.solana.includes(this.blockchain)) {
-      return ethers.BigNumber.from(CONSTANTS[this.blockchain].MAXINT)
+      return ethers.BigNumber.from(Blockchains.findByName(this.blockchain).maxInt)
     } 
   }
 

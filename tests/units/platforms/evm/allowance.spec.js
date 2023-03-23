@@ -1,4 +1,4 @@
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, getProvider } from '@depay/web3-client'
 import { supported } from 'src/blockchains'
@@ -32,24 +32,24 @@ describe('Token allowance', () => {
             api: Token[blockchain].DEFAULT,
             method: 'allowance',
             params: [owner, spender],
-            return: CONSTANTS[blockchain].MAXINT
+            return: Blockchains[blockchain].maxInt
           }
         })
         
         let token = new Token({ blockchain, address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb' })
         let allowance = await token.allowance(accounts[0], '0xb0252f13850a4823706607524de0b146820F2240')
         
-        expect(allowance.toString()).toEqual(CONSTANTS[blockchain].MAXINT)
+        expect(allowance.toString()).toEqual(Blockchains[blockchain].maxInt)
       })
 
       it('retrieves allowance amount for given address for the native token', async ()=> {
         let owner = '0xb0252f13850a4823706607524de0b146820F2240'
         let spender = '0xb0252f13850a4823706607524de0b146820F2240'
 
-        let token = new Token({ blockchain, address: CONSTANTS[blockchain].NATIVE })
+        let token = new Token({ blockchain, address: Blockchains[blockchain].currency.address })
         let allowance = await token.allowance(accounts[0], '0xb0252f13850a4823706607524de0b146820F2240')
         
-        expect(allowance.toString()).toEqual(CONSTANTS[blockchain].MAXINT)
+        expect(allowance.toString()).toEqual(Blockchains[blockchain].maxInt)
       })
     })
   })

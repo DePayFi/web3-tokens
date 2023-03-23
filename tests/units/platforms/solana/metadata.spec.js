@@ -1,4 +1,4 @@
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, getProvider } from '@depay/web3-client'
 import { supported } from 'src/blockchains'
@@ -67,12 +67,12 @@ describe('Token', () => {
 
         let token = new Token({
           blockchain,
-          address: CONSTANTS[blockchain].NATIVE
+          address: Blockchains[blockchain].currency.address
         })
 
-        expect(token.address).toEqual(CONSTANTS[blockchain].NATIVE)
-        expect(await token.symbol()).toEqual(CONSTANTS[blockchain].SYMBOL)
-        expect(await token.name()).toEqual(CONSTANTS[blockchain].CURRENCY)
+        expect(token.address).toEqual(Blockchains[blockchain].currency.address)
+        expect(await token.symbol()).toEqual(Blockchains[blockchain].currency.symbol)
+        expect(await token.name()).toEqual(Blockchains[blockchain].currency.name)
       })
     })
   })
