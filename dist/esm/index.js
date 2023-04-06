@@ -2190,8 +2190,7 @@ class Token {
   async readable(amount) {
     let decimals = await this.decimals();
     let readable = ethers.utils.formatUnits(amount.toString(), decimals);
-    readable = readable.replace(/0+$/, '');
-    readable = readable.replace(/\.$/, '');
+    readable = readable.replace(/\.0+$/, '');
     return readable
   }
 }
