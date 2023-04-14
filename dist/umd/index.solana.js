@@ -143,7 +143,7 @@
 
    return new solanaWeb3_js.TransactionInstruction({
       keys,
-      programId: ASSOCIATED_TOKEN_PROGRAM,
+      programId: new solanaWeb3_js.PublicKey(ASSOCIATED_TOKEN_PROGRAM),
       data: solanaWeb3_js.Buffer.alloc(0)
     })
   };

@@ -1942,7 +1942,7 @@ const createAssociatedTokenAccountInstruction = async ({ token, owner, payer }) 
 
  return new TransactionInstruction({
     keys,
-    programId: ASSOCIATED_TOKEN_PROGRAM,
+    programId: new PublicKey(ASSOCIATED_TOKEN_PROGRAM),
     data: Buffer.alloc(0)
   })
 };

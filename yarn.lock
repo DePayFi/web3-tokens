@@ -1029,15 +1029,10 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     to-fast-properties "^2.0.0"
 
-"@depay/solana-web3.js@^1.20.15":
-  version "1.20.15"
-  resolved "https://registry.yarnpkg.com/@depay/solana-web3.js/-/solana-web3.js-1.20.15.tgz#6e18476209e04cf29dd30761102e58a0a5b98b4d"
-  integrity sha512-diPDtBTQDmWDeHo32xWKIO7syd8Vk/wDez8PCU9S4q8RArU8vwBM/fpAlxn+LTBR3O1ci3BTgD/YwDtwAuD7Ig==
-
-"@depay/web3-blockchains@^7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-7.0.0.tgz#d319befc16aa7019428e76b6bc7df607cd2955ac"
-  integrity sha512-79L2Fz0umZ2ToBltA2XtbOqXVi33ocUsOXdHBFpEUC6XXBedP7d4aRcwS/NFFe6y7PBxV3jqbAAvzCamL+wq6g==
+"@depay/solana-web3.js@^1.21.2":
+  version "1.21.2"
+  resolved "https://registry.yarnpkg.com/@depay/solana-web3.js/-/solana-web3.js-1.21.2.tgz#65b2b60b66ad8b42f717ee22bc753ca538f2f56e"
+  integrity sha512-9UON+nXRrFnCYqg2vcGceP+4Ly+zzAJ88RthuvVhHtIfPeEqDyjj9S77iwZT/4/lmYDnUPoC9pl4otfmX7B+9w==
 
 "@depay/web3-blockchains@^7.1.0":
   version "7.1.0"
@@ -1059,13 +1054,13 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-client/-/web3-client-10.7.0.tgz#2f186c23a393e2d356cfddf7f57c441623f1184a"
   integrity sha512-TtYvfnk/b6ccgn555YXl308A0kX3EODxqxZef0h4wc/sNOcrv/fWafWdfgdqyuu2iFiD2Lga38RhREzQogEDIg==
 
-"@depay/web3-mock@^13.26.0":
-  version "13.26.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-mock/-/web3-mock-13.26.0.tgz#d7ad4faf1f8b0f650e2bacb4ffeae1022ecf71de"
-  integrity sha512-LMticjDtjhifYRC9wCW0VNEt1OS5Asexu7BKY8EyF/C7FWO74YV+TxzILVpPAWLNnKLV9m2KxIs0W30U0QMwFw==
+"@depay/web3-mock@^14.0.0":
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/@depay/web3-mock/-/web3-mock-14.0.0.tgz#b2aa490f20ae248f8e1777ccb0891a9aacc22926"
+  integrity sha512-sWZEGcRya1KHbCr8ZVH+WohWiC1TmtzXfDvOf1t9zfqtkKi/EAX8Tw5jw/rcksZl7NXho2N/WEwDb7G8+KRvYg==
   dependencies:
-    "@depay/solana-web3.js" "^1.20.15"
-    "@depay/web3-blockchains" "^7.0.0"
+    "@depay/solana-web3.js" "^1.21.2"
+    "@depay/web3-blockchains" "^7.1.0"
     ethers "^5.7.1"
 
 "@eslint/eslintrc@^0.4.3":
