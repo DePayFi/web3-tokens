@@ -1,7 +1,7 @@
 {
   "name": "@depay/web3-tokens-solana",
   "moduleName": "Web3Tokens",
-  "version": "9.19.1",
+  "version": "9.19.2",
   "description": "JavaScript library providing basic functionalities to interact with web3 tokens.",
   "main": "dist/umd/index.solana.js",
   "module": "dist/esm/index.solana.js",

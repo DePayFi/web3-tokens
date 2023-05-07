@@ -2036,7 +2036,7 @@
       blockchain: 'solana',
       address,
       api: TOKEN_LAYOUT,
-      cache: 7200
+      cache: 10000 // 10s
     });
 
     return existingAccount
