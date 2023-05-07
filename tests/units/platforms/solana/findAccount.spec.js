@@ -21,7 +21,7 @@ describe('findAccount', () => {
 
       describe('token account already exists', ()=> {
 
-        it('returns existing account with highest amount', async ()=>{
+        it('returns existing account', async ()=>{
 
           const data = Buffer.alloc(ACCOUNT_LAYOUT.span)
           ACCOUNT_LAYOUT.encode({
@@ -42,26 +42,43 @@ describe('findAccount', () => {
             blockchain,
             provider,
             request: {
-              to: TOKEN_PROGRAM,
-              method: 'getProgramAccounts',
-              params: { filters: [
-                { dataSize: 165 },
-                { memcmp: { offset: 32, bytes: '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1' }},
-                { memcmp: { offset: 0, bytes: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' }}
-              ]},
-              return: [{
-                account: { data, executable: false, lamports: 2039280, owner: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', rentEpoch: 327 },
-                pubkey: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
-              }]
+              to: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              method: 'getAccountInfo',
+              return: data
             }
           })
 
-          let tokenAccountAddress = await Token.solana.findAccount({ 
+          let tokenAccount = await Token.solana.findAccount({ 
             owner: '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1',
             token: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' 
           })
 
-          expect(tokenAccountAddress).toEqual('F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9')
+          expect(tokenAccount.mint.toString()).toEqual('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+          expect(tokenAccount.owner.toString()).toEqual('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1')
+          expect(tokenAccount.amount.toString()).toEqual('6774847')
+        })
+      })
+
+      describe('token account does not exists (yet)', ()=> {
+
+        it('returns nothing', async ()=>{
+          
+          mock({
+            blockchain,
+            provider,
+            request: {
+              to: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              method: 'getAccountInfo',
+              return: null
+            }
+          })
+
+          let tokenAccount = await Token.solana.findAccount({ 
+            owner: '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1',
+            token: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' 
+          })
+
+          expect(tokenAccount).toEqual(undefined)
         })
       })
     })

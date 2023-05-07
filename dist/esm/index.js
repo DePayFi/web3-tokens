@@ -2025,20 +2025,16 @@ var decimalsOnSolana = async ({ blockchain, address })=>{
 
 var findAccount = async ({ token, owner })=>{
 
-  let existingAccounts = await request(`solana://${TOKEN_PROGRAM}/getProgramAccounts`, {
+  const address = await findProgramAddress({ token, owner });
+
+  const existingAccount = await request({
+    blockchain: 'solana',
+    address,
     api: TOKEN_LAYOUT,
-    params: { filters: [
-      { dataSize: 165 },
-      { memcmp: { offset: 32, bytes: owner }},
-      { memcmp: { offset: 0, bytes: token }}
-    ]} 
+    cache: 7200
   });
 
-  let existingAccount = existingAccounts.sort((a, b) => (a.account.data.amount.lt(b.account.data.amount) ? 1 : -1))[0];
-
-  if(existingAccount){
-    return existingAccount.pubkey.toString()
-  } 
+  return existingAccount
 };
 
 function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
