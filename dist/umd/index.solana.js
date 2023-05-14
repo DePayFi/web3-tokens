@@ -939,25 +939,15 @@
 
     } else {
 
-      let filters = [
-        { dataSize: 165 },
-        { memcmp: { offset: 32, bytes: account }},
-        { memcmp: { offset: 0, bytes: address }}
-      ];
+      const tokenAccountAddress = await findProgramAddress({ token: address, owner: account });
 
-      let tokenAccounts  = await request(`solana://TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA/getProgramAccounts`, { params: { filters } });
+      const balance = await request(`solana://${tokenAccountAddress}/getTokenAccountBalance`);
 
-      let totalBalance = ethers.ethers.BigNumber.from('0');
-
-      await Promise.all(tokenAccounts.map((tokenAccount)=>{
-        return request(`solana://${tokenAccount.pubkey.toString()}/getTokenAccountBalance`)
-      })).then((balances)=>{
-        balances.forEach((balance)=>{
-          totalBalance = totalBalance.add(ethers.ethers.BigNumber.from(balance.value.amount));
-        });
-      });
-
-      return totalBalance
+      if (balance) {
+        return ethers.ethers.BigNumber.from(balance.value.amount)
+      } else {
+        return ethers.ethers.BigNumber.from('0')
+      }
     }
   };
 

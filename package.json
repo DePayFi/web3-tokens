@@ -1,7 +1,7 @@
 {
   "name": "@depay/web3-tokens",
   "moduleName": "Web3Tokens",
-  "version": "9.19.3",
+  "version": "9.19.4",
   "description": "JavaScript library providing basic functionalities to interact with web3 tokens.",
   "main": "dist/umd/index.js",
   "module": "dist/esm/index.js",
