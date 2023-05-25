@@ -2247,6 +2247,7 @@
     findProgramAddress,
     findAccount,
     getMetaData,
+    getMetaDataPDA,
     ...instructions
   };
 

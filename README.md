@@ -205,6 +205,8 @@ Token.solana
 // async createAssociatedTokenAccountInstruction({ token, owner, payer })
 // initializeAccountInstruction({ account, token, owner })
 // closeAccountInstruction({ account, owner })
+// getMetaData
+// getMetaDataPDA
 ```
 
 ## Development

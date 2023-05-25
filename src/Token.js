@@ -25,7 +25,7 @@ import findAccount from './platforms/solana/findAccount'
 import findProgramAddress from './platforms/solana/findProgramAddress'
 import nameOnSolana from './platforms/solana/name'
 import symbolOnSolana from './platforms/solana/symbol'
-import { getMetaData } from './platforms/solana/metadata'
+import { getMetaData, getMetaDataPDA } from './platforms/solana/metadata'
 import { METADATA_ACCOUNT } from './platforms/solana/metadata'
 import { MINT_LAYOUT, METADATA_LAYOUT, TRANSFER_LAYOUT, TOKEN_LAYOUT } from './platforms/solana/layouts'
 import { TOKEN_PROGRAM, ASSOCIATED_TOKEN_PROGRAM } from './platforms/solana/constants'
@@ -55,7 +55,7 @@ import findAccount from './platforms/solana/findAccount'
 import findProgramAddress from './platforms/solana/findProgramAddress'
 import nameOnSolana from './platforms/solana/name'
 import symbolOnSolana from './platforms/solana/symbol'
-import { getMetaData } from './platforms/solana/metadata'
+import { getMetaData, getMetaDataPDA } from './platforms/solana/metadata'
 import { METADATA_ACCOUNT } from './platforms/solana/metadata'
 import { MINT_LAYOUT, METADATA_LAYOUT, TRANSFER_LAYOUT, TOKEN_LAYOUT } from './platforms/solana/layouts'
 import { TOKEN_PROGRAM, ASSOCIATED_TOKEN_PROGRAM } from './platforms/solana/constants'
@@ -355,6 +355,7 @@ Token.solana = {
   findProgramAddress,
   findAccount,
   getMetaData,
+  getMetaDataPDA,
   ...instructions
 }
 

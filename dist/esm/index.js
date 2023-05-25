@@ -2242,6 +2242,7 @@ Token.solana = {
   findProgramAddress,
   findAccount,
   getMetaData,
+  getMetaDataPDA,
   ...instructions
 };
 
