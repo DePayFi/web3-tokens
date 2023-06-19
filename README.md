@@ -11,7 +11,7 @@ npm install --save @depay/web3-tokens
 ```
 
 ```javascript
-import { Token } from '@depay/web3-tokens'
+import Token from '@depay/web3-tokens'
 
 let token = new Token({
   blockchain: 'ethereum',
@@ -33,7 +33,10 @@ This library supports the following blockchains:
 - [Polygon](https://polygon.technology)
 - [Solana](https://solana.com)
 - [Fantom](https://fantom.foundation)
-- [Velas](https://velas.com)
+- [Arbitrum](https://arbitrum.io)
+- [Avalanche](https://www.avax.network)
+- [Gnosis](https://gnosis.io)
+- [Optimism](https://www.optimism.io)
 
 ## Platform specific packaging
 
@@ -42,13 +45,13 @@ In case you want to use and package only specific platforms, use platform-specif
 ### EVM specific packaging
 
 ```javascript
-import { Token } from '@depay/web3-tokens-evm'
+import Token from '@depay/web3-tokens-evm'
 ```
 
 ### SOLANA specific packaging
 
 ```javascript
-import { Token } from '@depay/web3-tokens-solana'
+import Token from '@depay/web3-tokens-solana'
 ```
 
 ## Functionalities
@@ -56,7 +59,7 @@ import { Token } from '@depay/web3-tokens-solana'
 ### initalize (new)
 
 ```javascript
-import { Token } from '@depay/web3-tokens'
+import Token from '@depay/web3-tokens'
 
 let token = new Token({
   blockchain: 'ethereum',
@@ -170,16 +173,20 @@ await token.readable('1231211111210000000') // "1.23121111121"
 #### EVM: Token Standards
 
 ```javascript
-import { Token } from '@depay/web3-tokens'
+import Token from '@depay/web3-tokens'
+
+Token.ethereum['20'] // [...] <XYZ>20 standard
+Token.bsc['20'] // [...] <XYZ>20 standard
 
 Token.ethereum.ERC20 // [...] ERC20 ABI
 Token.bsc.BEP20 // [...] BEP20 ABI
+
 ```
 
 `DEFAULT` references the broad default token standard on the respective blockchain:
 
 ```javascript
-import { Token } from '@depay/web3-tokens'
+import Token from '@depay/web3-tokens'
 
 Token.ethereum.DEFAULT // ERC20
 Token.bsc.DEFAULT // BEP20
@@ -190,7 +197,7 @@ Token[blockchain].DEFAULT
 #### Solana: Token Standards, Constants, Layouts and helper methods
 
 ```javascript
-import { Token } from '@depay/web3-tokens'
+import Token from '@depay/web3-tokens'
 
 Token.solana
 // MINT_LAYOUT,

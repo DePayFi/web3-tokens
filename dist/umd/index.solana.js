@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/solana-web3.js'), require('@depay/web3-blockchains'), require('ethers')) :
-  typeof define === 'function' && define.amd ? define(['exports', '@depay/solana-web3.js', '@depay/web3-blockchains', 'ethers'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Tokens = {}, global.SolanaWeb3js, global.Web3Blockchains, global.ethers));
-})(this, (function (exports, solanaWeb3_js, Blockchains, ethers) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/solana-web3.js'), require('@depay/web3-blockchains'), require('ethers')) :
+  typeof define === 'function' && define.amd ? define(['@depay/solana-web3.js', '@depay/web3-blockchains', 'ethers'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Tokens = factory(global.SolanaWeb3js, global.Web3Blockchains, global.ethers));
+})(this, (function (solanaWeb3_js, Blockchains, ethers) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -436,35 +436,39 @@
 
       const batch = chunk.map((inflight) => inflight.request);
 
-      return this._provider._rpcBatchRequest(batch)
-        .then((result) => {
-          // For each result, feed it to the correct Promise, depending
-          // on whether it was a success or error
-          chunk.forEach((inflightRequest, index) => {
-            const payload = result[index];
-            if (payload.error) {
-              const error = new Error(payload.error.message);
-              error.code = payload.error.code;
-              error.data = payload.error.data;
-              inflightRequest.reject(error);
-            } else {
-              inflightRequest.resolve(payload);
-            }
+      const handleError = (error)=>{
+        if(error && [
+          'Failed to fetch', 'limit reached', '504', '503', '502', '500', '429', '426', '422', '413', '409', '408', '406', '405', '404', '403', '402', '401', '400'
+        ].some((errorType)=>error.toString().match(errorType))) {
+          const index = this._endpoints.indexOf(this._endpoint)+1;
+          this._endpoint = index >= this._endpoints.length ? this._endpoints[0] : this._endpoints[index];
+          this._provider = new solanaWeb3_js.Connection(this._endpoint);
+          this.requestChunk(chunk);
+        } else {
+          chunk.forEach((inflightRequest) => {
+            inflightRequest.reject(error);
           });
-        }).catch((error) => {
-          if(error && [
-            'Failed to fetch', '504', '503', '502', '500', '429', '426', '422', '413', '409', '408', '406', '405', '404', '403', '402', '401', '400'
-          ].some((errorType)=>error.toString().match(errorType))) {
-            const index = this._endpoints.indexOf(this._endpoint)+1;
-            this._endpoint = index >= this._endpoints.length ? this._endpoints[0] : this._endpoints[index];
-            this._provider = new solanaWeb3_js.Connection(this._endpoint);
-            this.requestChunk(chunk);
-          } else {
-            chunk.forEach((inflightRequest) => {
-              inflightRequest.reject(error);
+        }
+      };
+
+      try {
+        return this._provider._rpcBatchRequest(batch)
+          .then((result) => {
+            // For each result, feed it to the correct Promise, depending
+            // on whether it was a success or error
+            chunk.forEach((inflightRequest, index) => {
+              const payload = result[index];
+              if (payload.error) {
+                const error = new Error(payload.error.message);
+                error.code = payload.error.code;
+                error.data = payload.error.data;
+                inflightRequest.reject(error);
+              } else {
+                inflightRequest.resolve(payload);
+              }
             });
-          }
-        })
+          }).catch(handleError)
+      } catch (error){ return handleError(error) }
     }
       
     _rpcRequestReplacement(methodName, args) {
@@ -617,8 +621,8 @@
     setProvider: setProvider$1,
   };
 
-  let supported$1 = ['ethereum', 'bsc', 'polygon', 'solana', 'fantom', 'velas'];
-  supported$1.evm = ['ethereum', 'bsc', 'polygon', 'fantom', 'velas'];
+  let supported$1 = ['ethereum', 'bsc', 'polygon', 'solana', 'fantom', 'arbitrum', 'avalanche', 'gnosis', 'optimism'];
+  supported$1.evm = ['ethereum', 'bsc', 'polygon', 'fantom', 'arbitrum', 'avalanche', 'gnosis', 'optimism'];
   supported$1.solana = ['solana'];
 
   function _optionalChain$1$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
@@ -825,14 +829,14 @@
       } else if(method === 'getTokenAccountBalance') {
         return await provider.getTokenAccountBalance(new solanaWeb3_js.PublicKey(address))
       } else if (method === 'latestBlockNumber') {
-        return await provider.getBlockHeight()  
+        return await provider.getSlot(params ? params : undefined)
       } else if (method === 'balance') {
         return await balance({ address, provider })
       }
 
     } catch (error){
       if(providers && error && [
-        'Failed to fetch', '504', '503', '502', '500', '429', '426', '422', '413', '409', '408', '406', '405', '404', '403', '402', '401', '400'
+        'Failed to fetch', 'limit reached', '504', '503', '502', '500', '429', '426', '422', '413', '409', '408', '406', '405', '404', '403', '402', '401', '400'
       ].some((errorType)=>error.toString().match(errorType))) {
         let nextProvider = providers[providers.indexOf(provider)+1] || providers[0];
         return singleRequest({ blockchain, address, api, method, params, block, provider: nextProvider, providers })
@@ -906,11 +910,11 @@
   const request = async function (url, options) {
     
     const { blockchain, address, method } = parseUrl(url);
-    const { api, params, cache: cache$1, block, timeout, strategy } = (typeof(url) == 'object' ? url : options) || {};
+    const { api, params, cache: cache$1, block, timeout, strategy, cacheKey } = (typeof(url) == 'object' ? url : options) || {};
 
     return await cache({
       expires: cache$1 || 0,
-      key: [blockchain, address, method, params, block],
+      key: cacheKey || [blockchain, address, method, params, block],
       call: async()=>{
         if(supported$1.evm.includes(blockchain)) {
 
@@ -1133,8 +1137,6 @@
     ...instructions
   };
 
-  exports.Token = Token;
-
-  Object.defineProperty(exports, '__esModule', { value: true });
+  return Token;
 
 }));

@@ -1,3 +1,3 @@
 import Token from './Token.js'
 
-export { Token }
+export default Token

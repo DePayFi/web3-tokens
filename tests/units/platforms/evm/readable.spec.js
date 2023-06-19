@@ -1,4 +1,4 @@
-import { Token } from 'src'
+import Token from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, getProvider } from '@depay/web3-client'
 import { supported } from 'src/blockchains'

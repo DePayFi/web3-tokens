@@ -3,7 +3,7 @@ import Blockchains from '@depay/web3-blockchains'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, getProvider } from '@depay/web3-client'
 import { supported } from 'src/blockchains'
-import { Token } from 'src'
+import Token from 'src'
 
 describe('Token', () => {
   describe('balance', () => {

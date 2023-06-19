@@ -2,7 +2,7 @@ import { ACCOUNT_LAYOUT, PublicKey, Buffer, BN } from '@depay/solana-web3.js'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, getProvider } from '@depay/web3-client'
 import { supported } from 'src/blockchains'
-import { Token } from 'src'
+import Token from 'src'
 import { TOKEN_PROGRAM } from 'src/platforms/solana/constants'
 
 describe('findAccount', () => {

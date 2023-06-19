@@ -2,19 +2,11 @@
 
 import allowanceOnEVM from './platforms/evm/allowance'
 import balanceOnEVM from './platforms/evm/balance'
-import BEP20 from './blockchains/bsc/20'
-import bsc1155 from './blockchains/bsc/1155'
 import decimalsOnEVM from './platforms/evm/decimals'
-import ERC20 from './blockchains/ethereum/20'
-import ERC20onPolygon from './blockchains/polygon/20'
-import ethereum1155 from './blockchains/ethereum/1155'
-import ftm1155 from './blockchains/fantom/1155'
-import FTM20 from './blockchains/fantom/20'
+import ERC1155 from './standards/ERC1155'
+import ERC20 from './standards/ERC20'
 import nameOnEVM from './platforms/evm/name'
-import polygon1155 from './blockchains/polygon/1155'
 import symbolOnEVM from './platforms/evm/symbol'
-import velas1155 from './blockchains/velas/1155'
-import VRC20 from './blockchains/velas/20'
 
 /*#elif _SOLANA
 
@@ -34,19 +26,11 @@ import { TOKEN_PROGRAM, ASSOCIATED_TOKEN_PROGRAM } from './platforms/solana/cons
 
 import allowanceOnEVM from './platforms/evm/allowance'
 import balanceOnEVM from './platforms/evm/balance'
-import BEP20 from './blockchains/bsc/20'
-import bsc1155 from './blockchains/bsc/1155'
 import decimalsOnEVM from './platforms/evm/decimals'
-import ERC20 from './blockchains/ethereum/20'
-import ERC20onPolygon from './blockchains/polygon/20'
-import ethereum1155 from './blockchains/ethereum/1155'
-import ftm1155 from './blockchains/fantom/1155'
-import FTM20 from './blockchains/fantom/20'
+import ERC1155 from './standards/ERC1155'
+import ERC20 from './standards/ERC20'
 import nameOnEVM from './platforms/evm/name'
-import polygon1155 from './blockchains/polygon/1155'
 import symbolOnEVM from './platforms/evm/symbol'
-import velas1155 from './blockchains/velas/1155'
-import VRC20 from './blockchains/velas/20'
 
 import * as instructions from './platforms/solana/instructions'
 import balanceOnSolana from './platforms/solana/balance'
@@ -258,37 +242,59 @@ Token.safeAmount = ({ amount, decimals }) => {
 
 Token.ethereum = { 
   DEFAULT: ERC20,
-  ERC20,
+  ERC20: ERC20,
   20: ERC20,
-  1155: ethereum1155,
+  1155: ERC1155,
 }
 
 Token.bsc = { 
-  DEFAULT: BEP20,
-  BEP20,
-  20: BEP20,
-  1155: bsc1155,
+  DEFAULT: ERC20,
+  BEP20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
 }
 
 Token.polygon = { 
-  DEFAULT: ERC20onPolygon,
-  ERC20: ERC20onPolygon,
-  20: ERC20onPolygon,
-  1155: bsc1155,
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
 }
 
 Token.fantom = {
-  DEFAULT: FTM20,
-  FTM20,
-  20: FTM20,
-  1155: ftm1155,
+  DEFAULT: ERC20,
+  FTM20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
 }
 
-Token.velas = {
-  DEFAULT: VRC20,
-  VRC20,
-  20: VRC20,
-  1155: bsc1155,
+Token.arbitrum = {
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
+}
+
+Token.avalanche = {
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  ARC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
+}
+
+Token.gnosis = {
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
+}
+
+Token.optimism = {
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
 }
 
 /*#elif _SOLANA
@@ -311,37 +317,59 @@ Token.solana = {
 
 Token.ethereum = { 
   DEFAULT: ERC20,
-  ERC20,
+  ERC20: ERC20,
   20: ERC20,
-  1155: ethereum1155,
+  1155: ERC1155,
 }
 
 Token.bsc = { 
-  DEFAULT: BEP20,
-  BEP20,
-  20: BEP20,
-  1155: bsc1155,
+  DEFAULT: ERC20,
+  BEP20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
 }
 
 Token.polygon = { 
-  DEFAULT: ERC20onPolygon,
-  ERC20: ERC20onPolygon,
-  20: ERC20onPolygon,
-  1155: bsc1155,
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
 }
 
 Token.fantom = {
-  DEFAULT: FTM20,
-  FTM20,
-  20: FTM20,
-  1155: ftm1155,
+  DEFAULT: ERC20,
+  FTM20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
 }
 
-Token.velas = {
-  DEFAULT: VRC20,
-  VRC20,
-  20: VRC20,
-  1155: bsc1155,
+Token.arbitrum = {
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
+}
+
+Token.avalanche = {
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  ARC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
+}
+
+Token.gnosis = {
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
+}
+
+Token.optimism = {
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
 }
 
 Token.solana = {

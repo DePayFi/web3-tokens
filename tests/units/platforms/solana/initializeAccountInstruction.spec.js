@@ -2,7 +2,7 @@ import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, getProvider } from '@depay/web3-client'
 import { supported } from 'src/blockchains'
 import { SystemProgram } from '@depay/solana-web3.js'
-import { Token } from 'src'
+import Token from 'src'
 import { TOKEN_PROGRAM } from 'src/platforms/solana/constants'
 
 describe('initializeAccountInstruction', () => {

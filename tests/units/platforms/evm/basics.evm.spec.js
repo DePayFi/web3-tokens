@@ -3,7 +3,7 @@ import Blockchains from '@depay/web3-blockchains'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { resetCache, getProvider } from '@depay/web3-client-evm'
 import { supported } from 'src/blockchains'
-import { Token } from 'dist/esm/index.evm'
+import Token from 'dist/esm/index.evm'
 
 describe('Token basics', () => {
 
