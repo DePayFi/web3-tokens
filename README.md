@@ -181,6 +181,9 @@ Token.bsc['20'] // [...] <XYZ>20 standard
 Token.ethereum.ERC20 // [...] ERC20 ABI
 Token.bsc.BEP20 // [...] BEP20 ABI
 
+Token.ethereum.WRAPPED // [...] WETH ABI
+Token.bsc.WRAPPED // [...] WETH ABI
+
 ```
 
 `DEFAULT` references the broad default token standard on the respective blockchain:

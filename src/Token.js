@@ -5,6 +5,7 @@ import balanceOnEVM from './platforms/evm/balance'
 import decimalsOnEVM from './platforms/evm/decimals'
 import ERC1155 from './standards/ERC1155'
 import ERC20 from './standards/ERC20'
+import WETH from './standards/WETH'
 import nameOnEVM from './platforms/evm/name'
 import symbolOnEVM from './platforms/evm/symbol'
 
@@ -29,6 +30,7 @@ import balanceOnEVM from './platforms/evm/balance'
 import decimalsOnEVM from './platforms/evm/decimals'
 import ERC1155 from './standards/ERC1155'
 import ERC20 from './standards/ERC20'
+import WETH from './standards/WETH'
 import nameOnEVM from './platforms/evm/name'
 import symbolOnEVM from './platforms/evm/symbol'
 
@@ -245,6 +247,7 @@ Token.ethereum = {
   ERC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.bsc = { 
@@ -252,6 +255,7 @@ Token.bsc = {
   BEP20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.polygon = { 
@@ -259,6 +263,7 @@ Token.polygon = {
   ERC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.fantom = {
@@ -266,6 +271,7 @@ Token.fantom = {
   FTM20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.arbitrum = {
@@ -273,6 +279,7 @@ Token.arbitrum = {
   ERC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.avalanche = {
@@ -281,6 +288,7 @@ Token.avalanche = {
   ARC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.gnosis = {
@@ -288,6 +296,7 @@ Token.gnosis = {
   ERC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.optimism = {
@@ -295,6 +304,7 @@ Token.optimism = {
   ERC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 /*#elif _SOLANA
@@ -320,6 +330,7 @@ Token.ethereum = {
   ERC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.bsc = { 
@@ -327,6 +338,7 @@ Token.bsc = {
   BEP20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.polygon = { 
@@ -334,6 +346,7 @@ Token.polygon = {
   ERC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.fantom = {
@@ -341,6 +354,7 @@ Token.fantom = {
   FTM20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.arbitrum = {
@@ -348,6 +362,7 @@ Token.arbitrum = {
   ERC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.avalanche = {
@@ -356,6 +371,7 @@ Token.avalanche = {
   ARC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.gnosis = {
@@ -363,6 +379,7 @@ Token.gnosis = {
   ERC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.optimism = {
@@ -370,6 +387,7 @@ Token.optimism = {
   ERC20: ERC20,
   20: ERC20,
   1155: ERC1155,
+  WRAPPED: WETH,
 }
 
 Token.solana = {
