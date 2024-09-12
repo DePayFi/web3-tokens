@@ -1,7 +1,7 @@
 {
   "name": "@depay/web3-tokens",
   "moduleName": "Web3Tokens",
-  "version": "10.3.0",
+  "version": "10.4.0",
   "description": "JavaScript library providing basic functionalities to interact with web3 tokens.",
   "main": "dist/umd/index.js",
   "module": "dist/esm/index.js",
@@ -33,9 +33,9 @@
   "private": false,
   "dependencies": {},
   "peerDependencies": {
-    "@depay/solana-web3.js": "^1.25.1",
-    "@depay/web3-blockchains": "^9.1.4",
-    "@depay/web3-client": "^10.18.0",
+    "@depay/solana-web3.js": "^1.26.0",
+    "@depay/web3-blockchains": "^9.6.0",
+    "@depay/web3-client": "^10.19.0",
     "ethers": "^5.7.1"
   },
   "engines": {
@@ -45,11 +45,11 @@
     "@babel/core": "^7.12.9",
     "@babel/preset-env": "^7.12.7",
     "@depay/solana-web3.js": "^1.25.1",
-    "@depay/web3-blockchains": "^9.1.4",
-    "@depay/web3-client": "^10.18.0",
-    "@depay/web3-client-evm": "^10.18.0",
-    "@depay/web3-client-solana": "^10.18.0",
-    "@depay/web3-mock": "^14.17.0",
+    "@depay/web3-blockchains": "^9.6.0",
+    "@depay/web3-client": "^10.19.0",
+    "@depay/web3-client-evm": "^10.19.0",
+    "@depay/web3-client-solana": "^10.19.0",
+    "@depay/web3-mock": "^14.19.0",
     "@peculiar/webcrypto": "^1.4.0",
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-node-resolve": "^11.2.1",

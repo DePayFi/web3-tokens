@@ -315,6 +315,14 @@ Token.base = {
   WRAPPED: WETH,
 }
 
+Token.worldchain = { 
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
+  WRAPPED: WETH,
+}
+
 /*#elif _SOLANA
 
 Token.solana = {
@@ -399,6 +407,14 @@ Token.optimism = {
 }
 
 Token.base = {
+  DEFAULT: ERC20,
+  ERC20: ERC20,
+  20: ERC20,
+  1155: ERC1155,
+  WRAPPED: WETH,
+}
+
+Token.worldchain = {
   DEFAULT: ERC20,
   ERC20: ERC20,
   20: ERC20,
