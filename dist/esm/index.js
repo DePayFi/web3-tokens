@@ -11,7 +11,7 @@ var allowanceOnEVM = ({ blockchain, address, api, owner, spender })=>{
       api,
       method: 'allowance',
       params: [owner, spender],
-      cache: 5000, // 5 seconds
+      // no cache for allowance!
     },
   )
 };

@@ -16,7 +16,7 @@
         api,
         method: 'allowance',
         params: [owner, spender],
-        cache: 5000, // 5 seconds
+        // no cache for allowance!
       },
     )
   };
