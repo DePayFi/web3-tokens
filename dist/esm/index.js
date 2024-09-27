@@ -23,7 +23,6 @@ var balanceOnEVM = async ({ blockchain, address, account, api, id })=>{
         blockchain: blockchain,
         address: account,
         method: 'balance',
-        cache: 10000, // 10 seconds
       },
     )
   } else {
@@ -34,7 +33,6 @@ var balanceOnEVM = async ({ blockchain, address, account, api, id })=>{
         method: 'balanceOf',
         api,
         params: id ? [account, id] : [account],
-        cache: 10000, // 10 seconds
       },
     )
   }
