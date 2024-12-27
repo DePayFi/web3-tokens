@@ -108,6 +108,25 @@ describe('BigNumber', () => {
 
         expect(amountBN.toString()).toEqual('19126903977196')
       })
+
+      it('fixes syntific numbers when parsing', async ()=> {
+        let tokenCallMock = mock({
+          provider,
+          blockchain,
+          request: {
+            to: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
+            api: Token[blockchain].DEFAULT,
+            method: 'decimals',
+            return: 18
+          }
+        })
+
+        let token = new Token({ blockchain, address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb' })
+
+        let amountBN = await token.BigNumber(1.9e-10)
+
+        expect(amountBN.toString()).toEqual('190000000')
+      })
     })
   })
 })

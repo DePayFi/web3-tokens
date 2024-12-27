@@ -211,9 +211,19 @@ class Token {
   }
 
   async BigNumber(amount) {
-    let decimals = await this.decimals()
+    const decimals = await this.decimals()
+    if(typeof(amount) != 'string') {
+      amount = amount.toString()
+    }
+    if(amount.match('e')) {
+      amount = parseFloat(amount).toFixed(decimals).toString()
+    }
+    const decimalsMatched = amount.match(/\.(\d+)/)
+    if(decimalsMatched && decimalsMatched[1] && decimalsMatched[1].length > decimals) {
+      amount = parseFloat(amount).toFixed(decimals).toString()
+    }
     return ethers.utils.parseUnits(
-      Token.safeAmount({ amount: parseFloat(amount), decimals }).toString(),
+      amount,
       decimals
     )
   }
@@ -234,10 +244,6 @@ Token.BigNumber = async ({ amount, blockchain, address }) => {
 Token.readable = async ({ amount, blockchain, address }) => {
   let token = new Token({ blockchain, address })
   return token.readable(amount)
-}
-
-Token.safeAmount = ({ amount, decimals }) => {
-  return parseFloat(amount.toFixed(decimals))
 }
 
 /*#if _EVM
