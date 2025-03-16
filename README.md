@@ -44,13 +44,13 @@ This library supports the following blockchains:
 
 In case you want to use and package only specific platforms, use platform-specific packages:
 
-### EVM specific packaging
+### EVM (Ethereum Virtual Machine) specific packaging
 
 ```javascript
 import Token from '@depay/web3-tokens-evm'
 ```
 
-### SOLANA specific packaging
+### SVM (Solana Virtual Machine) specific packaging
 
 ```javascript
 import Token from '@depay/web3-tokens-solana'

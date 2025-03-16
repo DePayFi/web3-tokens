@@ -1,10 +1,10 @@
 {
-  "name": "@depay/web3-tokens-solana",
+  "name": "@depay/web3-tokens-svm",
   "moduleName": "Web3Tokens",
-  "version": "10.4.4",
+  "version": "11.0.0",
   "description": "JavaScript library providing basic functionalities to interact with web3 tokens.",
-  "main": "dist/umd/index.solana.js",
-  "module": "dist/esm/index.solana.js",
+  "main": "dist/umd/index.svm.js",
+  "module": "dist/esm/index.svm.js",
   "files": [
     "dist"
   ],
@@ -24,9 +24,9 @@
   "private": false,
   "dependencies": {},
   "peerDependencies": {
-    "@depay/solana-web3.js": "^1.26.0",
-    "@depay/web3-blockchains": "^9.6.0",
-    "@depay/web3-client-solana": "^10.19.0",
+    "@depay/solana-web3.js": "^1.98.0",
+    "@depay/web3-blockchains": "^9.7.9",
+    "@depay/web3-client-svm": "^11.0.1",
     "ethers": "^5.7.1"
   },
   "engines": {

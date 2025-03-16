@@ -7,7 +7,7 @@ import { TOKEN_PROGRAM, ASSOCIATED_TOKEN_PROGRAM } from 'src/platforms/solana/co
 
 describe('createAssociatedTokenAccountInstruction', () => {
 
-  supported.solana.forEach((blockchain)=>{
+  supported.svm.forEach((blockchain)=>{
 
     describe(blockchain, ()=>{
 

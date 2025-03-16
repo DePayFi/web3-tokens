@@ -9,7 +9,7 @@ import WETH from './standards/WETH'
 import nameOnEVM from './platforms/evm/name'
 import symbolOnEVM from './platforms/evm/symbol'
 
-/*#elif _SOLANA
+/*#elif _SVM
 
 import * as instructions from './platforms/solana/instructions'
 import balanceOnSolana from './platforms/solana/balance'
@@ -58,7 +58,7 @@ class Token {
     this.blockchain = blockchain
     if(supported.evm.includes(this.blockchain)) {
       this.address = ethers.utils.getAddress(address)
-    } else if(supported.solana.includes(this.blockchain)) {
+    } else if(supported.svm.includes(this.blockchain)) {
       this.address = address
     }
   }
@@ -74,17 +74,17 @@ class Token {
 
         decimals = await decimalsOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
 
-        /*#elif _SOLANA
+        /*#elif _SVM
 
         //#else */
 
         decimals = await decimalsOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
 
         //#endif
-      } else if(supported.solana.includes(this.blockchain)) {
+      } else if(supported.svm.includes(this.blockchain)) {
         /*#if _EVM
 
-        /*#elif _SOLANA
+        /*#elif _SVM
 
         decimals = await decimalsOnSolana({ blockchain: this.blockchain, address: this.address })
 
@@ -108,17 +108,17 @@ class Token {
 
       return await symbolOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
 
-      /*#elif _SOLANA
+      /*#elif _SVM
 
       //#else */
 
       return await symbolOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
 
       //#endif
-    } else if(supported.solana.includes(this.blockchain)) {
+    } else if(supported.svm.includes(this.blockchain)) {
       /*#if _EVM
 
-      /*#elif _SOLANA
+      /*#elif _SVM
 
       return await symbolOnSolana({ blockchain: this.blockchain, address: this.address })
 
@@ -139,17 +139,17 @@ class Token {
 
       return await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, id: args?.id })
 
-      /*#elif _SOLANA
+      /*#elif _SVM
 
       //#else */
 
       return await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, id: args?.id })
 
       //#endif
-    } else if(supported.solana.includes(this.blockchain)) {
+    } else if(supported.svm.includes(this.blockchain)) {
       /*#if _EVM
 
-      /*#elif _SOLANA
+      /*#elif _SVM
 
       return await nameOnSolana({ blockchain: this.blockchain, address: this.address })
 
@@ -167,17 +167,17 @@ class Token {
 
       return await balanceOnEVM({ blockchain: this.blockchain, account, address: this.address, api: id ? Token[this.blockchain][1155] : Token[this.blockchain].DEFAULT, id })
 
-      /*#elif _SOLANA
+      /*#elif _SVM
 
       //#else */
 
       return await balanceOnEVM({ blockchain: this.blockchain, account, address: this.address, api: id ? Token[this.blockchain][1155] : Token[this.blockchain].DEFAULT, id })
 
       //#endif
-    } else if(supported.solana.includes(this.blockchain)) {
+    } else if(supported.svm.includes(this.blockchain)) {
       /*#if _EVM
 
-      /*#elif _SOLANA
+      /*#elif _SVM
 
       return await balanceOnSolana({ blockchain: this.blockchain, account, address: this.address, api: Token[this.blockchain].DEFAULT })
 
@@ -198,14 +198,14 @@ class Token {
 
       return await allowanceOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, owner, spender })
 
-      /*#elif _SOLANA
+      /*#elif _SVM
 
       //#else */
 
       return await allowanceOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, owner, spender })
 
       //#endif
-    } else if(supported.solana.includes(this.blockchain)) {
+    } else if(supported.svm.includes(this.blockchain)) {
       return ethers.BigNumber.from(Blockchains.findByName(this.blockchain).maxInt)
     } 
   }
@@ -329,7 +329,7 @@ Token.worldchain = {
   WRAPPED: WETH,
 }
 
-/*#elif _SOLANA
+/*#elif _SVM
 
 Token.solana = {
   MINT_LAYOUT,

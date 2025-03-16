@@ -7,7 +7,7 @@ import { TOKEN_PROGRAM } from 'src/platforms/solana/constants'
 
 describe('closeAccountInstruction', () => {
 
-  supported.solana.forEach((blockchain)=>{
+  supported.svm.forEach((blockchain)=>{
 
     describe(blockchain, ()=>{
 

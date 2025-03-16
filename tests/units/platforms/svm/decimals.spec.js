@@ -5,7 +5,7 @@ import Token from 'src'
 
 describe('Token', () => {
 
-  supported.solana.forEach((blockchain)=>{
+  supported.svm.forEach((blockchain)=>{
 
     describe(blockchain, ()=>{
 

@@ -1095,7 +1095,7 @@
 
   let supported = ['ethereum', 'bsc', 'polygon', 'solana', 'fantom', 'arbitrum', 'avalanche', 'gnosis', 'optimism', 'base', 'worldchain'];
   supported.evm = ['ethereum', 'bsc', 'polygon', 'fantom', 'arbitrum', 'avalanche', 'gnosis', 'optimism', 'base', 'worldchain'];
-  supported.solana = ['solana'];
+  supported.svm = ['solana'];
 
   function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 
@@ -1105,7 +1105,7 @@
       this.blockchain = blockchain;
       if(supported.evm.includes(this.blockchain)) {
         this.address = ethers.ethers.utils.getAddress(address);
-      } else if(supported.solana.includes(this.blockchain)) {
+      } else if(supported.svm.includes(this.blockchain)) {
         this.address = address;
       }
     }
@@ -1120,7 +1120,7 @@
 
           decimals = await decimalsOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT });
 
-        } else if(supported.solana.includes(this.blockchain)) {
+        } else if(supported.svm.includes(this.blockchain)) {
 
           decimals = await decimalsOnSolana({ blockchain: this.blockchain, address: this.address });
 
@@ -1138,7 +1138,7 @@
 
         return await symbolOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
 
-      } else if(supported.solana.includes(this.blockchain)) {
+      } else if(supported.svm.includes(this.blockchain)) {
 
         return await symbolOnSolana({ blockchain: this.blockchain, address: this.address })
 
@@ -1153,7 +1153,7 @@
 
         return await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, id: _optionalChain([args, 'optionalAccess', _ => _.id]) })
 
-      } else if(supported.solana.includes(this.blockchain)) {
+      } else if(supported.svm.includes(this.blockchain)) {
 
         return await nameOnSolana({ blockchain: this.blockchain, address: this.address })
 
@@ -1165,7 +1165,7 @@
 
         return await balanceOnEVM({ blockchain: this.blockchain, account, address: this.address, api: id ? Token[this.blockchain][1155] : Token[this.blockchain].DEFAULT, id })
 
-      } else if(supported.solana.includes(this.blockchain)) {
+      } else if(supported.svm.includes(this.blockchain)) {
 
         return await balanceOnSolana({ blockchain: this.blockchain, account, address: this.address, api: Token[this.blockchain].DEFAULT })
 
@@ -1180,7 +1180,7 @@
 
         return await allowanceOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, owner, spender })
 
-      } else if(supported.solana.includes(this.blockchain)) {
+      } else if(supported.svm.includes(this.blockchain)) {
         return ethers.ethers.BigNumber.from(Blockchains__default["default"].findByName(this.blockchain).maxInt)
       } 
     }

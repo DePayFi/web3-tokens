@@ -6,7 +6,7 @@ import Token from 'src'
 
 describe('createTransferInstruction', () => {
 
-  supported.solana.forEach((blockchain)=>{
+  supported.svm.forEach((blockchain)=>{
 
     describe(blockchain, ()=>{
 

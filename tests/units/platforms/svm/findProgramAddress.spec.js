@@ -6,7 +6,7 @@ import Token from 'src'
 
 describe('findProgramAddress', () => {
 
-  supported.solana.forEach((blockchain)=>{
+  supported.svm.forEach((blockchain)=>{
 
     describe(blockchain, ()=>{
 
