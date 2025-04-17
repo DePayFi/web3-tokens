@@ -1143,18 +1143,23 @@
 
   class Token {
     
-    constructor({ blockchain, address }) {
+    constructor({ blockchain, address, name, decimals, symbol }) {
       this.blockchain = blockchain;
       if(supported.evm.includes(this.blockchain)) {
         this.address = ethers.ethers.utils.getAddress(address);
       } else if(supported.svm.includes(this.blockchain)) {
         this.address = address;
       }
+      this._name = name;
+      this._decimals = decimals;
+      this._symbol = symbol;
     }
 
     async decimals() {
+      if(this._decimals) { return this._decimals }
       if (this.address == Blockchains__default["default"].findByName(this.blockchain).currency.address) {
-        return Blockchains__default["default"].findByName(this.blockchain).currency.decimals
+        this._decimals = Blockchains__default["default"].findByName(this.blockchain).currency.decimals;
+        return this._decimals
       }
       let decimals;
       try {
@@ -1167,29 +1172,40 @@
           
         }
       } catch (e) {}
+      this._decimals = decimals;
       return decimals
     }
 
     async symbol() {
+      if(this._symbol) { return this._symbol }
       if (this.address == Blockchains__default["default"].findByName(this.blockchain).currency.address) {
-        return Blockchains__default["default"].findByName(this.blockchain).currency.symbol
+        this._symbol = Blockchains__default["default"].findByName(this.blockchain).currency.symbol;
+        return this._symbol
       }
+      let symbol;
       if(supported.evm.includes(this.blockchain)) ; else if(supported.svm.includes(this.blockchain)) {
 
         return await symbolOnSolana({ blockchain: this.blockchain, address: this.address })
 
       }
+      this._symbol = symbol;
+      return symbol
     }
 
     async name(args) {
+      if(this._name) { return this._name }
       if (this.address == Blockchains__default["default"].findByName(this.blockchain).currency.address) {
-        return Blockchains__default["default"].findByName(this.blockchain).currency.name
+        this._name = Blockchains__default["default"].findByName(this.blockchain).currency.name;
+        return this._name
       }
+      let name;
       if(supported.evm.includes(this.blockchain)) ; else if(supported.svm.includes(this.blockchain)) {
 
         return await nameOnSolana({ blockchain: this.blockchain, address: this.address })
 
       }
+      this._name = name;
+      return name
     }
 
     async balance(account, id) {

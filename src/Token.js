@@ -54,18 +54,23 @@ import { supported } from './blockchains'
 
 class Token {
   
-  constructor({ blockchain, address }) {
+  constructor({ blockchain, address, name, decimals, symbol }) {
     this.blockchain = blockchain
     if(supported.evm.includes(this.blockchain)) {
       this.address = ethers.utils.getAddress(address)
     } else if(supported.svm.includes(this.blockchain)) {
       this.address = address
     }
+    this._name = name
+    this._decimals = decimals
+    this._symbol = symbol
   }
 
   async decimals() {
+    if(this._decimals) { return this._decimals }
     if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
-      return Blockchains.findByName(this.blockchain).currency.decimals
+      this._decimals = Blockchains.findByName(this.blockchain).currency.decimals
+      return this._decimals
     }
     let decimals
     try {
@@ -96,13 +101,17 @@ class Token {
         
       }
     } catch {}
+    this._decimals = decimals
     return decimals
   }
 
   async symbol() {
+    if(this._symbol) { return this._symbol }
     if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
-      return Blockchains.findByName(this.blockchain).currency.symbol
+      this._symbol = Blockchains.findByName(this.blockchain).currency.symbol
+      return this._symbol
     }
+    let symbol
     if(supported.evm.includes(this.blockchain)) {
       /*#if _EVM
 
@@ -112,7 +121,7 @@ class Token {
 
       //#else */
 
-      return await symbolOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
+      symbol = await symbolOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT })
 
       //#endif
     } else if(supported.svm.includes(this.blockchain)) {
@@ -124,16 +133,21 @@ class Token {
 
       //#else */
 
-      return await symbolOnSolana({ blockchain: this.blockchain, address: this.address })
+      symbol = await symbolOnSolana({ blockchain: this.blockchain, address: this.address })
 
       //#endif
     }
+    this._symbol = symbol
+    return symbol
   }
 
   async name(args) {
+    if(this._name) { return this._name }
     if (this.address == Blockchains.findByName(this.blockchain).currency.address) {
-      return Blockchains.findByName(this.blockchain).currency.name
+      this._name = Blockchains.findByName(this.blockchain).currency.name
+      return this._name
     }
+    let name
     if(supported.evm.includes(this.blockchain)) {
       /*#if _EVM
 
@@ -143,7 +157,7 @@ class Token {
 
       //#else */
 
-      return await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, id: args?.id })
+      name = await nameOnEVM({ blockchain: this.blockchain, address: this.address, api: Token[this.blockchain].DEFAULT, id: args?.id })
 
       //#endif
     } else if(supported.svm.includes(this.blockchain)) {
@@ -155,10 +169,12 @@ class Token {
 
       //#else */
 
-      return await nameOnSolana({ blockchain: this.blockchain, address: this.address })
+      name = await nameOnSolana({ blockchain: this.blockchain, address: this.address })
 
       //#endif
     }
+    this._name = name
+    return name
   }
 
   async balance(account, id) {
